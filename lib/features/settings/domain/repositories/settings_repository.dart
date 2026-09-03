@@ -1,0 +1,1 @@
+// Settings Domain Repository Interface

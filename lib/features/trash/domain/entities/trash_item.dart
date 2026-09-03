@@ -1,0 +1,1 @@
+// Trash Item Domain Entity

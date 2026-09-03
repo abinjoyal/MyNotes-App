@@ -1,0 +1,1 @@
+// Pinned Note Model Definition

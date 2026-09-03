@@ -1,0 +1,1 @@
+// Note Domain Repository Interface

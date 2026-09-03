@@ -1,0 +1,1 @@
+// Resentnotes Table Schema

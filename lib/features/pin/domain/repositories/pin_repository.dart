@@ -1,0 +1,1 @@
+// Pin Domain Repository Interface

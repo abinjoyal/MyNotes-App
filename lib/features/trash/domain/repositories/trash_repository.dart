@@ -1,0 +1,1 @@
+// Trash Domain Repository Interface

@@ -126,6 +126,12 @@ class SettingsController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateLastBackupTime(String timestamp, String formattedSize) {
+    _lastBackupTime = timestamp;
+    _lastBackupSize = formattedSize;
+    notifyListeners();
+  }
+
   BackupResult performBackup() {
     final result = BackupService.instance.createBackupPayload();
     _lastBackupTime = result.timestamp;

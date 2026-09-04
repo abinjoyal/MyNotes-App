@@ -3,6 +3,7 @@ import '../../../../app/constants/app_colors.dart';
 import '../controllers/settings_controller.dart';
 import '../../../pin/presentation/screens/passcode_lock_screen.dart';
 import '../../../backup/data/services/backup_service.dart';
+import '../../../backup/data/services/google_drive_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -13,16 +14,19 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final SettingsController _controller = SettingsController.instance;
+  final GoogleDriveService _driveService = GoogleDriveService.instance;
 
   @override
   void initState() {
     super.initState();
     _controller.addListener(_onSettingsChanged);
+    _driveService.addListener(_onSettingsChanged);
   }
 
   @override
   void dispose() {
     _controller.removeListener(_onSettingsChanged);
+    _driveService.removeListener(_onSettingsChanged);
     super.dispose();
   }
 
@@ -230,6 +234,66 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _buildSectionHeader('Backup & Cloud Sync', Icons.cloud_outlined, textColor),
                   const SizedBox(height: 12),
                   _buildCardContainer(cardBg, borderColor, [
+                    _buildActionTile(
+                      title: 'Google Drive Account',
+                      subtitle: _driveService.isConnected
+                          ? 'Connected: ${_driveService.currentUserEmail ?? 'Google Account'}'
+                          : 'Connect your Google account for automated cloud backups',
+                      icon: Icons.add_to_drive_rounded,
+                      actionLabel: _driveService.isConnected ? 'Disconnect' : 'Connect',
+                      textColor: textColor,
+                      secondaryTextColor: secondaryTextColor,
+                      onTap: () async {
+                        if (_driveService.isConnected) {
+                          await _driveService.disconnectAccount();
+                          _showSnackBar('Google Drive disconnected');
+                        } else {
+                          final success = await _driveService.connectAccount();
+                          if (success) {
+                            _showSnackBar('Google Drive connected: ${_driveService.currentUserEmail}');
+                          } else {
+                            _showSnackBar('Connecting Google Drive... (Setup Google OAuth Client ID in Cloud Console for live auth)');
+                          }
+                        }
+                      },
+                    ),
+                    Divider(height: 1, color: borderColor),
+                    _buildActionTile(
+                      title: 'Sync Backup to Google Drive',
+                      subtitle: 'Upload latest notes & settings snapshot to Google Drive',
+                      icon: Icons.cloud_upload_outlined,
+                      actionLabel: _driveService.isSyncing ? 'Syncing...' : 'Sync Drive',
+                      textColor: textColor,
+                      secondaryTextColor: secondaryTextColor,
+                      onTap: () async {
+                        final success = await _driveService.uploadBackupToDrive();
+                        if (success) {
+                          _showSnackBar('Backup successfully synced to Google Drive!');
+                        } else {
+                          _showSnackBar('Backup saved locally (Configure OAuth Client ID for live Drive upload)');
+                          _handleBackupNow();
+                        }
+                      },
+                    ),
+                    Divider(height: 1, color: borderColor),
+                    _buildActionTile(
+                      title: 'Restore from Google Drive',
+                      subtitle: 'Fetch latest backup from Google Drive and restore notes',
+                      icon: Icons.cloud_download_outlined,
+                      actionLabel: 'Fetch Drive',
+                      textColor: textColor,
+                      secondaryTextColor: secondaryTextColor,
+                      onTap: () async {
+                        final success = await _driveService.restoreBackupFromDrive();
+                        if (success) {
+                          _showSnackBar('Notes successfully restored from Google Drive!');
+                        } else {
+                          _showSnackBar('No Drive backup found. Use local file restore.');
+                          _showRestoreDialog();
+                        }
+                      },
+                    ),
+                    Divider(height: 1, color: borderColor),
                     _buildSwitchTile(
                       title: 'Cloud Auto-Sync',
                       subtitle: 'Automatically sync notes across your devices',
@@ -259,20 +323,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     Divider(height: 1, color: borderColor),
                     _buildActionTile(
-                      title: 'Backup Now',
+                      title: 'Local Backup Now',
                       subtitle: _controller.lastBackupTime == 'Never'
-                          ? 'Create a fresh backup snapshot immediately'
+                          ? 'Create a fresh backup file immediately'
                           : 'Last Backup: ${_controller.lastBackupTime} (${_controller.lastBackupSize})',
-                      icon: Icons.cloud_upload_outlined,
-                      actionLabel: 'Backup',
+                      icon: Icons.sd_storage_outlined,
+                      actionLabel: 'Export JSON',
                       textColor: textColor,
                       secondaryTextColor: secondaryTextColor,
                       onTap: _handleBackupNow,
                     ),
                     Divider(height: 1, color: borderColor),
                     _buildActionTile(
-                      title: 'Restore Notes from Backup',
-                      subtitle: 'Restore notes & folders from a JSON backup payload',
+                      title: 'Restore Notes from JSON File',
+                      subtitle: 'Restore notes & folders from a local JSON backup payload',
                       icon: Icons.settings_backup_restore_rounded,
                       actionLabel: 'Restore',
                       textColor: textColor,

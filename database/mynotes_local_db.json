@@ -6,7 +6,8 @@
     "attachments",
     "recent_notes"
   ],
-  "notes": [
+  "notes": [],
+  "trashedNotes": [
     {
       "id": "1788538758715",
       "title": "codeing",
@@ -18,6 +19,5 @@
       "folder_name": null
     }
   ],
-  "trashedNotes": [],
   "folders": []
 }

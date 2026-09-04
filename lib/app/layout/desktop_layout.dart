@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'sidebar_layout.dart';
 import '../constants/app_colors.dart';
+import '../../features/notes/presentation/screens/notes_screen.dart';
 
 class DesktopLayout extends StatefulWidget {
   final Widget? notesListWidget;
@@ -18,6 +19,28 @@ class DesktopLayout extends StatefulWidget {
 
 class _DesktopLayoutState extends State<DesktopLayout> {
   String _activeRoute = 'all_notes';
+
+  Widget _buildMiddlePane() {
+    if (widget.notesListWidget != null) {
+      return widget.notesListWidget!;
+    }
+    if (_activeRoute == 'all_notes') {
+      return const NotesScreen();
+    }
+    return Container(
+      color: Colors.white,
+      child: Center(
+        child: Text(
+          'Active Section: ${_activeRoute.toUpperCase()}',
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: AppColors.darkText,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,53 +60,33 @@ class _DesktopLayoutState extends State<DesktopLayout> {
           // Divider
           const VerticalDivider(width: 1, thickness: 1, color: AppColors.divider),
 
-          // Main View (Notes List + Editor Pane)
+          // Main View (Full Width Notes Screen or Split View with Editor)
           Expanded(
-            child: Row(
-              children: [
-                // Middle Pane (Notes List / Active Screen)
-                Expanded(
-                  flex: 2,
-                  child: widget.notesListWidget ??
-                      Container(
-                        color: Colors.white,
-                        child: Center(
-                          child: Text(
-                            'Active Section: ${_activeRoute.toUpperCase()}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.darkText,
-                            ),
-                          ),
-                        ),
+            child: widget.editorWidget != null
+                ? Row(
+                    children: [
+                      // Middle Pane (Notes List)
+                      Expanded(
+                        flex: 2,
+                        child: _buildMiddlePane(),
                       ),
-                ),
-
-                const VerticalDivider(width: 1, thickness: 1, color: AppColors.divider),
-
-                // Right Pane (Note Editor Preview)
-                Expanded(
-                  flex: 3,
-                  child: widget.editorWidget ??
-                      Container(
-                        color: const Color(0xFFFAFAFC),
-                        child: const Center(
-                          child: Text(
-                            'Select a note to view or edit',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: AppColors.secondaryText,
-                            ),
-                          ),
-                        ),
+                      const VerticalDivider(
+                        width: 1,
+                        thickness: 1,
+                        color: AppColors.divider,
                       ),
-                ),
-              ],
-            ),
+                      // Right Pane (Note Editor)
+                      Expanded(
+                        flex: 3,
+                        child: widget.editorWidget!,
+                      ),
+                    ],
+                  )
+                : _buildMiddlePane(),
           ),
         ],
       ),
     );
   }
 }
+

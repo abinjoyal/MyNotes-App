@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../domain/entities/note.dart';
 import 'editor_toolbar.dart';
+import '../../../settings/presentation/controllers/settings_controller.dart';
 
 class _MarkerMatch {
   final int start;
@@ -18,6 +19,7 @@ class _MarkerMatch {
     required this.closeTag,
     required this.innerText,
     required this.type,
+
   });
 }
 
@@ -222,9 +224,10 @@ class MarkdownEditingController extends TextEditingController {
       return TextSpan(style: style, text: '');
     }
 
-    const hiddenPrefixStyle = TextStyle(fontSize: 0.001, color: Colors.transparent);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hiddenPrefixStyle = const TextStyle(fontSize: 0.001, color: Colors.transparent);
     final defaultStyle =
-        style ?? const TextStyle(color: AppColors.darkText, fontSize: 15);
+        style ?? TextStyle(color: isDark ? AppColors.darkTextPrimary : AppColors.darkText, fontSize: SettingsController.instance.fontSizeValue);
     final List<InlineSpan> spans = [];
 
     final lines = text.split('\n');
@@ -246,9 +249,9 @@ class MarkdownEditingController extends TextEditingController {
           fontSize: 24,
           fontWeight: FontWeight.bold,
           height: 1.4,
-          color: AppColors.darkText,
+          color: defaultStyle.color,
         );
-        spans.add(const TextSpan(text: '# ', style: hiddenPrefixStyle));
+        spans.add(hiddenPrefixStyle as InlineSpan);
         spans.addAll(_parseInline(line.substring(2), lineStyle));
       } else if (line.startsWith('## ')) {
         // H2: 20px, bold, height: 1.3
@@ -256,9 +259,9 @@ class MarkdownEditingController extends TextEditingController {
           fontSize: 20,
           fontWeight: FontWeight.bold,
           height: 1.3,
-          color: AppColors.darkText,
+          color: defaultStyle.color,
         );
-        spans.add(const TextSpan(text: '## ', style: hiddenPrefixStyle));
+        spans.add(hiddenPrefixStyle as InlineSpan);
         spans.addAll(_parseInline(line.substring(3), lineStyle));
       } else if (line.startsWith('### ')) {
         // H3: 17px, bold, height: 1.3
@@ -266,9 +269,9 @@ class MarkdownEditingController extends TextEditingController {
           fontSize: 17,
           fontWeight: FontWeight.bold,
           height: 1.3,
-          color: AppColors.darkText,
+          color: defaultStyle.color,
         );
-        spans.add(const TextSpan(text: '### ', style: hiddenPrefixStyle));
+        spans.add(hiddenPrefixStyle as InlineSpan);
         spans.addAll(_parseInline(line.substring(4), lineStyle));
       } else if (line.startsWith('- [x] ') || line.startsWith('- [X] ')) {
         // Completed Checklist Item
@@ -483,6 +486,7 @@ class _NoteEditorState extends State<NoteEditor> {
     _previousText = _contentController.text;
 
     _contentController.addListener(_onContentChanged);
+    SettingsController.instance.addListener(_onSettingsChanged);
     _selectedColor =
         widget.initialNote?.indicatorColor ?? const Color(0xFF635BFF);
     _tags = List.from(widget.initialNote?.tags ?? ['#new']);
@@ -492,9 +496,14 @@ class _NoteEditorState extends State<NoteEditor> {
   @override
   void dispose() {
     _contentController.removeListener(_onContentChanged);
+    SettingsController.instance.removeListener(_onSettingsChanged);
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
+  }
+
+  void _onSettingsChanged() {
+    if (mounted) setState(() {});
   }
 
   void _onContentChanged() {
@@ -1304,8 +1313,13 @@ class _NoteEditorState extends State<NoteEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
+    final subtextColor = isDark ? AppColors.lightText : const Color(0xFF6C757D);
+    final hintColor = isDark ? AppColors.lightText.withOpacity(0.6) : const Color(0xFF98A2B3);
+
     return Container(
-      color: Colors.white,
+      color: isDark ? AppColors.darkScaffoldBackground : Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1317,22 +1331,22 @@ class _NoteEditorState extends State<NoteEditor> {
               InkWell(
                 onTap: widget.onClose,
                 borderRadius: BorderRadius.circular(8),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                   child: Row(
                     children: [
                       Icon(
                         Icons.arrow_back_rounded,
                         size: 18,
-                        color: AppColors.darkText,
+                        color: textColor,
                       ),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Text(
                         'All Notes',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.darkText,
+                          color: textColor,
                         ),
                       ),
                     ],
@@ -1345,9 +1359,9 @@ class _NoteEditorState extends State<NoteEditor> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF0FDF4),
+                      color: isDark ? const Color(0xFF14532D).withOpacity(0.3) : const Color(0xFFF0FDF4),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: const Color(0xFFDCFCE7)),
+                      border: Border.all(color: isDark ? const Color(0xFF16A34A).withOpacity(0.4) : const Color(0xFFDCFCE7)),
                     ),
                     child: const Row(
                       children: [
@@ -1412,9 +1426,9 @@ class _NoteEditorState extends State<NoteEditor> {
           // Category Colors & Tags Selector
           Row(
             children: [
-              const Text(
+              Text(
                 'Color: ',
-                style: TextStyle(fontSize: 13, color: AppColors.secondaryText),
+                style: TextStyle(fontSize: 13, color: isDark ? AppColors.lightText : AppColors.secondaryText),
               ),
               Row(
                 children: _categoryColors.map((color) {
@@ -1433,7 +1447,7 @@ class _NoteEditorState extends State<NoteEditor> {
                         color: color,
                         shape: BoxShape.circle,
                         border: isSelected
-                            ? Border.all(color: AppColors.darkText, width: 2)
+                            ? Border.all(color: isDark ? Colors.white : AppColors.darkText, width: 2)
                             : null,
                       ),
                     ),
@@ -1441,9 +1455,9 @@ class _NoteEditorState extends State<NoteEditor> {
                 }).toList(),
               ),
               const SizedBox(width: 20),
-              const Text(
+              Text(
                 'Tags: ',
-                style: TextStyle(fontSize: 13, color: AppColors.secondaryText),
+                style: TextStyle(fontSize: 13, color: isDark ? AppColors.lightText : AppColors.secondaryText),
               ),
               Wrap(
                 spacing: 6,
@@ -1454,7 +1468,7 @@ class _NoteEditorState extends State<NoteEditor> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.lightLavender,
+                      color: isDark ? AppColors.primaryPurple.withOpacity(0.25) : AppColors.lightLavender,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -1509,15 +1523,15 @@ class _NoteEditorState extends State<NoteEditor> {
               Expanded(
                 child: TextField(
                   controller: _titleController,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.darkText,
+                    color: textColor,
                   ),
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     hintText: 'Note title...',
                     hintStyle: TextStyle(
-                      color: Color(0xFF98A2B3),
+                      color: hintColor,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -1529,7 +1543,7 @@ class _NoteEditorState extends State<NoteEditor> {
                 tooltip: _isPinned ? 'Unpin Note' : 'Pin Note',
                 icon: Icon(
                   _isPinned ? Icons.push_pin_rounded : Icons.push_pin_outlined,
-                  color: _isPinned ? AppColors.primaryPurple : const Color(0xFF98A2B3),
+                  color: _isPinned ? AppColors.primaryPurple : hintColor,
                   size: 22,
                 ),
                 onPressed: () {
@@ -1552,15 +1566,15 @@ class _NoteEditorState extends State<NoteEditor> {
                     onTap: _onTextFieldTap,
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       height: 1.6,
-                      color: AppColors.darkText,
+                      color: textColor,
                     ),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'Start writing your note here...',
                       hintStyle: TextStyle(
-                        color: Color(0xFF98A2B3),
+                        color: hintColor,
                         fontSize: 16,
                       ),
                       border: InputBorder.none,
@@ -1571,8 +1585,8 @@ class _NoteEditorState extends State<NoteEditor> {
                 // Editor Bottom Status Bar with Stats
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: const BoxDecoration(
-                    border: Border(top: BorderSide(color: Color(0xFFF0F0F3))),
+                  decoration: BoxDecoration(
+                    border: Border(top: BorderSide(color: isDark ? AppColors.darkBorder : const Color(0xFFF0F0F3))),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1581,44 +1595,44 @@ class _NoteEditorState extends State<NoteEditor> {
                         children: [
                           Text(
                             'Words: $_wordCount    Characters: $_charCount',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: Color(0xFF6C757D),
+                              color: subtextColor,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           const SizedBox(width: 16),
                           Text(
                             '⏱️ $_readingTimeMinutes min read',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: Color(0xFF6C757D),
+                              color: subtextColor,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
                       ),
-                      const Row(
+                      Row(
                         children: [
                           Text(
                             'Aa',
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF6C757D),
+                              color: subtextColor,
                             ),
                           ),
-                          SizedBox(width: 14),
+                          const SizedBox(width: 14),
                           Icon(
                             Icons.dark_mode_outlined,
                             size: 16,
-                            color: Color(0xFF6C757D),
+                            color: subtextColor,
                           ),
-                          SizedBox(width: 14),
+                          const SizedBox(width: 14),
                           Icon(
                             Icons.attach_file_rounded,
                             size: 16,
-                            color: Color(0xFF6C757D),
+                            color: subtextColor,
                           ),
                         ],
                       ),

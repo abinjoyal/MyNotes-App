@@ -52,14 +52,21 @@ class NoteList extends StatelessWidget {
       buttonText = null;
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF0F0F3);
+    final titleColor = isDark ? const Color(0xFFE0E0E0) : const Color(0xFF1D2939);
+    final subtitleColor = isDark ? const Color(0xFF98A2B3) : const Color(0xFF667085);
+    final iconCircleBg = isDark ? iconColor.withOpacity(0.2) : bgColor;
+
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 420),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cardBg,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFF0F0F3)),
+          border: Border.all(color: borderColor),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.02),
@@ -75,7 +82,7 @@ class NoteList extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: bgColor,
+                color: iconCircleBg,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -87,20 +94,20 @@ class NoteList extends StatelessWidget {
             const SizedBox(height: 20),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1D2939),
+                color: titleColor,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 height: 1.4,
-                color: Color(0xFF667085),
+                color: subtitleColor,
               ),
             ),
             if (buttonText != null && onActionTap != null) ...[

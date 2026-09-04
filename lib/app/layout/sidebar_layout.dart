@@ -41,10 +41,16 @@ class _SidebarLayoutState extends State<SidebarLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final sidebarBg = isDark ? const Color(0xFF18181C) : const Color(0xFFF9FAFC);
+    final cardBg = isDark ? AppColors.darkSurface : Colors.white;
+    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
+    final borderColor = isDark ? AppColors.darkBorder : const Color(0xFFEAEAEE);
+
     return Container(
       width: AppSizes.sidebarWidth,
       height: double.infinity,
-      color: const Color(0xFFF9FAFC),
+      color: sidebarBg,
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,12 +89,12 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                 ),
               ),
               const SizedBox(width: 10),
-              const Text(
+              Text(
                 'MyNotes',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.darkText,
+                  color: textColor,
                 ),
               ),
             ],
@@ -203,18 +209,18 @@ class _SidebarLayoutState extends State<SidebarLayout> {
           Container(
             height: 36,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cardBg,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFFE5E7EB)),
+              border: Border.all(color: borderColor),
             ),
             child: TextField(
-              style: const TextStyle(fontSize: 13, color: AppColors.darkText),
-              decoration: InputDecoration(
+              style: TextStyle(fontSize: 13, color: textColor),
+              decoration: const InputDecoration(
                 hintText: 'Search notes... (Ctrl+K)',
-                hintStyle: const TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
-                prefixIcon: const Icon(Icons.search_rounded, size: 16, color: Color(0xFF9CA3AF)),
+                hintStyle: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
+                prefixIcon: Icon(Icons.search_rounded, size: 16, color: Color(0xFF9CA3AF)),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                contentPadding: EdgeInsets.symmetric(vertical: 8),
                 isDense: true,
               ),
             ),
@@ -310,7 +316,7 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                   _NavItem(
                     icon: AppIcons.trash,
                     title: 'Trash',
-                    badgeCount: 8,
+                    badgeCount: _controller.trashedNotesCount,
                     isSelected: _selectedRoute == 'trash',
                     onTap: () => _select('trash'),
                   ),
@@ -324,32 +330,49 @@ class _SidebarLayoutState extends State<SidebarLayout> {
           // Bottom Settings Card
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cardBg,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFEAEAEE)),
+              border: Border.all(color: borderColor),
             ),
             child: Material(
               color: Colors.transparent,
               child: InkWell(
                 onTap: () => _select('settings'),
                 borderRadius: BorderRadius.circular(12),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   child: Row(
                     children: [
-                      Icon(Icons.settings_outlined, color: AppColors.darkText, size: 20),
-                      SizedBox(width: 10),
+                      Icon(Icons.settings_outlined, color: textColor, size: 20),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           'Settings',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.darkText,
+                            color: textColor,
                           ),
                         ),
                       ),
-                      Icon(Icons.chevron_right, color: Color(0xFF8C98A9), size: 18),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF2A2A30) : const Color(0xFFF1F3F6),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: borderColor),
+                        ),
+                        child: const Text(
+                          'Ctrl + ,',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF8C98A9),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.chevron_right, color: Color(0xFF8C98A9), size: 18),
                     ],
                   ),
                 ),
@@ -510,10 +533,15 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final unselectedColor = isDark ? const Color(0xFFE0E0E0) : AppColors.darkText;
+    final selectedBg = isDark ? AppColors.primaryPurple.withOpacity(0.25) : AppColors.lightLavender;
+    final itemColor = isSelected ? AppColors.primaryPurple : unselectedColor;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 4),
       child: Material(
-        color: isSelected ? AppColors.lightLavender : Colors.transparent,
+        color: isSelected ? selectedBg : Colors.transparent,
         borderRadius: BorderRadius.circular(10),
         clipBehavior: Clip.antiAlias,
         child: ListTile(
@@ -523,7 +551,7 @@ class _NavItem extends StatelessWidget {
           onTap: onTap,
           leading: Icon(
             icon,
-            color: isSelected ? AppColors.primaryPurple : AppColors.darkText,
+            color: itemColor,
             size: 18,
           ),
           title: Text(
@@ -531,7 +559,7 @@ class _NavItem extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-              color: isSelected ? AppColors.primaryPurple : AppColors.darkText,
+              color: itemColor,
             ),
           ),
           trailing: Text(
@@ -539,7 +567,7 @@ class _NavItem extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.bold,
-              color: isSelected ? AppColors.primaryPurple : AppColors.darkText,
+              color: itemColor,
             ),
           ),
         ),
@@ -593,6 +621,9 @@ class _FolderItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? const Color(0xFFE0E0E0) : AppColors.darkText;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(6),
@@ -605,19 +636,19 @@ class _FolderItem extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.darkText,
+                  color: textColor,
                 ),
               ),
             ),
             Text(
               '$count',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
-                color: AppColors.darkText,
+                color: textColor,
               ),
             ),
           ],
@@ -640,6 +671,9 @@ class _RecentNoteItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? const Color(0xFFE0E0E0) : AppColors.darkText;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       child: Row(
@@ -655,10 +689,10 @@ class _RecentNoteItem extends StatelessWidget {
               title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: AppColors.darkText,
+                color: textColor,
               ),
             ),
           ),

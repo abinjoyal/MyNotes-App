@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "schemas": [
+    "notes",
+    "folders",
+    "attachments",
+    "recent_notes"
+  ],
+  "notes": [
+    {
+      "id": "1788538758715",
+      "title": "codeing",
+      "content": "class AttachmentsTable {\r\n  static const String tableName = 'attachments';\r\n\r\n  static const String colId = 'id';\r\n  static const String colNoteId = 'note_id';\r\n  static const String colFilePath = 'file_path';\r\n  static const String colFileType = 'file_type';\r\n  static const String colCreatedAt = 'created_at';\r\n\r\n  static const String createTableSql = '''\r\n    CREATE TABLE IF NOT EXISTS $tableName (\r\n      $colId TEXT PRIMARY KEY,\r\n      $colNoteId TEXT NOT NULL,\r\n      $colFilePath TEXT NOT NULL,\r\n      $colFileType TEXT NOT NULL,\r\n      $colCreatedAt TEXT NOT NULL,\r\n      FOREIGN KEY ($colNoteId) REFERENCES notes(id) ON DELETE CASCADE\r\n    );\r\n  ''';\r\n}",
+      "color_value": 4284701695,
+      "tags": "[\"#new\"]",
+      "updated_at": "Just now at 9:49 PM",
+      "is_pinned": 0,
+      "folder_name": null
+    }
+  ],
+  "trashedNotes": [],
+  "folders": []
+}

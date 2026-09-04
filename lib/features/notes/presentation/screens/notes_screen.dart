@@ -4,6 +4,8 @@ import '../../domain/entities/note.dart';
 import '../controllers/notes_controller.dart';
 import '../widgets/note_list.dart';
 
+import '../../../settings/presentation/controllers/settings_controller.dart';
+
 class NotesScreen extends StatefulWidget {
   final Function(Note)? onNoteSelect;
   final String activeRoute;
@@ -19,26 +21,38 @@ class NotesScreen extends StatefulWidget {
 }
 
 class _NotesScreenState extends State<NotesScreen> {
-  bool _isGridView = false;
+  late bool _isGridView;
   String _selectedSort = 'Last edited';
   String _searchQuery = '';
   String? _selectedTag;
   final NotesController _controller = NotesController.instance;
+  final SettingsController _settingsController = SettingsController.instance;
 
   @override
   void initState() {
     super.initState();
+    _isGridView = _settingsController.isGridView;
     _controller.addListener(_onNotesChanged);
+    _settingsController.addListener(_onSettingsChanged);
   }
 
   @override
   void dispose() {
     _controller.removeListener(_onNotesChanged);
+    _settingsController.removeListener(_onSettingsChanged);
     super.dispose();
   }
 
   void _onNotesChanged() {
     if (mounted) setState(() {});
+  }
+
+  void _onSettingsChanged() {
+    if (mounted) {
+      setState(() {
+        _isGridView = _settingsController.isGridView;
+      });
+    }
   }
 
   Map<String, String> _getHeaderInfo() {
@@ -71,7 +85,9 @@ class _NotesScreenState extends State<NotesScreen> {
     final headerInfo = _getHeaderInfo();
     final allNotes = widget.activeRoute == 'pinned'
         ? _controller.pinnedNotes
-        : _controller.notes;
+        : (widget.activeRoute == 'trash'
+            ? _controller.trashedNotes
+            : _controller.notes);
 
     final filteredNotes = allNotes.where((note) {
       final query = _searchQuery.toLowerCase();
@@ -84,9 +100,14 @@ class _NotesScreenState extends State<NotesScreen> {
     }).toList();
 
     final availableTags = _controller.allTags;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scaffoldBg = isDark ? AppColors.darkScaffoldBackground : Colors.white;
+    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
+    final inputBg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF7F8FA);
+    final borderColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFEAEAEE);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: scaffoldBg,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
@@ -105,10 +126,10 @@ class _NotesScreenState extends State<NotesScreen> {
                         children: [
                           Text(
                             headerInfo['title']!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.darkText,
+                              color: textColor,
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -130,9 +151,9 @@ class _NotesScreenState extends State<NotesScreen> {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Text(
+                       Text(
                         headerInfo['subtitle']!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           color: Color(0xFF6C757D),
                         ),
@@ -150,9 +171,9 @@ class _NotesScreenState extends State<NotesScreen> {
                     child: Container(
                       height: 44,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF7F8FA),
+                        color: inputBg,
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: const Color(0xFFEAEAEE)),
+                        border: Border.all(color: borderColor),
                       ),
                       child: Row(
                         children: [
@@ -170,6 +191,7 @@ class _NotesScreenState extends State<NotesScreen> {
                                   _searchQuery = val;
                                 });
                               },
+                              style: TextStyle(fontSize: 14, color: textColor),
                               decoration: const InputDecoration(
                                 hintText: 'Search notes...',
                                 hintStyle: TextStyle(
@@ -186,7 +208,7 @@ class _NotesScreenState extends State<NotesScreen> {
                                 horizontal: 6, vertical: 3),
                             margin: const EdgeInsets.only(right: 10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFEAEAEE),
+                              color: isDark ? const Color(0xFF2A2A30) : const Color(0xFFEAEAEE),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: const Text(
@@ -207,14 +229,14 @@ class _NotesScreenState extends State<NotesScreen> {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF7F8FA),
+                      color: inputBg,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: const Color(0xFFEAEAEE)),
+                      border: Border.all(color: borderColor),
                     ),
                     child: IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.tune_rounded,
-                        color: AppColors.darkText,
+                        color: textColor,
                         size: 20,
                       ),
                       onPressed: () {},
@@ -243,12 +265,12 @@ class _NotesScreenState extends State<NotesScreen> {
                           decoration: BoxDecoration(
                             color: _selectedTag == null
                                 ? AppColors.primaryPurple
-                                : const Color(0xFFF7F8FA),
+                                : inputBg,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: _selectedTag == null
                                   ? AppColors.primaryPurple
-                                  : const Color(0xFFEAEAEE),
+                                  : borderColor,
                             ),
                           ),
                           child: Text(
@@ -256,7 +278,7 @@ class _NotesScreenState extends State<NotesScreen> {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: _selectedTag == null ? Colors.white : AppColors.darkText,
+                              color: _selectedTag == null ? Colors.white : textColor,
                             ),
                           ),
                         ),
@@ -275,12 +297,12 @@ class _NotesScreenState extends State<NotesScreen> {
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? AppColors.primaryPurple
-                                  : const Color(0xFFF7F8FA),
+                                  : inputBg,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color: isSelected
                                     ? AppColors.primaryPurple
-                                    : const Color(0xFFEAEAEE),
+                                    : borderColor,
                               ),
                             ),
                             child: Text(
@@ -288,7 +310,7 @@ class _NotesScreenState extends State<NotesScreen> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: isSelected ? Colors.white : AppColors.darkText,
+                                color: isSelected ? Colors.white : textColor,
                               ),
                             ),
                           ),
@@ -326,17 +348,17 @@ class _NotesScreenState extends State<NotesScreen> {
                         ),
                         Text(
                           _selectedSort,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.darkText,
+                            color: textColor,
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Icon(
+                        Icon(
                           Icons.keyboard_arrow_down,
                           size: 16,
-                          color: AppColors.darkText,
+                          color: textColor,
                         ),
                       ],
                     ),
@@ -359,8 +381,9 @@ class _NotesScreenState extends State<NotesScreen> {
                   Container(
                     padding: const EdgeInsets.all(3),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF7F8FA),
+                      color: inputBg,
                       borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: borderColor),
                     ),
                     child: Row(
                       children: [

@@ -1,1 +1,1 @@
-// Resentnotes Table Schema
+export 'recent_notes_table.dart';

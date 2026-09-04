@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/note.dart';
+import '../../../../core/database/database.dart';
 
 class FolderItemModel {
   final String id;
@@ -20,12 +21,33 @@ class NotesController extends ChangeNotifier {
     return instance;
   }
 
-  NotesController._internal();
+  NotesController._internal() {
+    _loadFromDatabase();
+  }
+
+  Future<void> _loadFromDatabase() async {
+    final dbNotes = await AppDatabase.instance.getAllNotes();
+    final dbTrashed = await AppDatabase.instance.getTrashedNotes();
+    final dbFolders = await AppDatabase.instance.getAllFolders();
+
+    _notes.clear();
+    _notes.addAll(dbNotes);
+
+    _trashedNotes.clear();
+    _trashedNotes.addAll(dbTrashed);
+
+    _folders.clear();
+    _folders.addAll(dbFolders);
+
+    notifyListeners();
+  }
 
   final List<Note> _notes = [];
+  final List<Note> _trashedNotes = [];
   final List<FolderItemModel> _folders = [];
 
   List<Note> get notes => List.unmodifiable(_notes);
+  List<Note> get trashedNotes => List.unmodifiable(_trashedNotes);
   List<FolderItemModel> get folders => List.unmodifiable(_folders);
 
   List<Note> get pinnedNotes =>
@@ -33,16 +55,17 @@ class NotesController extends ChangeNotifier {
 
   int get totalNotesCount => _notes.length;
   int get pinnedNotesCount => pinnedNotes.length;
+  int get trashedNotesCount => _trashedNotes.length;
 
   void addFolder(String name, Color color) {
     if (name.trim().isEmpty) return;
-    _folders.add(
-      FolderItemModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: name.trim(),
-        color: color,
-      ),
+    final folder = FolderItemModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: name.trim(),
+      color: color,
     );
+    _folders.add(folder);
+    AppDatabase.instance.saveFolder(folder);
     notifyListeners();
   }
 
@@ -126,7 +149,7 @@ class NotesController extends ChangeNotifier {
     if (id != null && id.isNotEmpty) {
       final index = _notes.indexWhere((n) => n.id == id);
       if (index != -1) {
-        _notes[index] = _notes[index].copyWith(
+        final updatedNote = _notes[index].copyWith(
           title: effectiveTitle,
           content: content,
           indicatorColor: indicatorColor,
@@ -135,6 +158,8 @@ class NotesController extends ChangeNotifier {
           isPinned: isPinned,
           folderName: folderName ?? _notes[index].folderName,
         );
+        _notes[index] = updatedNote;
+        AppDatabase.instance.saveNote(updatedNote);
         notifyListeners();
         return;
       }
@@ -152,11 +177,36 @@ class NotesController extends ChangeNotifier {
     );
 
     _notes.insert(0, newNote);
+    AppDatabase.instance.saveNote(newNote);
     notifyListeners();
   }
 
   void deleteNote(String id) {
-    _notes.removeWhere((note) => note.id == id);
+    final index = _notes.indexWhere((note) => note.id == id);
+    if (index != -1) {
+      final deletedNote = _notes.removeAt(index);
+      _trashedNotes.insert(0, deletedNote);
+      AppDatabase.instance.deleteNoteToTrash(id);
+      notifyListeners();
+    }
+  }
+
+  void restoreFromTrash(String id) {
+    final index = _trashedNotes.indexWhere((note) => note.id == id);
+    if (index != -1) {
+      final restoredNote = _trashedNotes.removeAt(index);
+      _notes.insert(0, restoredNote);
+      notifyListeners();
+    }
+  }
+
+  void permanentlyDeleteFromTrash(String id) {
+    _trashedNotes.removeWhere((note) => note.id == id);
+    notifyListeners();
+  }
+
+  void emptyTrash() {
+    _trashedNotes.clear();
     notifyListeners();
   }
 

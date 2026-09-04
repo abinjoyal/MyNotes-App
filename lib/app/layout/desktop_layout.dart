@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'sidebar_layout.dart';
 import '../constants/app_colors.dart';
 import '../../features/folders/presentation/screens/folders_screen.dart';
@@ -7,6 +8,7 @@ import '../../features/notes/presentation/controllers/notes_controller.dart';
 import '../../features/notes/presentation/screens/notes_screen.dart';
 import '../../features/notes/presentation/screens/note_editor_screen.dart';
 import '../../features/pin/presentation/screens/pinned_notes_screen.dart';
+import '../../features/settings/presentation/screens/settings_screen.dart';
 
 class DesktopLayout extends StatefulWidget {
   final Widget? notesListWidget;
@@ -80,6 +82,9 @@ class _DesktopLayoutState extends State<DesktopLayout> {
         },
       );
     }
+    if (_activeRoute == 'settings') {
+      return const SettingsScreen();
+    }
     if (_activeRoute == 'all_notes' ||
         _activeRoute == 'tasks' ||
         _activeRoute == 'trash') {
@@ -110,57 +115,77 @@ class _DesktopLayoutState extends State<DesktopLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          // Left Sidebar
-          SidebarLayout(
-            activeRoute: _activeRoute,
-            onNavigate: (route) {
-              setState(() {
-                if (route.startsWith('new_note')) {
-                  if (route.contains(':')) {
-                    final template = route.split(':')[1];
-                    _selectedNote = NotesController.instance.createTemplateNote(template);
-                  } else {
-                    _selectedNote = null;
-                  }
-                  _activeRoute = 'new_note';
-                } else {
-                  _activeRoute = route;
-                }
-              });
-            },
-          ),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final dividerColor = isDark ? const Color(0xFF2C2C2C) : AppColors.divider;
 
-          // Divider
-          const VerticalDivider(width: 1, thickness: 1, color: AppColors.divider),
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.comma, control: true): () {
+          setState(() {
+            _activeRoute = 'settings';
+          });
+        },
+        const SingleActivator(LogicalKeyboardKey.comma, meta: true): () {
+          setState(() {
+            _activeRoute = 'settings';
+          });
+        },
+      },
+      child: Focus(
+        autofocus: true,
+        child: Scaffold(
+          body: Row(
+            children: [
+              // Left Sidebar
+              SidebarLayout(
+                activeRoute: _activeRoute,
+                onNavigate: (route) {
+                  setState(() {
+                    if (route.startsWith('new_note')) {
+                      if (route.contains(':')) {
+                        final template = route.split(':')[1];
+                        _selectedNote = NotesController.instance.createTemplateNote(template);
+                      } else {
+                        _selectedNote = null;
+                      }
+                      _activeRoute = 'new_note';
+                    } else {
+                      _activeRoute = route;
+                    }
+                  });
+                },
+              ),
 
-          // Main View (Full Width Notes Screen or Split View with Editor)
-          Expanded(
-            child: widget.editorWidget != null
-                ? Row(
-                    children: [
-                      // Middle Pane (Notes List)
-                      Expanded(
-                        flex: 2,
-                        child: _buildMiddlePane(),
-                      ),
-                      const VerticalDivider(
-                        width: 1,
-                        thickness: 1,
-                        color: AppColors.divider,
-                      ),
-                      // Right Pane (Note Editor)
-                      Expanded(
-                        flex: 3,
-                        child: widget.editorWidget!,
-                      ),
-                    ],
-                  )
-                : _buildMiddlePane(),
+              // Divider
+              VerticalDivider(width: 1, thickness: 1, color: dividerColor),
+
+              // Main View (Full Width Notes Screen or Split View with Editor)
+              Expanded(
+                child: widget.editorWidget != null
+                    ? Row(
+                        children: [
+                          // Middle Pane (Notes List)
+                          Expanded(
+                            flex: 2,
+                            child: _buildMiddlePane(),
+                          ),
+                          VerticalDivider(
+                            width: 1,
+                            thickness: 1,
+                            color: dividerColor,
+                          ),
+                          // Right Pane (Note Editor)
+                          Expanded(
+                            flex: 3,
+                            child: widget.editorWidget!,
+                          ),
+                        ],
+                      )
+                    : _buildMiddlePane(),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

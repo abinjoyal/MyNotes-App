@@ -18,15 +18,22 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? AppColors.darkSurface : Colors.white;
+    final borderColor = isDark ? AppColors.darkBorder : const Color(0xFFEAEAEE);
+    final titleColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
+    final snippetColor = isDark ? AppColors.lightText : const Color(0xFF6C757D);
+    final timeColor = isDark ? AppColors.lightText.withOpacity(0.7) : const Color(0xFF98A2B3);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardBg,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFEAEAEE), width: 1),
+        border: Border.all(color: borderColor, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.02),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -65,10 +72,10 @@ class NoteCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             note.title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.darkText,
+                              color: titleColor,
                               letterSpacing: -0.2,
                             ),
                             maxLines: 1,
@@ -78,8 +85,8 @@ class NoteCard extends StatelessWidget {
 
                         // Pinned Badge Indicator
                         if (note.isPinned)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 4),
+                          const Padding(
+                            padding: EdgeInsets.only(right: 4),
                             child: Icon(
                               Icons.push_pin_rounded,
                               size: 16,
@@ -92,11 +99,12 @@ class NoteCard extends StatelessWidget {
                           width: 28,
                           height: 28,
                           child: PopupMenuButton<String>(
+                            color: cardBg,
                             padding: EdgeInsets.zero,
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.more_vert_rounded,
                               size: 18,
-                              color: Color(0xFF8C98A9),
+                              color: isDark ? AppColors.lightText : const Color(0xFF8C98A9),
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -125,21 +133,22 @@ class NoteCard extends StatelessWidget {
                                     const SizedBox(width: 10),
                                     Text(
                                       note.isPinned ? 'Unpin Note' : 'Pin Note',
+                                      style: TextStyle(color: titleColor),
                                     ),
                                   ],
                                 ),
                               ),
-                              const PopupMenuItem(
+                              PopupMenuItem(
                                 value: 'edit',
                                 child: Row(
                                   children: [
                                     Icon(
                                       Icons.edit_outlined,
                                       size: 16,
-                                      color: AppColors.darkText,
+                                      color: titleColor,
                                     ),
-                                    SizedBox(width: 10),
-                                    Text('Edit Note'),
+                                    const SizedBox(width: 10),
+                                    Text('Edit Note', style: TextStyle(color: titleColor)),
                                   ],
                                 ),
                               ),
@@ -172,10 +181,10 @@ class NoteCard extends StatelessWidget {
                     // Note Content Preview Snippet
                     Text(
                       note.content,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         height: 1.4,
-                        color: Color(0xFF6C757D),
+                        color: snippetColor,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -199,9 +208,9 @@ class NoteCard extends StatelessWidget {
                     ),
                     Text(
                       note.updatedAt,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: Color(0xFF98A2B3),
+                        color: timeColor,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -222,14 +231,15 @@ class _TagChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color bg = AppColors.lightLavender;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    Color bg = isDark ? AppColors.primaryPurple.withOpacity(0.2) : AppColors.lightLavender;
     Color text = AppColors.primaryPurple;
 
     if (tag.toLowerCase() == '#project') {
-      bg = const Color(0xFFE8F8EE);
+      bg = isDark ? const Color(0xFF00C853).withOpacity(0.2) : const Color(0xFFE8F8EE);
       text = const Color(0xFF00C853);
     } else if (tag.toLowerCase() == '#daily') {
-      bg = const Color(0xFFFFF4E5);
+      bg = isDark ? const Color(0xFFFF9800).withOpacity(0.2) : const Color(0xFFFFF4E5);
       text = const Color(0xFFFF9800);
     }
 

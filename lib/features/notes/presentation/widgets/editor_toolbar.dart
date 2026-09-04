@@ -62,15 +62,18 @@ class EditorToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -109,31 +112,32 @@ class EditorToolbar extends StatelessWidget {
             // More Options Popup Menu
             PopupMenuButton<String>(
               tooltip: 'More',
+              color: isDark ? AppColors.darkSurface : Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              icon: const Icon(Icons.more_horiz_rounded, size: 20, color: AppColors.darkText),
+              icon: Icon(Icons.more_horiz_rounded, size: 20, color: iconColor),
               onSelected: (val) {
                 if (val == 'blockquote' && onBlockquoteTap != null) onBlockquoteTap!();
                 if (val == 'divider' && onDividerTap != null) onDividerTap!();
                 if (val == 'clear' && onClearFormattingTap != null) onClearFormattingTap!();
               },
               itemBuilder: (context) => [
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'blockquote',
                   child: Row(
                     children: [
-                      Icon(Icons.format_quote_rounded, size: 18, color: AppColors.darkText),
-                      SizedBox(width: 10),
-                      Text('Blockquote'),
+                      Icon(Icons.format_quote_rounded, size: 18, color: iconColor),
+                      const SizedBox(width: 10),
+                      Text('Blockquote', style: TextStyle(color: iconColor)),
                     ],
                   ),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'divider',
                   child: Row(
                     children: [
-                      Icon(Icons.horizontal_rule_rounded, size: 18, color: AppColors.darkText),
-                      SizedBox(width: 10),
-                      Text('Horizontal Divider'),
+                      Icon(Icons.horizontal_rule_rounded, size: 18, color: iconColor),
+                      const SizedBox(width: 10),
+                      Text('Horizontal Divider', style: TextStyle(color: iconColor)),
                     ],
                   ),
                 ),
@@ -172,6 +176,12 @@ class _TextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final activeBg = isDark
+        ? AppColors.primaryPurple.withOpacity(0.25)
+        : AppColors.lightLavender;
+    final inactiveText = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
+
     return Tooltip(
       message: tooltip,
       child: InkWell(
@@ -180,7 +190,7 @@ class _TextButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: isActive ? AppColors.lightLavender : Colors.transparent,
+            color: isActive ? activeBg : Colors.transparent,
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
@@ -188,7 +198,7 @@ class _TextButton extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.bold,
-              color: isActive ? AppColors.primaryPurple : AppColors.darkText,
+              color: isActive ? AppColors.primaryPurple : inactiveText,
             ),
           ),
         ),
@@ -212,6 +222,12 @@ class _IconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final activeBg = isDark
+        ? AppColors.primaryPurple.withOpacity(0.25)
+        : AppColors.lightLavender;
+    final inactiveIcon = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
+
     return Tooltip(
       message: tooltip,
       child: InkWell(
@@ -220,13 +236,13 @@ class _IconButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(5.0),
           decoration: BoxDecoration(
-            color: isActive ? AppColors.lightLavender : Colors.transparent,
+            color: isActive ? activeBg : Colors.transparent,
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(
             icon,
             size: 18,
-            color: isActive ? AppColors.primaryPurple : AppColors.darkText,
+            color: isActive ? AppColors.primaryPurple : inactiveIcon,
           ),
         ),
       ),
@@ -239,11 +255,12 @@ class _Divider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       height: 18,
       width: 1,
       margin: const EdgeInsets.symmetric(horizontal: 6),
-      color: const Color(0xFFE2E4E9),
+      color: isDark ? AppColors.darkBorder : const Color(0xFFE2E4E9),
     );
   }
 }

@@ -1311,6 +1311,91 @@ class _NoteEditorState extends State<NoteEditor> {
     return mins < 1 ? 1 : mins;
   }
 
+  void _showAddTagDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final tagController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF1E1E2A) : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: isDark ? const Color(0xFF323246) : const Color(0xFFE5E7EB)),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.label_outline_rounded, color: AppColors.primaryPurple, size: 22),
+            const SizedBox(width: 8),
+            Text(
+              'Add New Tag',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+          ],
+        ),
+        content: TextField(
+          controller: tagController,
+          autofocus: true,
+          style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+          decoration: InputDecoration(
+            hintText: 'e.g. #work, #idea, #important',
+            hintStyle: TextStyle(color: isDark ? Colors.grey : Colors.grey[600]),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryPurple,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              var text = tagController.text.trim();
+              if (text.isNotEmpty) {
+                if (!text.startsWith('#')) text = '#$text';
+                setState(() {
+                  if (!_tags.contains(text)) {
+                    _tags.add(text);
+                  }
+                });
+                Navigator.pop(ctx);
+              }
+            },
+            child: const Text('Add Tag'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatBadge(String label, bool isDark, Color subtextColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E2A) : const Color(0xFFF3F4F6),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: isDark ? const Color(0xFF2C2C3A) : const Color(0xFFE5E7EB)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: subtextColor,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -1320,7 +1405,7 @@ class _NoteEditorState extends State<NoteEditor> {
 
     return Container(
       color: isDark ? AppColors.darkScaffoldBackground : Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1330,21 +1415,26 @@ class _NoteEditorState extends State<NoteEditor> {
             children: [
               InkWell(
                 onTap: widget.onClose,
-                borderRadius: BorderRadius.circular(8),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1E1E2A) : const Color(0xFFF3F4F6),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: isDark ? const Color(0xFF323246) : const Color(0xFFE5E7EB)),
+                  ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.arrow_back_rounded,
-                        size: 18,
+                        size: 16,
                         color: textColor,
                       ),
                       const SizedBox(width: 6),
                       Text(
                         'All Notes',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: textColor,
                         ),
@@ -1357,17 +1447,24 @@ class _NoteEditorState extends State<NoteEditor> {
                 children: [
                   // Auto-Save Status Indicator Badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: isDark ? const Color(0xFF14532D).withOpacity(0.3) : const Color(0xFFF0FDF4),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: isDark ? const Color(0xFF16A34A).withOpacity(0.4) : const Color(0xFFDCFCE7)),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.check_circle_outline_rounded, size: 14, color: Color(0xFF16A34A)),
-                        SizedBox(width: 5),
-                        Text(
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF16A34A),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        const Text(
                           'Saved',
                           style: TextStyle(
                             fontSize: 12,
@@ -1379,42 +1476,32 @@ class _NoteEditorState extends State<NoteEditor> {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Tooltip(
-                    message: 'Save Note',
-                    child: InkWell(
-                      onTap: () {
-                        if (widget.onSave != null) {
-                          widget.onSave!(
-                            _titleController.text.trim(),
-                            _contentController.text.trim(),
-                            _selectedColor,
-                            _tags,
-                            _isPinned,
-                          );
-                        }
-                      },
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryPurple,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.check_rounded, size: 16, color: Colors.white),
-                            SizedBox(width: 4),
-                            Text(
-                              'Save',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      if (widget.onSave != null) {
+                        widget.onSave!(
+                          _titleController.text.trim(),
+                          _contentController.text.trim(),
+                          _selectedColor,
+                          _tags,
+                          _isPinned,
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.check_rounded, size: 16, color: Colors.white),
+                    label: const Text(
+                      'Save',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
                       ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryPurple,
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      elevation: 0,
                     ),
                   ),
                 ],
@@ -1441,13 +1528,22 @@ class _NoteEditorState extends State<NoteEditor> {
                     },
                     child: Container(
                       margin: const EdgeInsets.only(right: 8),
-                      width: 20,
-                      height: 20,
+                      width: 22,
+                      height: 22,
                       decoration: BoxDecoration(
                         color: color,
                         shape: BoxShape.circle,
                         border: isSelected
-                            ? Border.all(color: isDark ? Colors.white : AppColors.darkText, width: 2)
+                            ? Border.all(color: isDark ? Colors.white : AppColors.darkText, width: 2.5)
+                            : null,
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: color.withOpacity(0.6),
+                                  blurRadius: 8,
+                                  spreadRadius: 1,
+                                ),
+                              ]
                             : null,
                       ),
                     ),
@@ -1461,26 +1557,71 @@ class _NoteEditorState extends State<NoteEditor> {
               ),
               Wrap(
                 spacing: 6,
-                children: _tags.map((tag) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDark ? AppColors.primaryPurple.withOpacity(0.25) : AppColors.lightLavender,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      tag,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primaryPurple,
+                runSpacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  ..._tags.map((tag) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.primaryPurple.withOpacity(0.25) : AppColors.lightLavender,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.primaryPurple.withOpacity(0.3)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            tag,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryPurple,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _tags.remove(tag);
+                              });
+                            },
+                            child: const Icon(Icons.close_rounded, size: 12, color: AppColors.primaryPurple),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                  InkWell(
+                    onTap: _showAddTagDialog,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF262636) : const Color(0xFFE5E7EB),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.add_rounded, size: 14, color: isDark ? Colors.white70 : Colors.black87),
+                          const SizedBox(width: 2),
+                          Text(
+                            'Tag',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white70 : Colors.black87,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                }).toList(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -1517,22 +1658,23 @@ class _NoteEditorState extends State<NoteEditor> {
           ),
           const SizedBox(height: 16),
 
-          // Title Row with Aligned Pin Icon
+          // Title Row with Aligned Styled Pin Icon Button
           Row(
             children: [
               Expanded(
                 child: TextField(
                   controller: _titleController,
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: textColor,
+                    letterSpacing: -0.5,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Note title...',
                     hintStyle: TextStyle(
                       color: hintColor,
-                      fontSize: 24,
+                      fontSize: 26,
                       fontWeight: FontWeight.bold,
                     ),
                     border: InputBorder.none,
@@ -1541,10 +1683,22 @@ class _NoteEditorState extends State<NoteEditor> {
               ),
               IconButton(
                 tooltip: _isPinned ? 'Unpin Note' : 'Pin Note',
-                icon: Icon(
-                  _isPinned ? Icons.push_pin_rounded : Icons.push_pin_outlined,
-                  color: _isPinned ? AppColors.primaryPurple : hintColor,
-                  size: 22,
+                icon: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: _isPinned
+                        ? AppColors.primaryPurple.withOpacity(0.18)
+                        : (isDark ? const Color(0xFF1E1E2A) : const Color(0xFFF3F4F6)),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: _isPinned ? AppColors.primaryPurple.withOpacity(0.4) : Colors.transparent,
+                    ),
+                  ),
+                  child: Icon(
+                    _isPinned ? Icons.push_pin_rounded : Icons.push_pin_outlined,
+                    color: _isPinned ? AppColors.primaryPurple : hintColor,
+                    size: 20,
+                  ),
                 ),
                 onPressed: () {
                   setState(() {
@@ -1556,7 +1710,7 @@ class _NoteEditorState extends State<NoteEditor> {
           ),
           const SizedBox(height: 4),
 
-          // Borderless Notion-Style Editor Canvas
+          // Borderless Editor Canvas
           Expanded(
             child: Column(
               children: [
@@ -1568,7 +1722,7 @@ class _NoteEditorState extends State<NoteEditor> {
                     keyboardType: TextInputType.multiline,
                     style: TextStyle(
                       fontSize: 16,
-                      height: 1.6,
+                      height: 1.7,
                       color: textColor,
                     ),
                     decoration: InputDecoration(
@@ -1582,7 +1736,7 @@ class _NoteEditorState extends State<NoteEditor> {
                   ),
                 ),
 
-                // Editor Bottom Status Bar with Stats
+                // Editor Bottom Status Bar with Stats Pills
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
@@ -1593,46 +1747,32 @@ class _NoteEditorState extends State<NoteEditor> {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            'Words: $_wordCount    Characters: $_charCount',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: subtextColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Text(
-                            '⏱️ $_readingTimeMinutes min read',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: subtextColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                          _buildStatBadge('📊 $_wordCount words', isDark, subtextColor),
+                          const SizedBox(width: 8),
+                          _buildStatBadge('🔤 $_charCount chars', isDark, subtextColor),
+                          const SizedBox(width: 8),
+                          _buildStatBadge('⏱️ $_readingTimeMinutes min read', isDark, subtextColor),
                         ],
                       ),
                       Row(
                         children: [
-                          Text(
-                            'Aa',
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: subtextColor,
+                          Tooltip(
+                            message: 'Typography',
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: isDark ? const Color(0xFF1E1E2A) : const Color(0xFFF3F4F6),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                'Aa',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: subtextColor,
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 14),
-                          Icon(
-                            Icons.dark_mode_outlined,
-                            size: 16,
-                            color: subtextColor,
-                          ),
-                          const SizedBox(width: 14),
-                          Icon(
-                            Icons.attach_file_rounded,
-                            size: 16,
-                            color: subtextColor,
                           ),
                         ],
                       ),

@@ -238,7 +238,7 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                   _NavItem(
                     icon: AppIcons.notes,
                     title: 'All Notes',
-                    badgeCount: _controller.totalNotesCount,
+                    badgeCount: _controller.regularNotesCount,
                     isSelected: _selectedRoute == 'all_notes',
                     onTap: () => _select('all_notes'),
                   ),
@@ -252,7 +252,7 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                   _NavItem(
                     icon: AppIcons.checkbox,
                     title: 'Tasks',
-                    badgeCount: 0,
+                    badgeCount: _controller.taskChecklistNotesCount,
                     isSelected: _selectedRoute == 'tasks',
                     onTap: () => _select('tasks'),
                   ),
@@ -294,7 +294,7 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  if (_controller.notes.isEmpty)
+                  if (_controller.regularNotes.isEmpty)
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       child: Text(
@@ -303,7 +303,7 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                       ),
                     )
                   else
-                    ..._controller.notes.take(5).map(
+                    ..._controller.regularNotes.take(5).map(
                           (note) => _RecentNoteItem(
                             color: note.indicatorColor,
                             title: note.title,

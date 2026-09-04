@@ -50,10 +50,29 @@ class NotesController extends ChangeNotifier {
   List<Note> get trashedNotes => List.unmodifiable(_trashedNotes);
   List<FolderItemModel> get folders => List.unmodifiable(_folders);
 
+  bool _isTaskChecklistNote(Note note) {
+    final content = note.content.trim();
+    return note.tags.contains('#task') ||
+        note.tags.contains('#checklist') ||
+        note.tags.contains('task') ||
+        note.tags.contains('checklist') ||
+        content.startsWith('- [ ]') ||
+        content.startsWith('- [x]') ||
+        content.startsWith('- [X]');
+  }
+
+  List<Note> get regularNotes =>
+      _notes.where((note) => !_isTaskChecklistNote(note)).toList();
+
+  List<Note> get taskChecklistNotes =>
+      _notes.where((note) => _isTaskChecklistNote(note)).toList();
+
   List<Note> get pinnedNotes =>
       _notes.where((note) => note.isPinned).toList();
 
   int get totalNotesCount => _notes.length;
+  int get regularNotesCount => regularNotes.length;
+  int get taskChecklistNotesCount => taskChecklistNotes.length;
   int get pinnedNotesCount => pinnedNotes.length;
   int get trashedNotesCount => _trashedNotes.length;
 

@@ -63,19 +63,21 @@ class EditorToolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final iconColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
+    final iconColor = isDark ? const Color(0xFFD1D5DB) : AppColors.darkText;
+    final containerBg = isDark ? const Color(0xFF1E1E2A) : const Color(0xFFF8FAFC);
+    final borderColor = isDark ? const Color(0xFF323246) : const Color(0xFFE2E8F0);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkSurface : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB)),
+        color: containerBg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: borderColor, width: 1.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(isDark ? 0.25 : 0.05),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -111,10 +113,20 @@ class EditorToolbar extends StatelessWidget {
 
             // More Options Popup Menu
             PopupMenuButton<String>(
-              tooltip: 'More',
-              color: isDark ? AppColors.darkSurface : Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              icon: Icon(Icons.more_horiz_rounded, size: 20, color: iconColor),
+              tooltip: 'More Formatting',
+              color: isDark ? const Color(0xFF1E1E2A) : Colors.white,
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: borderColor),
+              ),
+              icon: Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.more_horiz_rounded, size: 20, color: iconColor),
+              ),
               onSelected: (val) {
                 if (val == 'blockquote' && onBlockquoteTap != null) onBlockquoteTap!();
                 if (val == 'divider' && onDividerTap != null) onDividerTap!();
@@ -127,7 +139,7 @@ class EditorToolbar extends StatelessWidget {
                     children: [
                       Icon(Icons.format_quote_rounded, size: 18, color: iconColor),
                       const SizedBox(width: 10),
-                      Text('Blockquote', style: TextStyle(color: iconColor)),
+                      Text('Blockquote', style: TextStyle(color: iconColor, fontSize: 13, fontWeight: FontWeight.w500)),
                     ],
                   ),
                 ),
@@ -137,7 +149,7 @@ class EditorToolbar extends StatelessWidget {
                     children: [
                       Icon(Icons.horizontal_rule_rounded, size: 18, color: iconColor),
                       const SizedBox(width: 10),
-                      Text('Horizontal Divider', style: TextStyle(color: iconColor)),
+                      Text('Horizontal Divider', style: TextStyle(color: iconColor, fontSize: 13, fontWeight: FontWeight.w500)),
                     ],
                   ),
                 ),
@@ -148,7 +160,7 @@ class EditorToolbar extends StatelessWidget {
                     children: [
                       Icon(Icons.format_clear_rounded, size: 18, color: AppColors.error),
                       SizedBox(width: 10),
-                      Text('Clear Formatting', style: TextStyle(color: AppColors.error)),
+                      Text('Clear Formatting', style: TextStyle(color: AppColors.error, fontSize: 13, fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
@@ -177,28 +189,37 @@ class _TextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final activeBg = isDark
-        ? AppColors.primaryPurple.withOpacity(0.25)
-        : AppColors.lightLavender;
-    final inactiveText = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
+    final activeBg = AppColors.primaryPurple;
+    final inactiveBg = Colors.transparent;
+    final inactiveText = isDark ? const Color(0xFFD1D5DB) : AppColors.darkText;
 
     return Tooltip(
       message: tooltip,
       child: InkWell(
         onTap: onTap ?? () {},
-        borderRadius: BorderRadius.circular(6),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        borderRadius: BorderRadius.circular(8),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
-            color: isActive ? activeBg : Colors.transparent,
-            borderRadius: BorderRadius.circular(6),
+            color: isActive ? activeBg : inactiveBg,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: AppColors.primaryPurple.withOpacity(0.4),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
           child: Text(
             text,
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.bold,
-              color: isActive ? AppColors.primaryPurple : inactiveText,
+              color: isActive ? Colors.white : inactiveText,
             ),
           ),
         ),
@@ -223,26 +244,35 @@ class _IconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final activeBg = isDark
-        ? AppColors.primaryPurple.withOpacity(0.25)
-        : AppColors.lightLavender;
-    final inactiveIcon = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
+    final activeBg = AppColors.primaryPurple;
+    final inactiveBg = Colors.transparent;
+    final inactiveIcon = isDark ? const Color(0xFFD1D5DB) : AppColors.darkText;
 
     return Tooltip(
       message: tooltip,
       child: InkWell(
         onTap: onTap ?? () {},
-        borderRadius: BorderRadius.circular(6),
-        child: Container(
-          padding: const EdgeInsets.all(5.0),
+        borderRadius: BorderRadius.circular(8),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.all(6.0),
           decoration: BoxDecoration(
-            color: isActive ? activeBg : Colors.transparent,
-            borderRadius: BorderRadius.circular(6),
+            color: isActive ? activeBg : inactiveBg,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: AppColors.primaryPurple.withOpacity(0.4),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
           child: Icon(
             icon,
             size: 18,
-            color: isActive ? AppColors.primaryPurple : inactiveIcon,
+            color: isActive ? Colors.white : inactiveIcon,
           ),
         ),
       ),
@@ -260,7 +290,7 @@ class _Divider extends StatelessWidget {
       height: 18,
       width: 1,
       margin: const EdgeInsets.symmetric(horizontal: 6),
-      color: isDark ? AppColors.darkBorder : const Color(0xFFE2E4E9),
+      color: isDark ? const Color(0xFF323246) : const Color(0xFFE2E8F0),
     );
   }
 }

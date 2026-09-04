@@ -6,7 +6,38 @@
     "attachments",
     "recent_notes"
   ],
-  "notes": [],
+  "notes": [
+    {
+      "id": "1788542307828",
+      "title": "Study List",
+      "content": "- [ ] First task item\n- [ ] Second task item",
+      "color_value": 4278241363,
+      "tags": "[\"#task\"]",
+      "updated_at": "Just now at 10:48 PM",
+      "is_pinned": 0,
+      "folder_name": null
+    },
+    {
+      "id": "1788540871774",
+      "title": "Checklist",
+      "content": "- [ ] First task item\n- [ ] Second task item",
+      "color_value": 4278241363,
+      "tags": "[\"#task\"]",
+      "updated_at": "Just now at 10:24 PM",
+      "is_pinned": 0,
+      "folder_name": null
+    },
+    {
+      "id": "1788540667330",
+      "title": "New Task Checklist",
+      "content": "- [x] today moring",
+      "color_value": 4278241363,
+      "tags": "[\"#task\"]",
+      "updated_at": "Just now at 10:21 PM",
+      "is_pinned": 0,
+      "folder_name": null
+    }
+  ],
   "trashedNotes": [
     {
       "id": "1788538758715",

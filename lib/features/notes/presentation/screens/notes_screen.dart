@@ -3,7 +3,7 @@ import '../../../../app/constants/app_colors.dart';
 import '../../domain/entities/note.dart';
 import '../controllers/notes_controller.dart';
 import '../widgets/note_list.dart';
-
+import '../../../tasks/presentation/widgets/tasks_checklist_view.dart';
 import '../../../settings/presentation/controllers/settings_controller.dart';
 
 class NotesScreen extends StatefulWidget {
@@ -87,7 +87,7 @@ class _NotesScreenState extends State<NotesScreen> {
         ? _controller.pinnedNotes
         : (widget.activeRoute == 'trash'
             ? _controller.trashedNotes
-            : _controller.notes);
+            : _controller.regularNotes);
 
     final filteredNotes = allNotes.where((note) {
       final query = _searchQuery.toLowerCase();
@@ -105,6 +105,20 @@ class _NotesScreenState extends State<NotesScreen> {
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
     final inputBg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF7F8FA);
     final borderColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFEAEAEE);
+
+    if (widget.activeRoute == 'tasks') {
+      return Scaffold(
+        backgroundColor: scaffoldBg,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+            child: TasksChecklistView(
+              onNoteSelect: widget.onNoteSelect,
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: scaffoldBg,

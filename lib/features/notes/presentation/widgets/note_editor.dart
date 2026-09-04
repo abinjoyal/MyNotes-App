@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mynotes/features/notes/data/services/version_history_service.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../domain/entities/note.dart';
 import 'editor_toolbar.dart';
@@ -1377,6 +1378,239 @@ class _NoteEditorState extends State<NoteEditor> {
     );
   }
 
+  void _showVersionHistoryDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final dialogBg = isDark ? const Color(0xFF1E1E2A) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black87;
+    final subtextColor = isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280);
+    final cardBg = isDark ? const Color(0xFF262636) : const Color(0xFFF3F4F6);
+    final borderColor = isDark ? const Color(0xFF323246) : const Color(0xFFE5E7EB);
+
+    final noteId = widget.initialNote?.id ?? '';
+    final snapshots = VersionHistoryService.instance.getHistoryForNote(noteId);
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: dialogBg,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: borderColor, width: 1),
+          ),
+          elevation: 16,
+          child: Container(
+            width: 500,
+            height: 580,
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryPurple.withOpacity(0.18),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: const Icon(
+                            Icons.history_rounded,
+                            color: AppColors.primaryPurple,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Version History',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                              ),
+                            ),
+                            Text(
+                              '${snapshots.length} saved version snapshots',
+                              style: TextStyle(fontSize: 12, color: subtextColor),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close_rounded, size: 20),
+                      color: subtextColor,
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+                const Divider(height: 1),
+                const SizedBox(height: 16),
+
+                // Snapshots List
+                Expanded(
+                  child: snapshots.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.history_toggle_off_rounded, size: 48, color: subtextColor.withOpacity(0.5)),
+                              const SizedBox(height: 12),
+                              Text(
+                                'No previous versions saved yet.',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: textColor),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Version snapshots are automatically saved whenever you edit & save notes.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 12, color: subtextColor),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.separated(
+                          itemCount: snapshots.length,
+                          separatorBuilder: (_, __) => const SizedBox(height: 12),
+                          itemBuilder: (context, idx) {
+                            final snapshot = snapshots[idx];
+                            final isCurrent = idx == 0;
+
+                            return Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: cardBg,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: isCurrent ? AppColors.primaryPurple.withOpacity(0.5) : borderColor,
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.access_time_rounded,
+                                            size: 14,
+                                            color: isCurrent ? AppColors.primaryPurple : subtextColor,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            snapshot.timestamp,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: isCurrent ? AppColors.primaryPurple : subtextColor,
+                                            ),
+                                          ),
+                                          if (isCurrent) ...[
+                                            const SizedBox(width: 8),
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.primaryPurple.withOpacity(0.2),
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: const Text(
+                                                'Current',
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: AppColors.primaryPurple,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                      Text(
+                                        '${snapshot.wordCount} words',
+                                        style: TextStyle(fontSize: 11, color: subtextColor),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    snapshot.title.isEmpty ? 'Untitled Note' : snapshot.title,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: textColor,
+                                    ),
+                                  ),
+                                  if (snapshot.content.isNotEmpty) ...[
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      snapshot.content.trim(),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: subtextColor,
+                                      ),
+                                    ),
+                                  ],
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      ElevatedButton.icon(
+                                        onPressed: () {
+                                          Navigator.pop(ctx);
+                                          setState(() {
+                                            _titleController.text = snapshot.title;
+                                            _contentController.text = snapshot.content;
+                                            _selectedColor = snapshot.indicatorColor;
+                                            _tags = List.from(snapshot.tags);
+                                          });
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Restored note version from ${snapshot.timestamp}'),
+                                              backgroundColor: AppColors.primaryPurple,
+                                              duration: const Duration(seconds: 2),
+                                            ),
+                                          );
+                                        },
+                                        icon: const Icon(Icons.restore_rounded, size: 14, color: Colors.white),
+                                        label: const Text(
+                                          'Restore Version',
+                                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.primaryPurple,
+                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                          elevation: 0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildStatBadge(String label, bool isDark, Color subtextColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -1445,6 +1679,26 @@ class _NoteEditorState extends State<NoteEditor> {
               ),
               Row(
                 children: [
+                  // History Button
+                  OutlinedButton.icon(
+                    onPressed: _showVersionHistoryDialog,
+                    icon: const Icon(Icons.history_rounded, size: 16, color: AppColors.primaryPurple),
+                    label: const Text(
+                      'History',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryPurple,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: isDark ? const Color(0xFF323246) : const Color(0xFFE5E7EB)),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
                   // Auto-Save Status Indicator Badge
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -1475,7 +1729,7 @@ class _NoteEditorState extends State<NoteEditor> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 8),
                   ElevatedButton.icon(
                     onPressed: () {
                       if (widget.onSave != null) {

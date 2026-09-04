@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mynotes/features/notes/data/services/version_history_service.dart';
 import '../../domain/entities/note.dart';
 import '../../../../core/database/database.dart';
 
@@ -179,6 +180,13 @@ class NotesController extends ChangeNotifier {
         );
         _notes[index] = updatedNote;
         AppDatabase.instance.saveNote(updatedNote);
+        VersionHistoryService.instance.saveSnapshot(
+          noteId: updatedNote.id,
+          title: updatedNote.title,
+          content: updatedNote.content,
+          indicatorColor: updatedNote.indicatorColor,
+          tags: updatedNote.tags,
+        );
         notifyListeners();
         return;
       }
@@ -197,6 +205,13 @@ class NotesController extends ChangeNotifier {
 
     _notes.insert(0, newNote);
     AppDatabase.instance.saveNote(newNote);
+    VersionHistoryService.instance.saveSnapshot(
+      noteId: newNote.id,
+      title: newNote.title,
+      content: newNote.content,
+      indicatorColor: newNote.indicatorColor,
+      tags: newNote.tags,
+    );
     notifyListeners();
   }
 

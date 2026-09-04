@@ -6,12 +6,14 @@ class NoteCard extends StatelessWidget {
   final Note note;
   final VoidCallback? onTap;
   final VoidCallback? onPinToggle;
+  final VoidCallback? onDelete;
 
   const NoteCard({
     super.key,
     required this.note,
     this.onTap,
     this.onPinToggle,
+    this.onDelete,
   });
 
   @override
@@ -39,64 +41,146 @@ class NoteCard extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Title and Indicator Row
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Category Color Indicator
-                    Container(
-                      width: 10,
-                      height: 10,
-                      decoration: BoxDecoration(
-                        color: note.indicatorColor,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-
-                    // Note Title
-                    Expanded(
-                      child: Text(
-                        note.title,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.darkText,
-                          letterSpacing: -0.2,
+                    // Title and Indicator Row with 3-dot Options Menu
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Category Color Indicator
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: note.indicatorColor,
+                            shape: BoxShape.circle,
+                          ),
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+                        const SizedBox(width: 10),
 
-                    // Pin Icon Button
-                    if (note.isPinned)
-                      IconButton(
-                        visualDensity: VisualDensity.compact,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        icon: const Icon(
-                          Icons.push_pin,
-                          size: 18,
-                          color: AppColors.primaryPurple,
+                        // Note Title
+                        Expanded(
+                          child: Text(
+                            note.title,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.darkText,
+                              letterSpacing: -0.2,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                        onPressed: onPinToggle,
+
+                        // Pinned Badge Indicator
+                        if (note.isPinned)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 4),
+                            child: Icon(
+                              Icons.push_pin_rounded,
+                              size: 16,
+                              color: AppColors.primaryPurple,
+                            ),
+                          ),
+
+                        // 3-Dot Options Menu (Pin, Edit, Delete)
+                        SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: PopupMenuButton<String>(
+                            padding: EdgeInsets.zero,
+                            icon: const Icon(
+                              Icons.more_vert_rounded,
+                              size: 18,
+                              color: Color(0xFF8C98A9),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            onSelected: (value) {
+                              if (value == 'pin') {
+                                onPinToggle?.call();
+                              } else if (value == 'edit') {
+                                onTap?.call();
+                              } else if (value == 'delete') {
+                                onDelete?.call();
+                              }
+                            },
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: 'pin',
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      note.isPinned
+                                          ? Icons.push_pin_outlined
+                                          : Icons.push_pin_rounded,
+                                      size: 16,
+                                      color: AppColors.primaryPurple,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      note.isPinned ? 'Unpin Note' : 'Pin Note',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.edit_outlined,
+                                      size: 16,
+                                      color: AppColors.darkText,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text('Edit Note'),
+                                  ],
+                                ),
+                              ),
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.delete_outline_rounded,
+                                      size: 16,
+                                      color: Color(0xFFFF4B4B),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'Delete Note',
+                                      style: TextStyle(
+                                        color: Color(0xFFFF4B4B),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Note Content Preview Snippet
+                    Text(
+                      note.content,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        height: 1.4,
+                        color: Color(0xFF6C757D),
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
-                ),
-                const SizedBox(height: 8),
-
-                // Note Content Preview Snippet
-                Text(
-                  note.content,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    height: 1.4,
-                    color: Color(0xFF6C757D),
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
 
                 const SizedBox(height: 12),
@@ -109,39 +193,19 @@ class NoteCard extends StatelessWidget {
                     Wrap(
                       spacing: 6,
                       runSpacing: 4,
-                      children: note.tags.map((tag) => _TagChip(tag: tag)).toList(),
+                      children: note.tags
+                          .map((tag) => _TagChip(tag: tag))
+                          .toList(),
                     ),
-
-                    // Pin icon for non-pinned or timestamp layout matching design
-                    Row(
-                      children: [
-                        if (!note.isPinned)
-                          IconButton(
-                            visualDensity: VisualDensity.compact,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            icon: const Icon(
-                              Icons.push_pin_outlined,
-                              size: 18,
-                              color: Color(0xFF98A2B3),
-                            ),
-                            onPressed: onPinToggle,
-                          ),
-                      ],
+                    Text(
+                      note.updatedAt,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF98A2B3),
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
-                ),
-
-                const SizedBox(height: 8),
-
-                // Time label
-                Text(
-                  note.updatedAt,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF98A2B3),
-                    fontWeight: FontWeight.w500,
-                  ),
                 ),
               ],
             ),

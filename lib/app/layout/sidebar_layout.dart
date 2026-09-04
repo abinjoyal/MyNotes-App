@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_icons.dart';
 import '../constants/app_sizes.dart';
+import '../../features/notes/presentation/controllers/notes_controller.dart';
 
 class SidebarLayout extends StatefulWidget {
   final String activeRoute;
@@ -19,11 +20,23 @@ class SidebarLayout extends StatefulWidget {
 
 class _SidebarLayoutState extends State<SidebarLayout> {
   late String _selectedRoute;
+  final NotesController _controller = NotesController.instance;
 
   @override
   void initState() {
     super.initState();
     _selectedRoute = widget.activeRoute;
+    _controller.addListener(_onNotesChanged);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onNotesChanged);
+    super.dispose();
+  }
+
+  void _onNotesChanged() {
+    if (mounted) setState(() {});
   }
 
   @override
@@ -82,25 +95,33 @@ class _SidebarLayoutState extends State<SidebarLayout> {
           ),
           const SizedBox(height: 16),
 
-          // 3. "+ New Note" Primary Action Button
+          // 3. "+ New Note" Primary Action Button with Template Dropdown
           Container(
             width: double.infinity,
             height: 42,
             decoration: BoxDecoration(
               color: AppColors.primaryPurple,
               borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primaryPurple.withOpacity(0.25),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {},
-                borderRadius: BorderRadius.circular(10),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 14),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+            child: Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () => _select('new_note'),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
                         children: [
                           Icon(Icons.add, color: Colors.white, size: 20),
                           SizedBox(width: 8),
@@ -114,10 +135,87 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                           ),
                         ],
                       ),
-                      Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 18),
-                    ],
+                    ),
                   ),
                 ),
+                PopupMenuButton<String>(
+                  onSelected: (templateType) {
+                    _select('new_note:$templateType');
+                  },
+                  tooltip: 'Choose Template',
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(
+                      value: 'blank',
+                      child: Row(
+                        children: [
+                          Icon(Icons.note_add_outlined, size: 18, color: AppColors.primaryPurple),
+                          SizedBox(width: 8),
+                          Text('Blank Note'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'checklist',
+                      child: Row(
+                        children: [
+                          Icon(Icons.check_box_outlined, size: 18, color: Color(0xFF00C853)),
+                          SizedBox(width: 8),
+                          Text('Task Checklist'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'journal',
+                      child: Row(
+                        children: [
+                          Icon(Icons.today_outlined, size: 18, color: Color(0xFFFFB020)),
+                          SizedBox(width: 8),
+                          Text('Daily Journal'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'meeting',
+                      child: Row(
+                        children: [
+                          Icon(Icons.groups_outlined, size: 18, color: Color(0xFF4C6FFF)),
+                          SizedBox(width: 8),
+                          Text('Meeting Notes'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // 3.5 Quick Search Input Bar
+          Container(
+            height: 36,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFFE5E7EB)),
+            ),
+            child: TextField(
+              style: const TextStyle(fontSize: 13, color: AppColors.darkText),
+              decoration: InputDecoration(
+                hintText: 'Search notes... (Ctrl+K)',
+                hintStyle: const TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
+                prefixIcon: const Icon(Icons.search_rounded, size: 16, color: Color(0xFF9CA3AF)),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                isDense: true,
               ),
             ),
           ),
@@ -134,21 +232,21 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                   _NavItem(
                     icon: AppIcons.notes,
                     title: 'All Notes',
-                    badgeCount: 128,
+                    badgeCount: _controller.totalNotesCount,
                     isSelected: _selectedRoute == 'all_notes',
                     onTap: () => _select('all_notes'),
                   ),
                   _NavItem(
                     icon: AppIcons.pin,
                     title: 'Pinned',
-                    badgeCount: 7,
+                    badgeCount: _controller.pinnedNotesCount,
                     isSelected: _selectedRoute == 'pinned',
                     onTap: () => _select('pinned'),
                   ),
                   _NavItem(
                     icon: AppIcons.checkbox,
                     title: 'Tasks',
-                    badgeCount: 24,
+                    badgeCount: 0,
                     isSelected: _selectedRoute == 'tasks',
                     onTap: () => _select('tasks'),
                   ),
@@ -157,16 +255,26 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                   // FOLDERS Section
                   _SectionHeader(
                     title: 'FOLDERS',
-                    onAddTap: () {},
+                    onAddTap: () => _showCreateFolderDialog(context),
                   ),
                   const SizedBox(height: 6),
-                  _FolderItem(title: 'Figma', count: 14, onTap: () {}),
-                  _FolderItem(title: 'Flutter', count: 22, onTap: () {}),
-                  _FolderItem(title: 'Projects', count: 16, onTap: () {}),
-                  _FolderItem(title: 'Learning', count: 31, onTap: () {}),
-                  _FolderItem(title: 'Personal', count: 9, onTap: () {}),
-                  _FolderItem(title: 'Ideas', count: 12, onTap: () {}),
-                  _FolderItem(title: 'Archive', count: 4, onTap: () {}),
+                  if (_controller.folders.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      child: Text(
+                        'No folders created yet',
+                        style: TextStyle(fontSize: 12, color: Color(0xFF8C98A9)),
+                      ),
+                    )
+                  else
+                    ..._controller.folders.map(
+                      (folder) => _FolderItem(
+                        title: folder.name,
+                        count: _controller.getFolderNotesCount(folder.name),
+                        folderColor: folder.color,
+                        onTap: () => _select('folder:${folder.name}'),
+                      ),
+                    ),
                   const SizedBox(height: 20),
 
                   // RECENT NOTES Section
@@ -180,31 +288,22 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const _RecentNoteItem(
-                    color: Color(0xFF635BFF),
-                    title: 'Figma Typography Guide',
-                    time: '2m ago',
-                  ),
-                  const _RecentNoteItem(
-                    color: Color(0xFF4C6FFF),
-                    title: 'Flutter Workout Scree...',
-                    time: '1h ago',
-                  ),
-                  const _RecentNoteItem(
-                    color: Color(0xFFFF4B4B),
-                    title: 'AI Food Scanner Project',
-                    time: 'Yesterday',
-                  ),
-                  const _RecentNoteItem(
-                    color: Color(0xFFFFB020),
-                    title: 'Daily Note - Sep 3',
-                    time: 'Yesterday',
-                  ),
-                  const _RecentNoteItem(
-                    color: Color(0xFF00C853),
-                    title: 'Design System Checklist',
-                    time: 'Sep 2',
-                  ),
+                  if (_controller.notes.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      child: Text(
+                        'No recent notes',
+                        style: TextStyle(fontSize: 12, color: Color(0xFF8C98A9)),
+                      ),
+                    )
+                  else
+                    ..._controller.notes.take(5).map(
+                          (note) => _RecentNoteItem(
+                            color: note.indicatorColor,
+                            title: note.title,
+                            time: note.updatedAt,
+                          ),
+                        ),
                   const SizedBox(height: 20),
 
                   // Trash
@@ -268,6 +367,115 @@ class _SidebarLayoutState extends State<SidebarLayout> {
       widget.onNavigate!(route);
     }
   }
+
+  void _showCreateFolderDialog(BuildContext context) {
+    final controller = TextEditingController();
+    Color selectedColor = const Color(0xFF635BFF);
+    final colors = const [
+      Color(0xFF635BFF),
+      Color(0xFFA259FF),
+      Color(0xFF02569B),
+      Color(0xFF3B82F6),
+      Color(0xFF10B981),
+      Color(0xFFEC4899),
+      Color(0xFFFF9800),
+      Color(0xFF6B7280),
+    ];
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text(
+            'Create New Folder',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColors.darkText,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: controller,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'Folder name (e.g. Design System)',
+                  filled: true,
+                  fillColor: const Color(0xFFF7F8FA),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Color(0xFFEAEAEE)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Color(0xFFEAEAEE)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Folder Color:',
+                style: TextStyle(fontSize: 13, color: Color(0xFF6C757D)),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: colors.map((c) {
+                  final isSelected = selectedColor == c;
+                  return GestureDetector(
+                    onTap: () {
+                      setDialogState(() {
+                        selectedColor = c;
+                      });
+                    },
+                    child: Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: c,
+                        shape: BoxShape.circle,
+                        border: isSelected
+                            ? Border.all(color: AppColors.darkText, width: 2)
+                            : null,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (controller.text.trim().isNotEmpty) {
+                  _controller.addFolder(controller.text.trim(), selectedColor);
+                  Navigator.of(ctx).pop();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryPurple,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text('Create Folder'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 // Helper Widgets
@@ -304,34 +512,35 @@ class _NavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 4),
-      decoration: BoxDecoration(
+      child: Material(
         color: isSelected ? AppColors.lightLavender : Colors.transparent,
         borderRadius: BorderRadius.circular(10),
-      ),
-      child: ListTile(
-        dense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-        horizontalTitleGap: 8,
-        onTap: onTap,
-        leading: Icon(
-          icon,
-          color: isSelected ? AppColors.primaryPurple : AppColors.darkText,
-          size: 18,
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          dense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+          horizontalTitleGap: 8,
+          onTap: onTap,
+          leading: Icon(
+            icon,
             color: isSelected ? AppColors.primaryPurple : AppColors.darkText,
+            size: 18,
           ),
-        ),
-        trailing: Text(
-          '$badgeCount',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            color: isSelected ? AppColors.primaryPurple : AppColors.darkText,
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              color: isSelected ? AppColors.primaryPurple : AppColors.darkText,
+            ),
+          ),
+          trailing: Text(
+            '$badgeCount',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: isSelected ? AppColors.primaryPurple : AppColors.darkText,
+            ),
           ),
         ),
       ),
@@ -372,11 +581,13 @@ class _SectionHeader extends StatelessWidget {
 class _FolderItem extends StatelessWidget {
   final String title;
   final int count;
+  final Color folderColor;
   final VoidCallback onTap;
 
   const _FolderItem({
     required this.title,
     required this.count,
+    this.folderColor = AppColors.primaryPurple,
     required this.onTap,
   });
 
@@ -389,7 +600,7 @@ class _FolderItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         child: Row(
           children: [
-            const Icon(Icons.folder_outlined, color: AppColors.primaryPurple, size: 18),
+            Icon(Icons.folder_rounded, color: folderColor, size: 18),
             const SizedBox(width: 10),
             Expanded(
               child: Text(

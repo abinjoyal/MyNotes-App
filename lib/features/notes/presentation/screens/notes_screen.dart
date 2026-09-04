@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../domain/entities/note.dart';
+import '../controllers/notes_controller.dart';
 import '../widgets/note_list.dart';
 
 class NotesScreen extends StatefulWidget {
   final Function(Note)? onNoteSelect;
+  final String activeRoute;
 
   const NotesScreen({
     super.key,
     this.onNoteSelect,
+    this.activeRoute = 'all_notes',
   });
 
   @override
@@ -19,16 +22,68 @@ class _NotesScreenState extends State<NotesScreen> {
   bool _isGridView = false;
   String _selectedSort = 'Last edited';
   String _searchQuery = '';
-  List<Note> _notes = NoteList.sampleNotes;
+  String? _selectedTag;
+  final NotesController _controller = NotesController.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onNotesChanged);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onNotesChanged);
+    super.dispose();
+  }
+
+  void _onNotesChanged() {
+    if (mounted) setState(() {});
+  }
+
+  Map<String, String> _getHeaderInfo() {
+    switch (widget.activeRoute) {
+      case 'pinned':
+        return {
+          'title': '📌 Pinned Notes',
+          'subtitle': 'Important items pinned for quick reference.',
+        };
+      case 'tasks':
+        return {
+          'title': '✅ Tasks Checklist',
+          'subtitle': 'Checklists and task notes.',
+        };
+      case 'trash':
+        return {
+          'title': '🗑️ Trash',
+          'subtitle': 'Deleted items waiting for cleanup.',
+        };
+      default:
+        return {
+          'title': '📝 All Notes',
+          'subtitle': 'Manage and organize all your personal workspace notes.',
+        };
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final filteredNotes = _notes.where((note) {
+    final headerInfo = _getHeaderInfo();
+    final allNotes = widget.activeRoute == 'pinned'
+        ? _controller.pinnedNotes
+        : _controller.notes;
+
+    final filteredNotes = allNotes.where((note) {
       final query = _searchQuery.toLowerCase();
-      return note.title.toLowerCase().contains(query) ||
+      final matchesQuery = note.title.toLowerCase().contains(query) ||
           note.content.toLowerCase().contains(query) ||
           note.tags.any((t) => t.toLowerCase().contains(query));
+
+      final matchesTag = _selectedTag == null || note.tags.contains(_selectedTag);
+      return matchesQuery && matchesTag;
     }).toList();
+
+    final availableTags = _controller.allTags;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -38,6 +93,56 @@ class _NotesScreenState extends State<NotesScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // 0. Section Title & Subtitle Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            headerInfo['title']!,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.darkText,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppColors.lightLavender,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${allNotes.length}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryPurple,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        headerInfo['subtitle']!,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFF6C757D),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
               // 1. Top Search Bar & Filter Row
               Row(
                 children: [
@@ -76,8 +181,6 @@ class _NotesScreenState extends State<NotesScreen> {
                               ),
                             ),
                           ),
-
-                          // ⌘K Shortcut Badge
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 3),
@@ -100,8 +203,6 @@ class _NotesScreenState extends State<NotesScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-
-                  // Filter Icon Button
                   Container(
                     width: 44,
                     height: 44,
@@ -122,13 +223,88 @@ class _NotesScreenState extends State<NotesScreen> {
                 ],
               ),
 
-              const SizedBox(height: 16),
+              if (availableTags.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                // 1.5 Horizontal Tag Filter Pills
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedTag = null;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                            color: _selectedTag == null
+                                ? AppColors.primaryPurple
+                                : const Color(0xFFF7F8FA),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: _selectedTag == null
+                                  ? AppColors.primaryPurple
+                                  : const Color(0xFFEAEAEE),
+                            ),
+                          ),
+                          child: Text(
+                            'All',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: _selectedTag == null ? Colors.white : AppColors.darkText,
+                            ),
+                          ),
+                        ),
+                      ),
+                      ...availableTags.map((tag) {
+                        final isSelected = _selectedTag == tag;
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedTag = isSelected ? null : tag;
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            margin: const EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppColors.primaryPurple
+                                  : const Color(0xFFF7F8FA),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppColors.primaryPurple
+                                    : const Color(0xFFEAEAEE),
+                              ),
+                            ),
+                            child: Text(
+                              tag,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: isSelected ? Colors.white : AppColors.darkText,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: 14),
 
               // 2. Sorting & Layout Toggle Controls Sub-header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Sort By Selector Dropdown
                   PopupMenuButton<String>(
                     onSelected: (val) {
                       setState(() {
@@ -180,7 +356,6 @@ class _NotesScreenState extends State<NotesScreen> {
                     ],
                   ),
 
-                  // View Toggle Buttons (List View / Grid View)
                   Container(
                     padding: const EdgeInsets.all(3),
                     decoration: BoxDecoration(
@@ -189,7 +364,6 @@ class _NotesScreenState extends State<NotesScreen> {
                     ),
                     child: Row(
                       children: [
-                        // List View Mode Button
                         GestureDetector(
                           onTap: () {
                             setState(() {
@@ -214,8 +388,6 @@ class _NotesScreenState extends State<NotesScreen> {
                           ),
                         ),
                         const SizedBox(width: 4),
-
-                        // Grid View Mode Button
                         GestureDetector(
                           onTap: () {
                             setState(() {
@@ -247,20 +419,22 @@ class _NotesScreenState extends State<NotesScreen> {
 
               const SizedBox(height: 16),
 
-              // 3. Notes List View
+              // 3. Notes List View / Contextual Empty State
               Expanded(
-                child: filteredNotes.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'No notes found',
-                          style: TextStyle(color: Color(0xFF8C98A9)),
-                        ),
-                      )
-                    : NoteList(
-                        notes: filteredNotes,
-                        isGridView: _isGridView,
-                        onNoteSelect: widget.onNoteSelect,
-                      ),
+                child: NoteList(
+                  notes: filteredNotes,
+                  isGridView: _isGridView,
+                  activeRoute: widget.activeRoute,
+                  onNoteSelect: widget.onNoteSelect,
+                  onActionTap: () {
+                    if (widget.onNoteSelect != null) {
+                      Note templateNote = _controller.createTemplateNote(
+                        widget.activeRoute == 'tasks' ? 'checklist' : 'blank',
+                      );
+                      widget.onNoteSelect!(templateNote);
+                    }
+                  },
+                ),
               ),
             ],
           ),

@@ -4,6 +4,7 @@ import '../controllers/settings_controller.dart';
 import '../../../pin/presentation/screens/passcode_lock_screen.dart';
 import '../../../backup/data/services/backup_service.dart';
 import '../../../backup/data/services/google_drive_service.dart';
+import '../../../notes/presentation/controllers/notes_controller.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -383,6 +384,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       textColor: textColor,
                       secondaryTextColor: secondaryTextColor,
                       onTap: () {
+                        NotesController.instance.emptyTrash();
                         _showSnackBar('Trash bin cleared!');
                       },
                     ),
@@ -809,7 +811,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ElevatedButton.icon(
             onPressed: () async {
               final filePath = await BackupService.instance.exportBackupToFile();
-              if (mounted) {
+              if (ctx.mounted && mounted) {
                 Navigator.of(ctx).pop();
                 if (filePath != null) {
                   _showSnackBar('Backup file saved to: $filePath');

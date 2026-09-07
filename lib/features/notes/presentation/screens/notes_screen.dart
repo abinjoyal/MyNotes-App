@@ -165,15 +165,32 @@ class _NotesScreenState extends State<NotesScreen> {
                         ],
                       ),
                       const SizedBox(height: 4),
-                       Text(
+                      Text(
                         headerInfo['subtitle']!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 13,
                           color: Color(0xFF6C757D),
                         ),
                       ),
                     ],
                   ),
+                  if (widget.activeRoute == 'trash' && allNotes.isNotEmpty)
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        _controller.emptyTrash();
+                      },
+                      icon: const Icon(Icons.delete_forever_rounded, size: 16),
+                      label: const Text('Empty Trash'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF4B4B),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        elevation: 0,
+                      ),
+                    ),
                 ],
               ),
               const SizedBox(height: 16),

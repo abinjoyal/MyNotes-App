@@ -230,17 +230,20 @@ class NotesController extends ChangeNotifier {
     if (index != -1) {
       final restoredNote = _trashedNotes.removeAt(index);
       _notes.insert(0, restoredNote);
+      AppDatabase.instance.restoreFromTrash(id);
       notifyListeners();
     }
   }
 
   void permanentlyDeleteFromTrash(String id) {
     _trashedNotes.removeWhere((note) => note.id == id);
+    AppDatabase.instance.permanentlyDeleteFromTrash(id);
     notifyListeners();
   }
 
   void emptyTrash() {
     _trashedNotes.clear();
+    AppDatabase.instance.emptyTrash();
     notifyListeners();
   }
 

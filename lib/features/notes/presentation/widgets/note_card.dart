@@ -7,6 +7,9 @@ class NoteCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onPinToggle;
   final VoidCallback? onDelete;
+  final VoidCallback? onRestore;
+  final VoidCallback? onPermanentDelete;
+  final bool isTrash;
 
   const NoteCard({
     super.key,
@@ -14,6 +17,9 @@ class NoteCard extends StatelessWidget {
     this.onTap,
     this.onPinToggle,
     this.onDelete,
+    this.onRestore,
+    this.onPermanentDelete,
+    this.isTrash = false,
   });
 
   @override
@@ -94,7 +100,7 @@ class NoteCard extends StatelessWidget {
                             ),
                           ),
 
-                        // 3-Dot Options Menu (Pin, Edit, Delete)
+                        // 3-Dot Options Menu (Pin, Edit, Delete / Restore, Permanent Delete)
                         SizedBox(
                           width: 28,
                           height: 28,
@@ -116,62 +122,105 @@ class NoteCard extends StatelessWidget {
                                 onTap?.call();
                               } else if (value == 'delete') {
                                 onDelete?.call();
+                              } else if (value == 'restore') {
+                                onRestore?.call();
+                              } else if (value == 'permanent_delete') {
+                                onPermanentDelete?.call();
                               }
                             },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 'pin',
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      note.isPinned
-                                          ? Icons.push_pin_outlined
-                                          : Icons.push_pin_rounded,
-                                      size: 16,
-                                      color: AppColors.primaryPurple,
+                            itemBuilder: (context) => isTrash
+                                ? [
+                                    PopupMenuItem(
+                                      value: 'restore',
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.restore_from_trash_rounded,
+                                            size: 16,
+                                            color: AppColors.primaryPurple,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            'Restore Note',
+                                            style: TextStyle(color: titleColor),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      note.isPinned ? 'Unpin Note' : 'Pin Note',
-                                      style: TextStyle(color: titleColor),
+                                    const PopupMenuItem(
+                                      value: 'permanent_delete',
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.delete_forever_rounded,
+                                            size: 16,
+                                            color: Color(0xFFFF4B4B),
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            'Delete Permanently',
+                                            style: TextStyle(
+                                              color: Color(0xFFFF4B4B),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'edit',
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.edit_outlined,
-                                      size: 16,
-                                      color: titleColor,
+                                  ]
+                                : [
+                                    PopupMenuItem(
+                                      value: 'pin',
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            note.isPinned
+                                                ? Icons.push_pin_outlined
+                                                : Icons.push_pin_rounded,
+                                            size: 16,
+                                            color: AppColors.primaryPurple,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            note.isPinned ? 'Unpin Note' : 'Pin Note',
+                                            style: TextStyle(color: titleColor),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    const SizedBox(width: 10),
-                                    Text('Edit Note', style: TextStyle(color: titleColor)),
-                                  ],
-                                ),
-                              ),
-                              const PopupMenuItem(
-                                value: 'delete',
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.delete_outline_rounded,
-                                      size: 16,
-                                      color: Color(0xFFFF4B4B),
+                                    PopupMenuItem(
+                                      value: 'edit',
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.edit_outlined,
+                                            size: 16,
+                                            color: titleColor,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text('Edit Note', style: TextStyle(color: titleColor)),
+                                        ],
+                                      ),
                                     ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Delete Note',
-                                      style: TextStyle(
-                                        color: Color(0xFFFF4B4B),
+                                    const PopupMenuItem(
+                                      value: 'delete',
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.delete_outline_rounded,
+                                            size: 16,
+                                            color: Color(0xFFFF4B4B),
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            'Delete Note',
+                                            style: TextStyle(
+                                              color: Color(0xFFFF4B4B),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
-                                ),
-                              ),
-                            ],
                           ),
                         ),
                       ],

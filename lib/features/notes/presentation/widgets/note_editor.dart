@@ -732,8 +732,9 @@ class _NoteEditorState extends State<NoteEditor> {
     final selection = _contentController.selection;
 
     int cursorOffset = selection.baseOffset;
-    if (cursorOffset < 0 || cursorOffset > text.length)
+    if (cursorOffset < 0 || cursorOffset > text.length) {
       cursorOffset = text.length;
+    }
 
     int lineStart = _getLineStart(text, cursorOffset);
     int lineEnd = _getLineEnd(text, cursorOffset);
@@ -1479,7 +1480,7 @@ class _NoteEditorState extends State<NoteEditor> {
                         )
                       : ListView.separated(
                           itemCount: snapshots.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 12),
+                          separatorBuilder: (_, _) => const SizedBox(height: 12),
                           itemBuilder: (context, idx) {
                             final snapshot = snapshots[idx];
                             final isCurrent = idx == 0;

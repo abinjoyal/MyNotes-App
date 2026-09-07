@@ -142,6 +142,8 @@ class NoteList extends StatelessWidget {
       return _buildEmptyState(context);
     }
 
+    final isTrashRoute = activeRoute == 'trash';
+
     if (isGridView) {
       return GridView.builder(
         physics: const BouncingScrollPhysics(),
@@ -156,16 +158,29 @@ class NoteList extends StatelessWidget {
           final note = notes[index];
           return NoteCard(
             note: note,
-            onTap: () {
-              if (onNoteSelect != null) {
-                onNoteSelect!(note);
-              }
+            isTrash: isTrashRoute,
+            onTap: isTrashRoute
+                ? null
+                : () {
+                    if (onNoteSelect != null) {
+                      onNoteSelect!(note);
+                    }
+                  },
+            onPinToggle: isTrashRoute
+                ? null
+                : () {
+                    NotesController.instance.togglePin(note.id);
+                  },
+            onDelete: isTrashRoute
+                ? null
+                : () {
+                    NotesController.instance.deleteNote(note.id);
+                  },
+            onRestore: () {
+              NotesController.instance.restoreFromTrash(note.id);
             },
-            onPinToggle: () {
-              NotesController.instance.togglePin(note.id);
-            },
-            onDelete: () {
-              NotesController.instance.deleteNote(note.id);
+            onPermanentDelete: () {
+              NotesController.instance.permanentlyDeleteFromTrash(note.id);
             },
           );
         },
@@ -179,13 +194,29 @@ class NoteList extends StatelessWidget {
         final note = notes[index];
         return NoteCard(
           note: note,
-          onTap: () {
-            if (onNoteSelect != null) {
-              onNoteSelect!(note);
-            }
+          isTrash: isTrashRoute,
+          onTap: isTrashRoute
+              ? null
+              : () {
+                  if (onNoteSelect != null) {
+                    onNoteSelect!(note);
+                  }
+                },
+          onPinToggle: isTrashRoute
+              ? null
+              : () {
+                  NotesController.instance.togglePin(note.id);
+                },
+          onDelete: isTrashRoute
+              ? null
+              : () {
+                  NotesController.instance.deleteNote(note.id);
+                },
+          onRestore: () {
+            NotesController.instance.restoreFromTrash(note.id);
           },
-          onPinToggle: () {
-            NotesController.instance.togglePin(note.id);
+          onPermanentDelete: () {
+            NotesController.instance.permanentlyDeleteFromTrash(note.id);
           },
         );
       },

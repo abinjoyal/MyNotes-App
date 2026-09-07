@@ -77,7 +77,7 @@ class AppDialog extends StatelessWidget {
             ),
             const SizedBox(height: 12),
           ],
-          if (content != null) content!,
+          ?content,
         ],
       ),
       actions: actions,

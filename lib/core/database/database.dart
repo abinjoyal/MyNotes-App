@@ -96,6 +96,28 @@ class AppDatabase {
     }
   }
 
+  Future<void> restoreFromTrash(String id) async {
+    await init();
+    final index = _trashedNotesDb.indexWhere((n) => n.id == id);
+    if (index != -1) {
+      final restored = _trashedNotesDb.removeAt(index);
+      _notesDb.insert(0, restored);
+      await _flushToDisk();
+    }
+  }
+
+  Future<void> permanentlyDeleteFromTrash(String id) async {
+    await init();
+    _trashedNotesDb.removeWhere((n) => n.id == id);
+    await _flushToDisk();
+  }
+
+  Future<void> emptyTrash() async {
+    await init();
+    _trashedNotesDb.clear();
+    await _flushToDisk();
+  }
+
   Future<void> saveFolder(FolderItemModel folder) async {
     await init();
     final index = _foldersDb.indexWhere((f) => f.name == folder.name);

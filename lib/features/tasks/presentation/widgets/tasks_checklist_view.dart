@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../../notes/domain/entities/note.dart';
@@ -313,7 +312,7 @@ class _TasksChecklistViewState extends State<TasksChecklistView> {
                               ),
                             ),
                             child: Text(
-                              '${m} min',
+                              '$m min',
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,

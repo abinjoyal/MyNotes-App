@@ -42,7 +42,9 @@ class _SidebarLayoutState extends State<SidebarLayout> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sidebarBg = isDark ? const Color(0xFF18181C) : const Color(0xFFF9FAFC);
+    final sidebarBg = isDark
+        ? const Color(0xFF18181C)
+        : const Color(0xFFF9FAFC);
     final cardBg = isDark ? AppColors.darkSurface : Colors.white;
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
     final borderColor = isDark ? AppColors.darkBorder : const Color(0xFFEAEAEE);
@@ -162,7 +164,11 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                       value: 'blank',
                       child: Row(
                         children: [
-                          Icon(Icons.note_add_outlined, size: 18, color: AppColors.primaryPurple),
+                          Icon(
+                            Icons.note_add_outlined,
+                            size: 18,
+                            color: AppColors.primaryPurple,
+                          ),
                           SizedBox(width: 8),
                           Text('Blank Note'),
                         ],
@@ -172,7 +178,11 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                       value: 'checklist',
                       child: Row(
                         children: [
-                          Icon(Icons.check_box_outlined, size: 18, color: Color(0xFF00C853)),
+                          Icon(
+                            Icons.check_box_outlined,
+                            size: 18,
+                            color: Color(0xFF00C853),
+                          ),
                           SizedBox(width: 8),
                           Text('Task Checklist'),
                         ],
@@ -182,7 +192,11 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                       value: 'journal',
                       child: Row(
                         children: [
-                          Icon(Icons.today_outlined, size: 18, color: Color(0xFFFFB020)),
+                          Icon(
+                            Icons.today_outlined,
+                            size: 18,
+                            color: Color(0xFFFFB020),
+                          ),
                           SizedBox(width: 8),
                           Text('Daily Journal'),
                         ],
@@ -192,7 +206,11 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                       value: 'meeting',
                       child: Row(
                         children: [
-                          Icon(Icons.groups_outlined, size: 18, color: Color(0xFF4C6FFF)),
+                          Icon(
+                            Icons.groups_outlined,
+                            size: 18,
+                            color: Color(0xFF4C6FFF),
+                          ),
                           SizedBox(width: 8),
                           Text('Meeting Notes'),
                         ],
@@ -206,26 +224,26 @@ class _SidebarLayoutState extends State<SidebarLayout> {
           const SizedBox(height: 12),
 
           // 3.5 Quick Search Input Bar
-          Container(
-            height: 36,
-            decoration: BoxDecoration(
-              color: cardBg,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: borderColor),
-            ),
-            child: TextField(
-              style: TextStyle(fontSize: 13, color: textColor),
-              decoration: const InputDecoration(
-                hintText: 'Search notes... (Ctrl+K)',
-                hintStyle: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
-                prefixIcon: Icon(Icons.search_rounded, size: 16, color: Color(0xFF9CA3AF)),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(vertical: 8),
-                isDense: true,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
+          // Container(
+          //   height: 36,
+          //   decoration: BoxDecoration(
+          //     color: cardBg,
+          //     borderRadius: BorderRadius.circular(8),
+          //     border: Border.all(color: borderColor),
+          //   ),
+          //   child: TextField(
+          //     style: TextStyle(fontSize: 13, color: textColor),
+          //     decoration: const InputDecoration(
+          //       hintText: 'Search notes... (Ctrl+K)',
+          //       hintStyle: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
+          //       prefixIcon: Icon(Icons.search_rounded, size: 16, color: Color(0xFF9CA3AF)),
+          //       border: InputBorder.none,
+          //       contentPadding: EdgeInsets.symmetric(vertical: 8),
+          //       isDense: true,
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(height: 16),
 
           // Scrollable Sidebar Navigation List
           Expanded(
@@ -269,7 +287,10 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       child: Text(
                         'No folders created yet',
-                        style: TextStyle(fontSize: 12, color: Color(0xFF8C98A9)),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF8C98A9),
+                        ),
                       ),
                     )
                   else
@@ -299,11 +320,16 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       child: Text(
                         'No recent notes',
-                        style: TextStyle(fontSize: 12, color: Color(0xFF8C98A9)),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF8C98A9),
+                        ),
                       ),
                     )
                   else
-                    ..._controller.regularNotes.take(5).map(
+                    ..._controller.regularNotes
+                        .take(5)
+                        .map(
                           (note) => _RecentNoteItem(
                             color: note.indicatorColor,
                             title: note.title,
@@ -340,7 +366,10 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                 onTap: () => _select('settings'),
                 borderRadius: BorderRadius.circular(12),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   child: Row(
                     children: [
                       Icon(Icons.settings_outlined, color: textColor, size: 20),
@@ -356,9 +385,14 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF2A2A30) : const Color(0xFFF1F3F6),
+                          color: isDark
+                              ? const Color(0xFF2A2A30)
+                              : const Color(0xFFF1F3F6),
                           borderRadius: BorderRadius.circular(4),
                           border: Border.all(color: borderColor),
                         ),
@@ -372,7 +406,11 @@ class _SidebarLayoutState extends State<SidebarLayout> {
                         ),
                       ),
                       const SizedBox(width: 6),
-                      const Icon(Icons.chevron_right, color: Color(0xFF8C98A9), size: 18),
+                      const Icon(
+                        Icons.chevron_right,
+                        color: Color(0xFF8C98A9),
+                        size: 18,
+                      ),
                     ],
                   ),
                 ),
@@ -534,8 +572,12 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final unselectedColor = isDark ? const Color(0xFFE0E0E0) : AppColors.darkText;
-    final selectedBg = isDark ? AppColors.primaryPurple.withOpacity(0.25) : AppColors.lightLavender;
+    final unselectedColor = isDark
+        ? const Color(0xFFE0E0E0)
+        : AppColors.darkText;
+    final selectedBg = isDark
+        ? AppColors.primaryPurple.withOpacity(0.25)
+        : AppColors.lightLavender;
     final itemColor = isSelected ? AppColors.primaryPurple : unselectedColor;
 
     return Container(
@@ -546,14 +588,13 @@ class _NavItem extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: ListTile(
           dense: true,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 0,
+          ),
           horizontalTitleGap: 8,
           onTap: onTap,
-          leading: Icon(
-            icon,
-            color: itemColor,
-            size: 18,
-          ),
+          leading: Icon(icon, color: itemColor, size: 18),
           title: Text(
             title,
             style: TextStyle(
@@ -698,10 +739,7 @@ class _RecentNoteItem extends StatelessWidget {
           ),
           Text(
             time,
-            style: const TextStyle(
-              fontSize: 11,
-              color: Color(0xFF8C98A9),
-            ),
+            style: const TextStyle(fontSize: 11, color: Color(0xFF8C98A9)),
           ),
         ],
       ),

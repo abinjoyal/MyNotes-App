@@ -35,7 +35,7 @@ class NoteList extends StatelessWidget {
       bgColor = const Color(0xFFEEECFF);
       title = 'No Pinned Notes Yet';
       subtitle = 'Pin your important notes to keep them at your fingertips.';
-      buttonText = 'View All Notes';
+      buttonText = null;
     } else if (activeRoute == 'tasks') {
       iconData = Icons.check_box_rounded;
       iconColor = const Color(0xFF00C853);

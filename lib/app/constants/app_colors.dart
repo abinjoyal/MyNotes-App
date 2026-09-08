@@ -5,6 +5,9 @@ abstract class AppColors {
   /// Primary Purple - #635BFF
   static const Color primaryPurple = Color(0xFF635BFF);
 
+  /// Vibrant Pink - #FF5B94
+  static const Color primaryPink = Color(0xFFFF5B94);
+
   /// Light Lavender - #EEECFF
   static const Color lightLavender = Color(0xFFEEECFF);
 

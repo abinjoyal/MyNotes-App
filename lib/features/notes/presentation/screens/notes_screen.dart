@@ -120,9 +120,49 @@ class _NotesScreenState extends State<NotesScreen> {
       );
     }
 
-    return Scaffold(
-      backgroundColor: scaffoldBg,
-      body: SafeArea(
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark 
+              ? [const Color(0xFF1A1A24), const Color(0xFF121212)]
+              : [const Color(0xFFF8F9FF), const Color(0xFFF1F3F6)],
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        floatingActionButton: widget.activeRoute != 'trash' ? Container(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppColors.primaryPurple, AppColors.primaryPink],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primaryPink.withOpacity(0.4),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: FloatingActionButton(
+            onPressed: () {
+              if (widget.onNoteSelect != null) {
+                Note templateNote = _controller.createTemplateNote(
+                  widget.activeRoute == 'tasks' ? 'checklist' : 'blank',
+                );
+                widget.onNoteSelect!(templateNote);
+              }
+            },
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: const Icon(Icons.add_rounded, color: Colors.white, size: 28),
+          ),
+        ) : null,
+        body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
           child: Column(
@@ -202,9 +242,9 @@ class _NotesScreenState extends State<NotesScreen> {
                     child: Container(
                       height: 44,
                       decoration: BoxDecoration(
-                        color: inputBg,
+                        color: inputBg.withOpacity(isDark ? 0.6 : 0.4),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: borderColor),
+                        border: Border.all(color: borderColor.withOpacity(0.5)),
                       ),
                       child: Row(
                         children: [
@@ -260,9 +300,9 @@ class _NotesScreenState extends State<NotesScreen> {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: inputBg,
+                      color: inputBg.withOpacity(isDark ? 0.6 : 0.4),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: borderColor),
+                      border: Border.all(color: borderColor.withOpacity(0.5)),
                     ),
                     child: IconButton(
                       icon: Icon(
@@ -294,15 +334,29 @@ class _NotesScreenState extends State<NotesScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           margin: const EdgeInsets.only(right: 8),
                           decoration: BoxDecoration(
+                            gradient: _selectedTag == null
+                                ? const LinearGradient(
+                                    colors: [AppColors.primaryPurple, AppColors.primaryPink],
+                                  )
+                                : null,
                             color: _selectedTag == null
-                                ? AppColors.primaryPurple
-                                : inputBg,
+                                ? null
+                                : inputBg.withOpacity(isDark ? 0.6 : 0.4),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: _selectedTag == null
-                                  ? AppColors.primaryPurple
-                                  : borderColor,
+                                  ? Colors.transparent
+                                  : borderColor.withOpacity(0.3),
                             ),
+                            boxShadow: _selectedTag == null
+                                ? [
+                                    BoxShadow(
+                                      color: AppColors.primaryPink.withOpacity(0.3),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    )
+                                  ]
+                                : null,
                           ),
                           child: Text(
                             'All',
@@ -326,15 +380,29 @@ class _NotesScreenState extends State<NotesScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             margin: const EdgeInsets.only(right: 8),
                             decoration: BoxDecoration(
+                              gradient: isSelected
+                                  ? const LinearGradient(
+                                      colors: [AppColors.primaryPurple, AppColors.primaryPink],
+                                    )
+                                  : null,
                               color: isSelected
-                                  ? AppColors.primaryPurple
-                                  : inputBg,
+                                  ? null
+                                  : inputBg.withOpacity(isDark ? 0.6 : 0.4),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color: isSelected
-                                    ? AppColors.primaryPurple
-                                    : borderColor,
+                                    ? Colors.transparent
+                                    : borderColor.withOpacity(0.3),
                               ),
+                              boxShadow: isSelected
+                                  ? [
+                                      BoxShadow(
+                                        color: AppColors.primaryPink.withOpacity(0.3),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      )
+                                    ]
+                                  : null,
                             ),
                             child: Text(
                               tag,
@@ -493,6 +561,7 @@ class _NotesScreenState extends State<NotesScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

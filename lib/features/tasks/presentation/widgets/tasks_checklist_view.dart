@@ -1904,6 +1904,20 @@ class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
                                         ],
                                       ),
                                     ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete_outline_rounded, size: 16),
+                                      color: subtextColor.withOpacity(0.5),
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      onPressed: () {
+                                        ref.read(notesProvider).deleteNote(note.id);
+                                        if (_selectedNoteId == note.id) {
+                                          setState(() {
+                                            _selectedNoteId = null;
+                                          });
+                                        }
+                                      },
+                                    ),
                                   ],
                                 ),
                               ),
@@ -1982,6 +1996,20 @@ class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
                                     fontSize: 11,
                                     color: subtextColor,
                                   ),
+                                ),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                                  color: subtextColor.withOpacity(0.5),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () {
+                                    ref.read(notesProvider).deleteNote(note.id);
+                                    if (_selectedNoteId == note.id) {
+                                      setState(() {
+                                        _selectedNoteId = null;
+                                      });
+                                    }
+                                  },
                                 ),
                                 onTap: () {
                                   setState(() {

@@ -5,6 +5,7 @@ import '../controllers/notes_controller.dart';
 import '../widgets/note_list.dart';
 import '../widgets/notes_header_widget.dart';
 import '../widgets/notes_filter_bar_widget.dart';
+import '../widgets/notes_tag_list_widget.dart';
 import '../../../tasks/presentation/widgets/tasks_checklist_view.dart';
 import '../../../settings/presentation/controllers/settings_controller.dart';
 
@@ -194,109 +195,17 @@ class _NotesScreenState extends State<NotesScreen> {
                 onFilterTap: () {},
               ),
 
-              if (availableTags.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                // 1.5 Horizontal Tag Filter Pills
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedTag = null;
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          margin: const EdgeInsets.only(right: 8),
-                          decoration: BoxDecoration(
-                            gradient: _selectedTag == null
-                                ? const LinearGradient(
-                                    colors: [AppColors.primaryPurple, AppColors.primaryPink],
-                                  )
-                                : null,
-                            color: _selectedTag == null
-                                ? null
-                                : inputBg.withOpacity(isDark ? 0.6 : 0.4),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: _selectedTag == null
-                                  ? Colors.transparent
-                                  : borderColor.withOpacity(0.3),
-                            ),
-                            boxShadow: _selectedTag == null
-                                ? [
-                                    BoxShadow(
-                                      color: AppColors.primaryPink.withOpacity(0.3),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    )
-                                  ]
-                                : null,
-                          ),
-                          child: Text(
-                            'All',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: _selectedTag == null ? Colors.white : textColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                      ...availableTags.map((tag) {
-                        final isSelected = _selectedTag == tag;
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedTag = isSelected ? null : tag;
-                            });
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            margin: const EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                              gradient: isSelected
-                                  ? const LinearGradient(
-                                      colors: [AppColors.primaryPurple, AppColors.primaryPink],
-                                    )
-                                  : null,
-                              color: isSelected
-                                  ? null
-                                  : inputBg.withOpacity(isDark ? 0.6 : 0.4),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: isSelected
-                                    ? Colors.transparent
-                                    : borderColor.withOpacity(0.3),
-                              ),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: AppColors.primaryPink.withOpacity(0.3),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      )
-                                    ]
-                                  : null,
-                            ),
-                            child: Text(
-                              tag,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: isSelected ? Colors.white : textColor,
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
+              if (availableTags.isNotEmpty)
+                NotesTagListWidget(
+                  availableTags: availableTags,
+                  selectedTag: _selectedTag,
+                  onTagSelect: (tag) {
+                    setState(() {
+                      _selectedTag = tag;
+                    });
+                  },
+                  isDark: isDark,
                 ),
-              ],
 
               const SizedBox(height: 14),
 

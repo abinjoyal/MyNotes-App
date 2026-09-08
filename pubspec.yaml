@@ -38,6 +38,7 @@ dependencies:
   googleapis: ^13.2.0
   extension_google_sign_in_as_googleapis_auth: ^2.0.1
   http: ^1.2.0
+  flutter_riverpod: ^3.4.3
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../domain/entities/note.dart';
-import '../controllers/notes_controller.dart';
+import '../controllers/notes_provider.dart';
 import '../widgets/note_list.dart';
 import '../widgets/notes_header_widget.dart';
 import '../widgets/notes_filter_bar_widget.dart';
@@ -9,7 +10,7 @@ import '../widgets/notes_tag_list_widget.dart';
 import '../../../tasks/presentation/widgets/tasks_checklist_view.dart';
 import '../../../settings/presentation/controllers/settings_controller.dart';
 
-class NotesScreen extends StatefulWidget {
+class NotesScreen extends ConsumerStatefulWidget {
   final Function(Note)? onNoteSelect;
   final String activeRoute;
 
@@ -20,34 +21,27 @@ class NotesScreen extends StatefulWidget {
   });
 
   @override
-  State<NotesScreen> createState() => _NotesScreenState();
+  ConsumerState<NotesScreen> createState() => _NotesScreenState();
 }
 
-class _NotesScreenState extends State<NotesScreen> {
+class _NotesScreenState extends ConsumerState<NotesScreen> {
   late bool _isGridView;
   String _selectedSort = 'Last edited';
   String _searchQuery = '';
   String? _selectedTag;
-  final NotesController _controller = NotesController.instance;
   final SettingsController _settingsController = SettingsController.instance;
 
   @override
   void initState() {
     super.initState();
     _isGridView = _settingsController.isGridView;
-    _controller.addListener(_onNotesChanged);
     _settingsController.addListener(_onSettingsChanged);
   }
 
   @override
   void dispose() {
-    _controller.removeListener(_onNotesChanged);
     _settingsController.removeListener(_onSettingsChanged);
     super.dispose();
-  }
-
-  void _onNotesChanged() {
-    if (mounted) setState(() {});
   }
 
   void _onSettingsChanged() {
@@ -85,6 +79,7 @@ class _NotesScreenState extends State<NotesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final _controller = ref.watch(notesProvider);
     final headerInfo = _getHeaderInfo();
     final allNotes = widget.activeRoute == 'pinned'
         ? _controller.pinnedNotes
@@ -106,8 +101,7 @@ class _NotesScreenState extends State<NotesScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final scaffoldBg = isDark ? AppColors.darkScaffoldBackground : Colors.white;
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
-    final inputBg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF7F8FA);
-    final borderColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFEAEAEE);
+
 
     if (widget.activeRoute == 'tasks') {
       return Scaffold(

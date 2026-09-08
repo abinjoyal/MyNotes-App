@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../../notes/domain/entities/note.dart';
-import '../../../notes/presentation/controllers/notes_controller.dart';
+import '../../../notes/presentation/controllers/notes_provider.dart';
 
 class TaskItem {
   final int index;
@@ -20,17 +21,16 @@ class TaskItem {
   });
 }
 
-class TasksChecklistView extends StatefulWidget {
+class TasksChecklistView extends ConsumerStatefulWidget {
   final Function(Note)? onNoteSelect;
 
   const TasksChecklistView({super.key, this.onNoteSelect});
 
   @override
-  State<TasksChecklistView> createState() => _TasksChecklistViewState();
+  ConsumerState<TasksChecklistView> createState() => _TasksChecklistViewState();
 }
 
-class _TasksChecklistViewState extends State<TasksChecklistView> {
-  final NotesController _controller = NotesController.instance;
+class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
   final TextEditingController _newTaskController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
 
@@ -47,15 +47,8 @@ class _TasksChecklistViewState extends State<TasksChecklistView> {
   bool _showFocusTimerCard = false;
 
   @override
-  void initState() {
-    super.initState();
-    _controller.addListener(_onNotesChanged);
-  }
-
-  @override
   void dispose() {
     _focusTimer?.cancel();
-    _controller.removeListener(_onNotesChanged);
     _newTaskController.dispose();
     _searchController.dispose();
     super.dispose();
@@ -650,11 +643,9 @@ class _TasksChecklistViewState extends State<TasksChecklistView> {
     );
   }
 
-  void _onNotesChanged() {
-    if (mounted) setState(() {});
-  }
 
   List<Note> get _allChecklistNotes {
+    final _controller = ref.watch(notesProvider);
     final all = _controller.notes;
     final checklists = all.where((n) {
       final text = n.content;
@@ -745,7 +736,7 @@ class _TasksChecklistViewState extends State<TasksChecklistView> {
       }
     }
 
-    _controller.saveNote(
+    ref.read(notesProvider).saveNote(
       id: note.id,
       title: note.title,
       content: lines.join('\n'),
@@ -763,7 +754,7 @@ class _TasksChecklistViewState extends State<TasksChecklistView> {
         ? '- [ ] $text'
         : '${note.content}\n- [ ] $text';
 
-    _controller.saveNote(
+    ref.read(notesProvider).saveNote(
       id: note.id,
       title: note.title,
       content: newContent,
@@ -792,7 +783,7 @@ class _TasksChecklistViewState extends State<TasksChecklistView> {
       }
     }
 
-    _controller.saveNote(
+    ref.read(notesProvider).saveNote(
       id: note.id,
       title: note.title,
       content: lines.join('\n'),
@@ -1023,7 +1014,7 @@ class _TasksChecklistViewState extends State<TasksChecklistView> {
                                 tags: ['#task'],
                                 updatedAt: 'Just now',
                               );
-                              _controller.saveNote(
+                              ref.read(notesProvider).saveNote(
                                 id: newNote.id,
                                 title: newNote.title,
                                 content: newNote.content,

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_icons.dart';
 import '../constants/app_sizes.dart';
-import '../../features/notes/presentation/controllers/notes_controller.dart';
+import '../../features/notes/presentation/controllers/notes_provider.dart';
 
-class SidebarLayout extends StatefulWidget {
+class SidebarLayout extends ConsumerStatefulWidget {
   final String activeRoute;
   final Function(String route)? onNavigate;
 
@@ -15,32 +16,21 @@ class SidebarLayout extends StatefulWidget {
   });
 
   @override
-  State<SidebarLayout> createState() => _SidebarLayoutState();
+  ConsumerState<SidebarLayout> createState() => _SidebarLayoutState();
 }
 
-class _SidebarLayoutState extends State<SidebarLayout> {
+class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
   late String _selectedRoute;
-  final NotesController _controller = NotesController.instance;
 
   @override
   void initState() {
     super.initState();
     _selectedRoute = widget.activeRoute;
-    _controller.addListener(_onNotesChanged);
-  }
-
-  @override
-  void dispose() {
-    _controller.removeListener(_onNotesChanged);
-    super.dispose();
-  }
-
-  void _onNotesChanged() {
-    if (mounted) setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    final _controller = ref.watch(notesProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final sidebarBg = isDark
         ? const Color(0xFF18181C)
@@ -519,7 +509,7 @@ class _SidebarLayoutState extends State<SidebarLayout> {
             ElevatedButton(
               onPressed: () {
                 if (controller.text.trim().isNotEmpty) {
-                  _controller.addFolder(controller.text.trim(), selectedColor);
+                  ref.read(notesProvider).addFolder(controller.text.trim(), selectedColor);
                   Navigator.of(ctx).pop();
                 }
               },

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../../notes/domain/entities/note.dart';
 import '../../../notes/presentation/controllers/notes_controller.dart';
+import '../../../notes/presentation/controllers/notes_provider.dart';
 import '../../../notes/presentation/widgets/note_list.dart';
 
-class FoldersScreen extends StatefulWidget {
+class FoldersScreen extends ConsumerStatefulWidget {
   final String? selectedFolderName;
   final Function(Note)? onNoteSelect;
 
@@ -15,18 +17,16 @@ class FoldersScreen extends StatefulWidget {
   });
 
   @override
-  State<FoldersScreen> createState() => _FoldersScreenState();
+  ConsumerState<FoldersScreen> createState() => _FoldersScreenState();
 }
 
-class _FoldersScreenState extends State<FoldersScreen> {
+class _FoldersScreenState extends ConsumerState<FoldersScreen> {
   late String? _currentFolder;
-  final NotesController _controller = NotesController.instance;
 
   @override
   void initState() {
     super.initState();
     _currentFolder = widget.selectedFolderName;
-    _controller.addListener(_onNotesChanged);
   }
 
   @override
@@ -37,16 +37,6 @@ class _FoldersScreenState extends State<FoldersScreen> {
         _currentFolder = widget.selectedFolderName;
       });
     }
-  }
-
-  @override
-  void dispose() {
-    _controller.removeListener(_onNotesChanged);
-    super.dispose();
-  }
-
-  void _onNotesChanged() {
-    if (mounted) setState(() {});
   }
 
   void _createNoteInFolder(String folderName) {
@@ -73,6 +63,7 @@ class _FoldersScreenState extends State<FoldersScreen> {
   }
 
   Widget _buildFolderGridOverview(BuildContext context) {
+    final _controller = ref.watch(notesProvider);
     final folders = _controller.folders;
 
     return Scaffold(
@@ -234,6 +225,7 @@ class _FoldersScreenState extends State<FoldersScreen> {
   }
 
   Widget _buildFolderDetailView(BuildContext context, String folderName) {
+    final _controller = ref.watch(notesProvider);
     final folderNotes = _controller.getNotesByFolder(folderName);
     FolderItemModel? folderModel;
     try {

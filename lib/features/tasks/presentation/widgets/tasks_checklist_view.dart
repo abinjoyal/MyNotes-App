@@ -1937,26 +1937,29 @@ class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
                                 .where((t) => t.isCompleted)
                                 .length;
 
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 8),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? (isDark
-                                          ? AppColors.primaryPurple.withOpacity(
-                                              0.2,
-                                            )
-                                          : AppColors.lightLavender.withOpacity(
-                                              0.7,
-                                            ))
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                clipBehavior: Clip.antiAlias,
+                                decoration: BoxDecoration(
                                   color: isSelected
-                                      ? AppColors.primaryPurple
+                                      ? (isDark
+                                            ? AppColors.primaryPurple.withOpacity(
+                                                0.2,
+                                              )
+                                            : AppColors.lightLavender.withOpacity(
+                                                0.7,
+                                              ))
                                       : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? AppColors.primaryPurple
+                                        : Colors.transparent,
+                                  ),
                                 ),
-                              ),
-                              child: ListTile(
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: ListTile(
                                 dense: true,
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 10,
@@ -2018,7 +2021,8 @@ class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
                                   });
                                 },
                               ),
-                            );
+                            ),
+                          );
                           },
                         )),
           ),

@@ -252,7 +252,7 @@ class MarkdownEditingController extends TextEditingController {
           height: 1.4,
           color: defaultStyle.color,
         );
-        spans.add(hiddenPrefixStyle as InlineSpan);
+        spans.add(TextSpan(text: '# ', style: hiddenPrefixStyle));
         spans.addAll(_parseInline(line.substring(2), lineStyle));
       } else if (line.startsWith('## ')) {
         // H2: 20px, bold, height: 1.3
@@ -262,7 +262,7 @@ class MarkdownEditingController extends TextEditingController {
           height: 1.3,
           color: defaultStyle.color,
         );
-        spans.add(hiddenPrefixStyle as InlineSpan);
+        spans.add(TextSpan(text: '## ', style: hiddenPrefixStyle));
         spans.addAll(_parseInline(line.substring(3), lineStyle));
       } else if (line.startsWith('### ')) {
         // H3: 17px, bold, height: 1.3
@@ -272,7 +272,7 @@ class MarkdownEditingController extends TextEditingController {
           height: 1.3,
           color: defaultStyle.color,
         );
-        spans.add(hiddenPrefixStyle as InlineSpan);
+        spans.add(TextSpan(text: '### ', style: hiddenPrefixStyle));
         spans.addAll(_parseInline(line.substring(4), lineStyle));
       } else if (line.startsWith('- [x] ') || line.startsWith('- [X] ')) {
         // Completed Checklist Item

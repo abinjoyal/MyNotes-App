@@ -3,6 +3,7 @@ import '../../../../app/constants/app_colors.dart';
 import '../../domain/entities/note.dart';
 import '../controllers/notes_controller.dart';
 import '../widgets/note_list.dart';
+import '../widgets/notes_header_widget.dart';
 import '../../../tasks/presentation/widgets/tasks_checklist_view.dart';
 import '../../../settings/presentation/controllers/settings_controller.dart';
 
@@ -169,69 +170,15 @@ class _NotesScreenState extends State<NotesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 0. Section Title & Subtitle Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            headerInfo['title']!,
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: textColor,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: AppColors.lightLavender,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              '${allNotes.length}',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primaryPurple,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        headerInfo['subtitle']!,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Color(0xFF6C757D),
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (widget.activeRoute == 'trash' && allNotes.isNotEmpty)
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        _controller.emptyTrash();
-                      },
-                      icon: const Icon(Icons.delete_forever_rounded, size: 16),
-                      label: const Text('Empty Trash'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF4B4B),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        elevation: 0,
-                      ),
-                    ),
-                ],
+              NotesHeaderWidget(
+                title: headerInfo['title']!,
+                subtitle: headerInfo['subtitle']!,
+                noteCount: allNotes.length,
+                textColor: textColor,
+                activeRoute: widget.activeRoute,
+                onEmptyTrash: () {
+                  _controller.emptyTrash();
+                },
               ),
               const SizedBox(height: 16),
 

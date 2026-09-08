@@ -20,7 +20,6 @@ class _MarkerMatch {
     required this.closeTag,
     required this.innerText,
     required this.type,
-
   });
 }
 
@@ -127,10 +126,7 @@ class MarkdownEditingController extends TextEditingController {
     return matches.first;
   }
 
-  static List<InlineSpan> _parseInline(
-    String text,
-    TextStyle currentStyle,
-  ) {
+  static List<InlineSpan> _parseInline(String text, TextStyle currentStyle) {
     if (text.isEmpty) return [];
 
     final firstMatch = _findFirstMatch(text);
@@ -144,10 +140,7 @@ class MarkdownEditingController extends TextEditingController {
     // Text before match
     if (firstMatch.start > 0) {
       spans.addAll(
-        _parseInline(
-          text.substring(0, firstMatch.start),
-          currentStyle,
-        ),
+        _parseInline(text.substring(0, firstMatch.start), currentStyle),
       );
     }
 
@@ -190,12 +183,7 @@ class MarkdownEditingController extends TextEditingController {
 
     // Recursively parse inner content
     if (firstMatch.innerText.isNotEmpty) {
-      spans.addAll(
-        _parseInline(
-          firstMatch.innerText,
-          innerStyle,
-        ),
-      );
+      spans.addAll(_parseInline(firstMatch.innerText, innerStyle));
     }
 
     // Closing tag (always hidden from UI display)
@@ -203,12 +191,7 @@ class MarkdownEditingController extends TextEditingController {
 
     // Text after match
     if (firstMatch.end < text.length) {
-      spans.addAll(
-        _parseInline(
-          text.substring(firstMatch.end),
-          currentStyle,
-        ),
-      );
+      spans.addAll(_parseInline(text.substring(firstMatch.end), currentStyle));
     }
 
     return spans;
@@ -226,9 +209,16 @@ class MarkdownEditingController extends TextEditingController {
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final hiddenPrefixStyle = const TextStyle(fontSize: 0.001, color: Colors.transparent);
+    final hiddenPrefixStyle = const TextStyle(
+      fontSize: 0.001,
+      color: Colors.transparent,
+    );
     final defaultStyle =
-        style ?? TextStyle(color: isDark ? AppColors.darkTextPrimary : AppColors.darkText, fontSize: SettingsController.instance.fontSizeValue);
+        style ??
+        TextStyle(
+          color: isDark ? AppColors.darkTextPrimary : AppColors.darkText,
+          fontSize: SettingsController.instance.fontSizeValue,
+        );
     final List<InlineSpan> spans = [];
 
     final lines = text.split('\n');
@@ -439,7 +429,8 @@ class NoteEditor extends StatefulWidget {
     Color color,
     List<String> tags,
     bool isPinned,
-  )? onSave;
+  )?
+  onSave;
   final VoidCallback? onClose;
 
   const NoteEditor({super.key, this.initialNote, this.onSave, this.onClose});
@@ -1323,11 +1314,17 @@ class _NoteEditorState extends State<NoteEditor> {
         backgroundColor: isDark ? const Color(0xFF1E1E2A) : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: isDark ? const Color(0xFF323246) : const Color(0xFFE5E7EB)),
+          side: BorderSide(
+            color: isDark ? const Color(0xFF323246) : const Color(0xFFE5E7EB),
+          ),
         ),
         title: Row(
           children: [
-            const Icon(Icons.label_outline_rounded, color: AppColors.primaryPurple, size: 22),
+            const Icon(
+              Icons.label_outline_rounded,
+              color: AppColors.primaryPurple,
+              size: 22,
+            ),
             const SizedBox(width: 8),
             Text(
               'Add New Tag',
@@ -1345,9 +1342,14 @@ class _NoteEditorState extends State<NoteEditor> {
           style: TextStyle(color: isDark ? Colors.white : Colors.black87),
           decoration: InputDecoration(
             hintText: 'e.g. #work, #idea, #important',
-            hintStyle: TextStyle(color: isDark ? Colors.grey : Colors.grey[600]),
+            hintStyle: TextStyle(
+              color: isDark ? Colors.grey : Colors.grey[600],
+            ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 10,
+            ),
           ),
         ),
         actions: [
@@ -1383,9 +1385,13 @@ class _NoteEditorState extends State<NoteEditor> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dialogBg = isDark ? const Color(0xFF1E1E2A) : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black87;
-    final subtextColor = isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280);
+    final subtextColor = isDark
+        ? const Color(0xFF9CA3AF)
+        : const Color(0xFF6B7280);
     final cardBg = isDark ? const Color(0xFF262636) : const Color(0xFFF3F4F6);
-    final borderColor = isDark ? const Color(0xFF323246) : const Color(0xFFE5E7EB);
+    final borderColor = isDark
+        ? const Color(0xFF323246)
+        : const Color(0xFFE5E7EB);
 
     final noteId = widget.initialNote?.id ?? '';
     final snapshots = VersionHistoryService.instance.getHistoryForNote(noteId);
@@ -1439,7 +1445,10 @@ class _NoteEditorState extends State<NoteEditor> {
                             ),
                             Text(
                               '${snapshots.length} saved version snapshots',
-                              style: TextStyle(fontSize: 12, color: subtextColor),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: subtextColor,
+                              ),
                             ),
                           ],
                         ),
@@ -1463,24 +1472,36 @@ class _NoteEditorState extends State<NoteEditor> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.history_toggle_off_rounded, size: 48, color: subtextColor.withOpacity(0.5)),
+                              Icon(
+                                Icons.history_toggle_off_rounded,
+                                size: 48,
+                                color: subtextColor.withOpacity(0.5),
+                              ),
                               const SizedBox(height: 12),
                               Text(
                                 'No previous versions saved yet.',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: textColor),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                  color: textColor,
+                                ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'Version snapshots are automatically saved whenever you edit & save notes.',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 12, color: subtextColor),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: subtextColor,
+                                ),
                               ),
                             ],
                           ),
                         )
                       : ListView.separated(
                           itemCount: snapshots.length,
-                          separatorBuilder: (_, _) => const SizedBox(height: 12),
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 12),
                           itemBuilder: (context, idx) {
                             final snapshot = snapshots[idx];
                             final isCurrent = idx == 0;
@@ -1491,21 +1512,26 @@ class _NoteEditorState extends State<NoteEditor> {
                                 color: cardBg,
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
-                                  color: isCurrent ? AppColors.primaryPurple.withOpacity(0.5) : borderColor,
+                                  color: isCurrent
+                                      ? AppColors.primaryPurple.withOpacity(0.5)
+                                      : borderColor,
                                 ),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Row(
                                         children: [
                                           Icon(
                                             Icons.access_time_rounded,
                                             size: 14,
-                                            color: isCurrent ? AppColors.primaryPurple : subtextColor,
+                                            color: isCurrent
+                                                ? AppColors.primaryPurple
+                                                : subtextColor,
                                           ),
                                           const SizedBox(width: 6),
                                           Text(
@@ -1513,23 +1539,32 @@ class _NoteEditorState extends State<NoteEditor> {
                                             style: TextStyle(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w600,
-                                              color: isCurrent ? AppColors.primaryPurple : subtextColor,
+                                              color: isCurrent
+                                                  ? AppColors.primaryPurple
+                                                  : subtextColor,
                                             ),
                                           ),
                                           if (isCurrent) ...[
                                             const SizedBox(width: 8),
                                             Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 6,
+                                                    vertical: 2,
+                                                  ),
                                               decoration: BoxDecoration(
-                                                color: AppColors.primaryPurple.withOpacity(0.2),
-                                                borderRadius: BorderRadius.circular(6),
+                                                color: AppColors.primaryPurple
+                                                    .withOpacity(0.2),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
                                               ),
                                               child: const Text(
                                                 'Current',
                                                 style: TextStyle(
                                                   fontSize: 10,
                                                   fontWeight: FontWeight.bold,
-                                                  color: AppColors.primaryPurple,
+                                                  color:
+                                                      AppColors.primaryPurple,
                                                 ),
                                               ),
                                             ),
@@ -1538,13 +1573,18 @@ class _NoteEditorState extends State<NoteEditor> {
                                       ),
                                       Text(
                                         '${snapshot.wordCount} words',
-                                        style: TextStyle(fontSize: 11, color: subtextColor),
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: subtextColor,
+                                        ),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    snapshot.title.isEmpty ? 'Untitled Note' : snapshot.title,
+                                    snapshot.title.isEmpty
+                                        ? 'Untitled Note'
+                                        : snapshot.title,
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
@@ -1571,28 +1611,54 @@ class _NoteEditorState extends State<NoteEditor> {
                                         onPressed: () {
                                           Navigator.pop(ctx);
                                           setState(() {
-                                            _titleController.text = snapshot.title;
-                                            _contentController.text = snapshot.content;
-                                            _selectedColor = snapshot.indicatorColor;
+                                            _titleController.text =
+                                                snapshot.title;
+                                            _contentController.text =
+                                                snapshot.content;
+                                            _selectedColor =
+                                                snapshot.indicatorColor;
                                             _tags = List.from(snapshot.tags);
                                           });
-                                          ScaffoldMessenger.of(context).showSnackBar(
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
                                             SnackBar(
-                                              content: Text('Restored note version from ${snapshot.timestamp}'),
-                                              backgroundColor: AppColors.primaryPurple,
-                                              duration: const Duration(seconds: 2),
+                                              content: Text(
+                                                'Restored note version from ${snapshot.timestamp}',
+                                              ),
+                                              backgroundColor:
+                                                  AppColors.primaryPurple,
+                                              duration: const Duration(
+                                                seconds: 2,
+                                              ),
                                             ),
                                           );
                                         },
-                                        icon: const Icon(Icons.restore_rounded, size: 14, color: Colors.white),
+                                        icon: const Icon(
+                                          Icons.restore_rounded,
+                                          size: 14,
+                                          color: Colors.white,
+                                        ),
                                         label: const Text(
                                           'Restore Version',
-                                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.primaryPurple,
-                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                          backgroundColor:
+                                              AppColors.primaryPurple,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 8,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
                                           elevation: 0,
                                         ),
                                       ),
@@ -1618,7 +1684,9 @@ class _NoteEditorState extends State<NoteEditor> {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1E2A) : const Color(0xFFF3F4F6),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: isDark ? const Color(0xFF2C2C3A) : const Color(0xFFE5E7EB)),
+        border: Border.all(
+          color: isDark ? const Color(0xFF2C2C3A) : const Color(0xFFE5E7EB),
+        ),
       ),
       child: Text(
         label,
@@ -1636,7 +1704,9 @@ class _NoteEditorState extends State<NoteEditor> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
     final subtextColor = isDark ? AppColors.lightText : const Color(0xFF6C757D);
-    final hintColor = isDark ? AppColors.lightText.withOpacity(0.6) : const Color(0xFF98A2B3);
+    final hintColor = isDark
+        ? AppColors.lightText.withOpacity(0.6)
+        : const Color(0xFF98A2B3);
 
     return Container(
       color: isDark ? AppColors.darkScaffoldBackground : Colors.white,
@@ -1652,11 +1722,20 @@ class _NoteEditorState extends State<NoteEditor> {
                 onTap: widget.onClose,
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E1E2A) : const Color(0xFFF3F4F6),
+                    color: isDark
+                        ? const Color(0xFF1E1E2A)
+                        : const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: isDark ? const Color(0xFF323246) : const Color(0xFFE5E7EB)),
+                    border: Border.all(
+                      color: isDark
+                          ? const Color(0xFF323246)
+                          : const Color(0xFFE5E7EB),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -1683,7 +1762,11 @@ class _NoteEditorState extends State<NoteEditor> {
                   // History Button
                   OutlinedButton.icon(
                     onPressed: _showVersionHistoryDialog,
-                    icon: const Icon(Icons.history_rounded, size: 16, color: AppColors.primaryPurple),
+                    icon: const Icon(
+                      Icons.history_rounded,
+                      size: 16,
+                      color: AppColors.primaryPurple,
+                    ),
                     label: const Text(
                       'History',
                       style: TextStyle(
@@ -1693,20 +1776,38 @@ class _NoteEditorState extends State<NoteEditor> {
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: isDark ? const Color(0xFF323246) : const Color(0xFFE5E7EB)),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      side: BorderSide(
+                        color: isDark
+                            ? const Color(0xFF323246)
+                            : const Color(0xFFE5E7EB),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
 
                   // Auto-Save Status Indicator Badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF14532D).withOpacity(0.3) : const Color(0xFFF0FDF4),
+                      color: isDark
+                          ? const Color(0xFF14532D).withOpacity(0.3)
+                          : const Color(0xFFF0FDF4),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: isDark ? const Color(0xFF16A34A).withOpacity(0.4) : const Color(0xFFDCFCE7)),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF16A34A).withOpacity(0.4)
+                            : const Color(0xFFDCFCE7),
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -1743,7 +1844,11 @@ class _NoteEditorState extends State<NoteEditor> {
                         );
                       }
                     },
-                    icon: const Icon(Icons.check_rounded, size: 16, color: Colors.white),
+                    icon: const Icon(
+                      Icons.check_rounded,
+                      size: 16,
+                      color: Colors.white,
+                    ),
                     label: const Text(
                       'Save',
                       style: TextStyle(
@@ -1754,8 +1859,13 @@ class _NoteEditorState extends State<NoteEditor> {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryPurple,
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       elevation: 0,
                     ),
                   ),
@@ -1770,7 +1880,10 @@ class _NoteEditorState extends State<NoteEditor> {
             children: [
               Text(
                 'Color: ',
-                style: TextStyle(fontSize: 13, color: isDark ? AppColors.lightText : AppColors.secondaryText),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark ? AppColors.lightText : AppColors.secondaryText,
+                ),
               ),
               Row(
                 children: _categoryColors.map((color) {
@@ -1789,7 +1902,12 @@ class _NoteEditorState extends State<NoteEditor> {
                         color: color,
                         shape: BoxShape.circle,
                         border: isSelected
-                            ? Border.all(color: isDark ? Colors.white : AppColors.darkText, width: 2.5)
+                            ? Border.all(
+                                color: isDark
+                                    ? Colors.white
+                                    : AppColors.darkText,
+                                width: 2.5,
+                              )
                             : null,
                         boxShadow: isSelected
                             ? [
@@ -1808,7 +1926,10 @@ class _NoteEditorState extends State<NoteEditor> {
               const SizedBox(width: 20),
               Text(
                 'Tags: ',
-                style: TextStyle(fontSize: 13, color: isDark ? AppColors.lightText : AppColors.secondaryText),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark ? AppColors.lightText : AppColors.secondaryText,
+                ),
               ),
               Wrap(
                 spacing: 6,
@@ -1822,9 +1943,13 @@ class _NoteEditorState extends State<NoteEditor> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: isDark ? AppColors.primaryPurple.withOpacity(0.25) : AppColors.lightLavender,
+                        color: isDark
+                            ? AppColors.primaryPurple.withOpacity(0.25)
+                            : AppColors.lightLavender,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.primaryPurple.withOpacity(0.3)),
+                        border: Border.all(
+                          color: AppColors.primaryPurple.withOpacity(0.3),
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -1844,7 +1969,11 @@ class _NoteEditorState extends State<NoteEditor> {
                                 _tags.remove(tag);
                               });
                             },
-                            child: const Icon(Icons.close_rounded, size: 12, color: AppColors.primaryPurple),
+                            child: const Icon(
+                              Icons.close_rounded,
+                              size: 12,
+                              color: AppColors.primaryPurple,
+                            ),
                           ),
                         ],
                       ),
@@ -1854,15 +1983,24 @@ class _NoteEditorState extends State<NoteEditor> {
                     onTap: _showAddTagDialog,
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF262636) : const Color(0xFFE5E7EB),
+                        color: isDark
+                            ? const Color(0xFF262636)
+                            : const Color(0xFFE5E7EB),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.add_rounded, size: 14, color: isDark ? Colors.white70 : Colors.black87),
+                          Icon(
+                            Icons.add_rounded,
+                            size: 14,
+                            color: isDark ? Colors.white70 : Colors.black87,
+                          ),
                           const SizedBox(width: 2),
                           Text(
                             'Tag',
@@ -1943,14 +2081,20 @@ class _NoteEditorState extends State<NoteEditor> {
                   decoration: BoxDecoration(
                     color: _isPinned
                         ? AppColors.primaryPurple.withOpacity(0.18)
-                        : (isDark ? const Color(0xFF1E1E2A) : const Color(0xFFF3F4F6)),
+                        : (isDark
+                              ? const Color(0xFF1E1E2A)
+                              : const Color(0xFFF3F4F6)),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: _isPinned ? AppColors.primaryPurple.withOpacity(0.4) : Colors.transparent,
+                      color: _isPinned
+                          ? AppColors.primaryPurple.withOpacity(0.4)
+                          : Colors.transparent,
                     ),
                   ),
                   child: Icon(
-                    _isPinned ? Icons.push_pin_rounded : Icons.push_pin_outlined,
+                    _isPinned
+                        ? Icons.push_pin_rounded
+                        : Icons.push_pin_outlined,
                     color: _isPinned ? AppColors.primaryPurple : hintColor,
                     size: 20,
                   ),
@@ -1982,10 +2126,7 @@ class _NoteEditorState extends State<NoteEditor> {
                     ),
                     decoration: InputDecoration(
                       hintText: 'Start writing your note here...',
-                      hintStyle: TextStyle(
-                        color: hintColor,
-                        fontSize: 16,
-                      ),
+                      hintStyle: TextStyle(color: hintColor, fontSize: 16),
                       border: InputBorder.none,
                     ),
                   ),
@@ -1995,18 +2136,36 @@ class _NoteEditorState extends State<NoteEditor> {
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
-                    border: Border(top: BorderSide(color: isDark ? AppColors.darkBorder : const Color(0xFFF0F0F3))),
+                    border: Border(
+                      top: BorderSide(
+                        color: isDark
+                            ? AppColors.darkBorder
+                            : const Color(0xFFF0F0F3),
+                      ),
+                    ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         children: [
-                          _buildStatBadge('📊 $_wordCount words', isDark, subtextColor),
+                          _buildStatBadge(
+                            '📊 $_wordCount words',
+                            isDark,
+                            subtextColor,
+                          ),
                           const SizedBox(width: 8),
-                          _buildStatBadge('🔤 $_charCount chars', isDark, subtextColor),
+                          _buildStatBadge(
+                            '🔤 $_charCount chars',
+                            isDark,
+                            subtextColor,
+                          ),
                           const SizedBox(width: 8),
-                          _buildStatBadge('⏱️ $_readingTimeMinutes min read', isDark, subtextColor),
+                          _buildStatBadge(
+                            '⏱️ $_readingTimeMinutes min read',
+                            isDark,
+                            subtextColor,
+                          ),
                         ],
                       ),
                       Row(
@@ -2014,9 +2173,14 @@ class _NoteEditorState extends State<NoteEditor> {
                           Tooltip(
                             message: 'Typography',
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF1E1E2A) : const Color(0xFFF3F4F6),
+                                color: isDark
+                                    ? const Color(0xFF1E1E2A)
+                                    : const Color(0xFFF3F4F6),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(

@@ -95,77 +95,7 @@ class EditorToolbar extends StatelessWidget {
             _IconButton(icon: Icons.format_list_bulleted_rounded, tooltip: 'Bulleted List', isActive: isBulletList, onTap: onBulletListTap),
             _IconButton(icon: Icons.format_list_numbered_rounded, tooltip: 'Numbered List', isActive: isNumberedList, onTap: onNumberedListTap),
             _IconButton(icon: Icons.check_box_outlined, tooltip: 'Checklist', isActive: isChecklist, onTap: onCheckboxTap),
-            const _Divider(),
 
-            // Text Styles (Bold, Italic, Underline, Strikethrough)
-            _IconButton(icon: Icons.format_bold_rounded, tooltip: 'Bold', isActive: isBold, onTap: onBoldTap),
-            _IconButton(icon: Icons.format_italic_rounded, tooltip: 'Italic', isActive: isItalic, onTap: onItalicTap),
-            _IconButton(icon: Icons.format_underlined_rounded, tooltip: 'Underline', isActive: isUnderline, onTap: onUnderlineTap),
-            _IconButton(icon: Icons.strikethrough_s_rounded, tooltip: 'Strikethrough', isActive: isStrikethrough, onTap: onStrikethroughTap),
-            const _Divider(),
-
-            // Insert Options (Code, Link, Image, Table)
-            _IconButton(icon: Icons.code_rounded, tooltip: 'Code', isActive: isCode, onTap: onCodeTap),
-            _IconButton(icon: Icons.link_rounded, tooltip: 'Insert Link', onTap: onLinkTap),
-            _IconButton(icon: Icons.image_outlined, tooltip: 'Insert Image', onTap: onImageTap),
-            _IconButton(icon: Icons.grid_on_rounded, tooltip: 'Insert Table', onTap: onTableTap),
-            const _Divider(),
-
-            // More Options Popup Menu
-            PopupMenuButton<String>(
-              tooltip: 'More Formatting',
-              color: isDark ? const Color(0xFF1E1E2A) : Colors.white,
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: borderColor),
-              ),
-              icon: Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(Icons.more_horiz_rounded, size: 20, color: iconColor),
-              ),
-              onSelected: (val) {
-                if (val == 'blockquote' && onBlockquoteTap != null) onBlockquoteTap!();
-                if (val == 'divider' && onDividerTap != null) onDividerTap!();
-                if (val == 'clear' && onClearFormattingTap != null) onClearFormattingTap!();
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'blockquote',
-                  child: Row(
-                    children: [
-                      Icon(Icons.format_quote_rounded, size: 18, color: iconColor),
-                      const SizedBox(width: 10),
-                      Text('Blockquote', style: TextStyle(color: iconColor, fontSize: 13, fontWeight: FontWeight.w500)),
-                    ],
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'divider',
-                  child: Row(
-                    children: [
-                      Icon(Icons.horizontal_rule_rounded, size: 18, color: iconColor),
-                      const SizedBox(width: 10),
-                      Text('Horizontal Divider', style: TextStyle(color: iconColor, fontSize: 13, fontWeight: FontWeight.w500)),
-                    ],
-                  ),
-                ),
-                const PopupMenuDivider(),
-                const PopupMenuItem(
-                  value: 'clear',
-                  child: Row(
-                    children: [
-                      Icon(Icons.format_clear_rounded, size: 18, color: AppColors.error),
-                      SizedBox(width: 10),
-                      Text('Clear Formatting', style: TextStyle(color: AppColors.error, fontSize: 13, fontWeight: FontWeight.w600)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ),

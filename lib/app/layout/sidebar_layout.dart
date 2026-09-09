@@ -21,6 +21,7 @@ class SidebarLayout extends ConsumerStatefulWidget {
 
 class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
   late String _selectedRoute;
+  bool _isCollapsed = false;
 
   @override
   void initState() {
@@ -39,62 +40,111 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
     final borderColor = isDark ? AppColors.darkBorder : const Color(0xFFEAEAEE);
 
-    return Container(
-      width: AppSizes.sidebarWidth,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+      width: _isCollapsed ? AppSizes.sidebarCollapsedWidth : AppSizes.sidebarWidth,
       height: double.infinity,
       color: sidebarBg,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: _isCollapsed ? 8.0 : 16.0,
+        vertical: 12.0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 1. Window Control Dots (macOS Style)
-          const Row(
-            children: [
-              _WindowDot(color: Color(0xFFFF5F56)),
-              SizedBox(width: 6),
-              _WindowDot(color: Color(0xFFFFBD2E)),
-              SizedBox(width: 6),
-              _WindowDot(color: Color(0xFF27C93F)),
-            ],
-          ),
-          const SizedBox(height: 16),
+          if (!_isCollapsed)
+            const Row(
+              children: [
+                _WindowDot(color: Color(0xFFFF5F56)),
+                SizedBox(width: 6),
+                _WindowDot(color: Color(0xFFFFBD2E)),
+                SizedBox(width: 6),
+                _WindowDot(color: Color(0xFF27C93F)),
+              ],
+            ),
+          
+          if (!_isCollapsed) const SizedBox(height: 16),
 
-          // 2. App Logo & Brand Name
+          // 2. App Logo & Brand Name & Menu Icon
           Row(
+            mainAxisAlignment: _isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
             children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryPurple,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(
-                  child: Text(
-                    'M',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+              if (!_isCollapsed) ...[
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryPurple,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'M',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Text(
-                'MyNotes',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'MyNotes',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
+                  ),
                 ),
+              ],
+              IconButton(
+                icon: Icon(
+                  Icons.menu_rounded,
+                  color: textColor,
+                  size: 24,
+                ),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: () {
+                  setState(() {
+                    _isCollapsed = !_isCollapsed;
+                  });
+                },
               ),
             ],
           ),
           const SizedBox(height: 16),
 
           // 3. "+ New Note" Primary Action Button with Template Dropdown
-          Container(
+          if (_isCollapsed)
+            Center(
+              child: Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryPurple,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primaryPurple.withOpacity(0.25),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.add, color: Colors.white),
+                  onPressed: () => _select('new_note'),
+                ),
+              ),
+            )
+          else
+            Container(
             width: double.infinity,
             height: 42,
             decoration: BoxDecoration(
@@ -248,6 +298,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                     title: 'All Notes',
                     badgeCount: _controller.regularNotesCount,
                     isSelected: _selectedRoute == 'all_notes',
+                    isCollapsed: _isCollapsed,
                     onTap: () => _select('all_notes'),
                   ),
                   _NavItem(
@@ -255,6 +306,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                     title: 'Pinned',
                     badgeCount: _controller.pinnedNotesCount,
                     isSelected: _selectedRoute == 'pinned',
+                    isCollapsed: _isCollapsed,
                     onTap: () => _select('pinned'),
                   ),
                   _NavItem(
@@ -262,71 +314,87 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                     title: 'Tasks',
                     badgeCount: _controller.taskChecklistNotesCount,
                     isSelected: _selectedRoute == 'tasks',
+                    isCollapsed: _isCollapsed,
                     onTap: () => _select('tasks'),
                   ),
                   const SizedBox(height: 20),
 
                   // FOLDERS Section
-                  _SectionHeader(
-                    title: 'FOLDERS',
-                    onAddTap: () => _showCreateFolderDialog(context),
-                  ),
-                  const SizedBox(height: 6),
-                  if (_controller.folders.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      child: Text(
-                        'No folders created yet',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF8C98A9),
+                  if (!_isCollapsed) ...[
+                    _SectionHeader(
+                      title: 'FOLDERS',
+                      onAddTap: () => _showCreateFolderDialog(context),
+                    ),
+                    const SizedBox(height: 6),
+                    if (_controller.folders.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        child: Text(
+                          'No folders created yet',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF8C98A9),
+                          ),
                         ),
-                      ),
-                    )
-                  else
+                      )
+                    else
                     ..._controller.folders.map(
                       (folder) => _FolderItem(
                         title: folder.name,
                         count: _controller.getFolderNotesCount(folder.name),
                         folderColor: folder.color,
+                        isCollapsed: _isCollapsed,
                         onTap: () => _select('folder:${folder.name}'),
                       ),
                     ),
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                  // RECENT NOTES Section
-                  const Text(
-                    'RECENT NOTES',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF8C98A9),
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  if (_controller.regularNotes.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      child: Text(
-                        'No recent notes',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF8C98A9),
-                        ),
+                    // RECENT NOTES Section
+                    const Text(
+                      'RECENT NOTES',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF8C98A9),
+                        letterSpacing: 0.5,
                       ),
-                    )
-                  else
-                    ..._controller.regularNotes
-                        .take(5)
-                        .map(
-                          (note) => _RecentNoteItem(
-                            color: note.indicatorColor,
-                            title: note.title,
-                            time: note.updatedAt,
+                    ),
+                    const SizedBox(height: 8),
+                    if (_controller.regularNotes.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        child: Text(
+                          'No recent notes',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF8C98A9),
                           ),
                         ),
-                  const SizedBox(height: 20),
+                      )
+                    else
+                      ..._controller.regularNotes
+                          .take(5)
+                          .map(
+                            (note) => _RecentNoteItem(
+                              color: note.indicatorColor,
+                              title: note.title,
+                              time: note.updatedAt,
+                            ),
+                          ),
+                    const SizedBox(height: 20),
+                  ] else ...[
+                    // Just icons for folders when collapsed
+                    ..._controller.folders.map(
+                      (folder) => _FolderItem(
+                        title: folder.name,
+                        count: _controller.getFolderNotesCount(folder.name),
+                        folderColor: folder.color,
+                        isCollapsed: _isCollapsed,
+                        onTap: () => _select('folder:${folder.name}'),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
 
                   // Trash
                   _NavItem(
@@ -334,6 +402,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                     title: 'Trash',
                     badgeCount: _controller.trashedNotesCount,
                     isSelected: _selectedRoute == 'trash',
+                    isCollapsed: _isCollapsed,
                     onTap: () => _select('trash'),
                   ),
                 ],
@@ -356,51 +425,27 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                 onTap: () => _select('settings'),
                 borderRadius: BorderRadius.circular(12),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: _isCollapsed ? 0 : 14,
                     vertical: 12,
                   ),
                   child: Row(
+                    mainAxisAlignment: _isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
                     children: [
                       Icon(Icons.settings_outlined, color: textColor, size: 20),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'Settings',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: textColor,
+                      if (!_isCollapsed) ...[
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Settings',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: textColor,
+                            ),
                           ),
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF2A2A30)
-                              : const Color(0xFFF1F3F6),
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: borderColor),
-                        ),
-                        child: const Text(
-                          'Ctrl + ,',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF8C98A9),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      const Icon(
-                        Icons.chevron_right,
-                        color: Color(0xFF8C98A9),
-                        size: 18,
-                      ),
+                      ],
                     ],
                   ),
                 ),
@@ -549,6 +594,7 @@ class _NavItem extends StatelessWidget {
   final String title;
   final int badgeCount;
   final bool isSelected;
+  final bool isCollapsed;
   final VoidCallback onTap;
 
   const _NavItem({
@@ -556,6 +602,7 @@ class _NavItem extends StatelessWidget {
     required this.title,
     required this.badgeCount,
     required this.isSelected,
+    this.isCollapsed = false,
     required this.onTap,
   });
 
@@ -576,32 +623,44 @@ class _NavItem extends StatelessWidget {
         color: isSelected ? selectedBg : Colors.transparent,
         borderRadius: BorderRadius.circular(10),
         clipBehavior: Clip.antiAlias,
-        child: ListTile(
-          dense: true,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 10,
-            vertical: 0,
-          ),
-          horizontalTitleGap: 8,
-          onTap: onTap,
-          leading: Icon(icon, color: itemColor, size: 18),
-          title: Text(
-            title,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-              color: itemColor,
-            ),
-          ),
-          trailing: Text(
-            '$badgeCount',
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              color: itemColor,
-            ),
-          ),
-        ),
+        child: isCollapsed
+            ? Tooltip(
+                message: title,
+                child: InkWell(
+                  onTap: onTap,
+                  child: Container(
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: Icon(icon, color: itemColor, size: 20),
+                  ),
+                ),
+              )
+            : ListTile(
+                dense: true,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 0,
+                ),
+                horizontalTitleGap: 8,
+                onTap: onTap,
+                leading: Icon(icon, color: itemColor, size: 18),
+                title: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    color: itemColor,
+                  ),
+                ),
+                trailing: Text(
+                  '$badgeCount',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: itemColor,
+                  ),
+                ),
+              ),
       ),
     );
   }
@@ -641,12 +700,14 @@ class _FolderItem extends StatelessWidget {
   final String title;
   final int count;
   final Color folderColor;
+  final bool isCollapsed;
   final VoidCallback onTap;
 
   const _FolderItem({
     required this.title,
     required this.count,
     this.folderColor = AppColors.primaryPurple,
+    this.isCollapsed = false,
     required this.onTap,
   });
 
@@ -658,33 +719,43 @@ class _FolderItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(6),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        child: Row(
-          children: [
-            Icon(Icons.folder_rounded, color: folderColor, size: 18),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: textColor,
+      child: isCollapsed
+          ? Tooltip(
+              message: title,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Center(
+                  child: Icon(Icons.folder_rounded, color: folderColor, size: 20),
                 ),
               ),
-            ),
-            Text(
-              '$count',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: textColor,
+            )
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              child: Row(
+                children: [
+                  Icon(Icons.folder_rounded, color: folderColor, size: 18),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: textColor,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '$count',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

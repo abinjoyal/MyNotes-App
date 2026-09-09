@@ -46,13 +46,20 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
       width: _isCollapsed ? AppSizes.sidebarCollapsedWidth : AppSizes.sidebarWidth,
       height: double.infinity,
       color: sidebarBg,
-      padding: EdgeInsets.symmetric(
-        horizontal: _isCollapsed ? 8.0 : 16.0,
-        vertical: 12.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      child: ClipRect(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const NeverScrollableScrollPhysics(),
+          child: SizedBox(
+            width: _isCollapsed ? AppSizes.sidebarCollapsedWidth : AppSizes.sidebarWidth,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: _isCollapsed ? 8.0 : 16.0,
+                vertical: 12.0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
           // 1. Window Control Dots (macOS Style)
           if (!_isCollapsed)
             const Row(
@@ -453,6 +460,10 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
             ),
           ),
         ],
+      ),
+            ),
+          ),
+        ),
       ),
     );
   }

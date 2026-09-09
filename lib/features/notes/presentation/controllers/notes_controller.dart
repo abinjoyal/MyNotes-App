@@ -23,10 +23,10 @@ class NotesController extends ChangeNotifier {
   }
 
   NotesController._internal() {
-    _loadFromDatabase();
+    loadFromDatabase();
   }
 
-  Future<void> _loadFromDatabase() async {
+  Future<void> loadFromDatabase() async {
     final dbNotes = await AppDatabase.instance.getAllNotes();
     final dbTrashed = await AppDatabase.instance.getTrashedNotes();
     final dbFolders = await AppDatabase.instance.getAllFolders();

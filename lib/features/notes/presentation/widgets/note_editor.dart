@@ -4,6 +4,8 @@ import '../../../../app/constants/app_colors.dart';
 import '../../domain/entities/note.dart';
 import 'editor_toolbar.dart';
 import '../../../settings/presentation/controllers/settings_controller.dart';
+import 'package:screenshot/screenshot.dart';
+import '../../../../core/services/export_service.dart';
 
 class _MarkerMatch {
   final int start;
@@ -446,6 +448,7 @@ class _NoteEditorState extends State<NoteEditor> {
   late List<String> _tags;
   bool _isPinned = false;
   String _previousText = '';
+  final ScreenshotController _screenshotController = ScreenshotController();
 
   // Active formatting state for toolbar highlights
   int _activeHeading = 0;
@@ -1679,6 +1682,66 @@ class _NoteEditorState extends State<NoteEditor> {
     );
   }
 
+  void _showShareOptionsDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final title = _titleController.text.trim();
+    final content = _contentController.text.trim();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? const Color(0xFF1E1E2A) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Share Note',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: const Icon(Icons.picture_as_pdf, color: Colors.redAccent),
+                title: const Text('Share as PDF'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  ExportService.instance.shareAsPdf(title: title, content: content);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.image, color: Colors.green),
+                title: const Text('Share as Image'),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  final imageBytes = await _screenshotController.capture(pixelRatio: 2.0);
+                  if (imageBytes != null) {
+                    ExportService.instance.shareAsImage(imageBytes: imageBytes, title: title);
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.text_snippet, color: Colors.blueAccent),
+                title: const Text('Share as Text'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  ExportService.instance.shareAsText(title: title, content: content);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildStatBadge(String label, bool isDark, Color subtextColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -1831,6 +1894,18 @@ class _NoteEditorState extends State<NoteEditor> {
                         ),
                       ],
                     ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // Share Button
+                  IconButton(
+                    onPressed: _showShareOptionsDialog,
+                    icon: Icon(
+                      Icons.share_rounded,
+                      size: 20,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                    ),
+                    tooltip: 'Share Note',
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton.icon(
@@ -2112,8 +2187,12 @@ class _NoteEditorState extends State<NoteEditor> {
 
           // Borderless Editor Canvas
           Expanded(
-            child: Column(
-              children: [
+            child: Screenshot(
+              controller: _screenshotController,
+              child: Container(
+                color: isDark ? AppColors.darkScaffoldBackground : Colors.white,
+                child: Column(
+                  children: [
                 Expanded(
                   child: TextField(
                     controller: _contentController,
@@ -2201,6 +2280,8 @@ class _NoteEditorState extends State<NoteEditor> {
                 ),
               ],
             ),
+          ),
+          ),
           ),
         ],
       ),

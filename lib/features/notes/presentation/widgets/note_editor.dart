@@ -1919,7 +1919,17 @@ class _NoteEditorState extends State<NoteEditor> {
 
                   // Share Button
                   IconButton(
-                    onPressed: _showShareOptionsDialog,
+                    onPressed: () async {
+                      final title = _titleController.text.trim();
+                      final content = _contentController.text.trim();
+                      try {
+                        await ExportService.instance.shareAsText(title: title, content: content);
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                        }
+                      }
+                    },
                     icon: Icon(
                       Icons.share_rounded,
                       size: 20,

@@ -149,6 +149,10 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                         _selectedNote = null;
                       }
                       _activeRoute = 'new_note';
+                    } else if (route.startsWith('open_note:')) {
+                      final noteId = route.split(':')[1];
+                      _selectedNote = NotesController.instance.getNoteById(noteId);
+                      _activeRoute = 'edit_note';
                     } else {
                       _activeRoute = route;
                     }

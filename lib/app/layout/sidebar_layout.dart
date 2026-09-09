@@ -386,6 +386,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                               color: note.indicatorColor,
                               title: note.title,
                               time: note.updatedAt,
+                              onTap: () => _select('open_note:${note.id}'),
                             ),
                           ),
                     const SizedBox(height: 20),
@@ -775,11 +776,13 @@ class _RecentNoteItem extends StatelessWidget {
   final Color color;
   final String title;
   final String time;
+  final VoidCallback onTap;
 
   const _RecentNoteItem({
     required this.color,
     required this.title,
     required this.time,
+    required this.onTap,
   });
 
   @override
@@ -787,9 +790,12 @@ class _RecentNoteItem extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? const Color(0xFFE0E0E0) : AppColors.darkText;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      child: Row(
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(6),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        child: Row(
         children: [
           Container(
             width: 8,
@@ -814,6 +820,7 @@ class _RecentNoteItem extends StatelessWidget {
             style: const TextStyle(fontSize: 11, color: Color(0xFF8C98A9)),
           ),
         ],
+      ),
       ),
     );
   }

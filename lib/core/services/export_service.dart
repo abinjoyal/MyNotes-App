@@ -20,9 +20,13 @@ class ExportService {
   Future<void> shareAsPdf({required String title, required String content}) async {
     final pdf = pw.Document();
 
-    // Load fonts that support unicode (including emojis)
+    // Load fonts that support unicode (including Tamil and Emojis)
     final font = await PdfGoogleFonts.notoSansRegular();
+    final tamilFont = await PdfGoogleFonts.notoSansTamilRegular();
     final fallback = await PdfGoogleFonts.notoColorEmoji();
+
+    // Split content by lines to avoid large widget spanning issues
+    final lines = content.split('\n');
 
     pdf.addPage(
       pw.MultiPage(
@@ -34,21 +38,22 @@ class ExportService {
               title.isEmpty ? 'Untitled Note' : title,
               style: pw.TextStyle(
                 font: font,
-                fontFallback: [fallback],
+                fontFallback: [tamilFont, fallback],
                 fontSize: 24,
                 fontWeight: pw.FontWeight.bold,
               ),
             ),
             pw.SizedBox(height: 16),
-            pw.Text(
-              content,
-              style: pw.TextStyle(
-                font: font,
-                fontFallback: [fallback],
-                fontSize: 14,
-                lineSpacing: 1.5,
-              ),
-            ),
+            ...lines.map((line) => pw.Paragraph(
+                  margin: const pw.EdgeInsets.only(bottom: 6),
+                  text: line,
+                  style: pw.TextStyle(
+                    font: font,
+                    fontFallback: [tamilFont, fallback],
+                    fontSize: 14,
+                    lineSpacing: 1.5,
+                  ),
+                )),
           ];
         },
       ),

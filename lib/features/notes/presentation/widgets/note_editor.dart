@@ -1711,9 +1711,15 @@ class _NoteEditorState extends State<NoteEditor> {
               ListTile(
                 leading: const Icon(Icons.picture_as_pdf, color: Colors.redAccent),
                 title: const Text('Share as PDF'),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(ctx);
-                  ExportService.instance.shareAsPdf(title: title, content: content);
+                  try {
+                    await ExportService.instance.shareAsPdf(title: title, content: content);
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('PDF Error: $e')));
+                    }
+                  }
                 },
               ),
               ListTile(
@@ -1721,18 +1727,32 @@ class _NoteEditorState extends State<NoteEditor> {
                 title: const Text('Share as Image'),
                 onTap: () async {
                   Navigator.pop(ctx);
-                  final imageBytes = await _screenshotController.capture(pixelRatio: 2.0);
-                  if (imageBytes != null) {
-                    ExportService.instance.shareAsImage(imageBytes: imageBytes, title: title);
+                  try {
+                    final imageBytes = await _screenshotController.capture(pixelRatio: 2.0);
+                    if (imageBytes != null) {
+                      await ExportService.instance.shareAsImage(imageBytes: imageBytes, title: title);
+                    } else {
+                      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to capture image')));
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Image Error: $e')));
+                    }
                   }
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.text_snippet, color: Colors.blueAccent),
                 title: const Text('Share as Text'),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(ctx);
-                  ExportService.instance.shareAsText(title: title, content: content);
+                  try {
+                    await ExportService.instance.shareAsText(title: title, content: content);
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Text Error: $e')));
+                    }
+                  }
                 },
               ),
             ],

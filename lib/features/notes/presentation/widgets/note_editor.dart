@@ -1204,6 +1204,7 @@ class _NoteEditorState extends State<NoteEditor> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryPurple,
               foregroundColor: Colors.white,
+              
             ),
             onPressed: () {
               Navigator.pop(ctx);

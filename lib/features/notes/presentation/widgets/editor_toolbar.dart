@@ -63,7 +63,6 @@ class EditorToolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final iconColor = isDark ? const Color(0xFFD1D5DB) : AppColors.darkText;
     final containerBg = isDark ? const Color(0xFF1E1E2A) : const Color(0xFFF8FAFC);
     final borderColor = isDark ? const Color(0xFF323246) : const Color(0xFFE2E8F0);
 

@@ -99,7 +99,6 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
 
     final availableTags = _controller.allTags;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final scaffoldBg = isDark ? AppColors.darkScaffoldBackground : Colors.white;
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
 
 

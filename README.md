@@ -14,10 +14,6 @@ MyNotes is a feature-rich, cross-platform note-taking application built with Flu
 * **Cross-Platform Support**: Enjoy a seamless experience across Mobile, Web, and Desktop environments (features responsive layouts like sidebars and desktop views).
 * **Modern Architecture**: Built using a feature-first, clean architecture approach with Riverpod for robust state management.
 
-## 📸 Screenshots
-
-*(Add screenshots of your application here. You can capture screenshots of your mobile and desktop layouts and place them in an `assets/screenshots/` folder, then link them like this: `![Dashboard](assets/screenshots/dashboard.png)`)*
-
 ## 🚀 Getting Started
 
 ### Prerequisites

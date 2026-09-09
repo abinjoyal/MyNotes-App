@@ -10,7 +10,6 @@ MyNotes is a feature-rich, cross-platform note-taking application built with Flu
 * **Pin Important Items**: Pin your most crucial notes and tasks to the top for quick access.
 * **Search Functionality**: Quickly find what you are looking for with the integrated search feature.
 * **Trash / Recycle Bin**: Accidentally deleted something? Recover your notes and tasks from the Trash before they are permanently removed.
-* **Google Drive Backup & Sync**: Keep your data safe by securely backing up your notes to Google Drive.
 * **Export & Share**: Easily export your notes as PDFs or images, or print them directly from the app.
 * **Cross-Platform Support**: Enjoy a seamless experience across Mobile, Web, and Desktop environments (features responsive layouts like sidebars and desktop views).
 * **Modern Architecture**: Built using a feature-first, clean architecture approach with Riverpod for robust state management.
@@ -40,13 +39,7 @@ MyNotes is a feature-rich, cross-platform note-taking application built with Flu
    flutter pub get
    ```
 
-3. **Google Sign-In Configuration (For Backup Feature):**
-   * Go to the [Google Cloud Console](https://console.cloud.google.com/).
-   * Create a new project and configure the OAuth consent screen.
-   * Generate OAuth 2.0 Client IDs for Android/iOS/Web as needed.
-   * Update your project configurations (like `google-services.json` for Android or `GoogleService-Info.plist` for iOS) according to the official [google_sign_in documentation](https://pub.dev/packages/google_sign_in).
-
-4. **Run the application:**
+3. **Run the application:**
    ```bash
    flutter run
    ```
@@ -58,7 +51,6 @@ This project follows a feature-driven, clean architecture approach to maintain s
 * **`app/`**: Contains core application setup, including routing, themes, and global layout structures (e.g., sidebar and desktop layouts).
 * **`core/`**: Houses shared resources used across the app, such as database services, extensions, utilities, exceptions, and common UI widgets.
 * **`features/`**: The main business logic is split into standalone features:
-  * `backup/`: Google Drive synchronization.
   * `folders/`: Directory management for notes.
   * `notes/`: Note creation and displaying logic.
   * `tasks/`: Task management.
@@ -72,7 +64,6 @@ This project follows a feature-driven, clean architecture approach to maintain s
 
 * [Flutter](https://flutter.dev/) - UI Toolkit
 * [Riverpod](https://riverpod.dev/) - Reactive State Management
-* [Google Sign In](https://pub.dev/packages/google_sign_in) & [Googleapis](https://pub.dev/packages/googleapis) - Authentication & Drive Backup
 * [pdf](https://pub.dev/packages/pdf) & [printing](https://pub.dev/packages/printing) - Exporting & Printing
 * [share_plus](https://pub.dev/packages/share_plus) - Sharing functionalities
 

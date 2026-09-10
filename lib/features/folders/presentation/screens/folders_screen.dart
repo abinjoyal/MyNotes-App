@@ -70,10 +70,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? const Color(0xFF18181C) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.darkText;
-    final cardBg = isDark ? const Color(0xFF232329) : Colors.white;
-    final borderColor = isDark
-        ? const Color(0xFF333333)
-        : const Color(0xFFEAEAEE);
+   
 
     return Scaffold(
       backgroundColor: bgColor,

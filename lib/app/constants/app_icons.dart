@@ -33,15 +33,7 @@ abstract class AppIcons {
   static const IconData bold = Icons.format_bold_rounded;
   static const IconData italic = Icons.format_italic_rounded;
   static const IconData underline = Icons.format_underlined_rounded;
-  static const IconData bulletList = Icons.format_list_bulleted_rounded;
-  static const IconData numberedList = Icons.format_list_numbered_rounded;
-  static const IconData checkbox = Icons.check_box_outlined;
-  static const IconData attachment = Icons.attach_file_rounded;
-  static const IconData image = Icons.image_outlined;
-  static const IconData voice = Icons.mic_none_rounded;
-  static const IconData draw = Icons.brush_outlined;
-  static const IconData colorPalette = Icons.palette_outlined;
-
+  
   // General & Theme
   static const IconData darkMode = Icons.dark_mode_outlined;
   static const IconData lightMode = Icons.light_mode_outlined;

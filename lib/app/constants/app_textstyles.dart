@@ -88,4 +88,21 @@ abstract class AppTextStyles {
     fontWeight: FontWeight.w600,
     color: AppColors.primaryPurple,
   );
+
+  // Custom Text Style Generator for different sizes and colors
+  static TextStyle custom({
+    double? fontSize,
+    Color? color,
+    FontWeight? fontWeight,
+    double? letterSpacing,
+    double? height,
+  }) {
+    return TextStyle(
+      fontSize: fontSize,
+      color: color,
+      fontWeight: fontWeight,
+      letterSpacing: letterSpacing,
+      height: height,
+    );
+  }
 }

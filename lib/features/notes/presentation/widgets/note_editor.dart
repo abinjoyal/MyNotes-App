@@ -472,6 +472,11 @@ class _NoteEditorState extends State<NoteEditor> {
   @override
   void initState() {
     super.initState();
+    _initControllers();
+    SettingsController.instance.addListener(_onSettingsChanged);
+  }
+
+  void _initControllers() {
     _titleController = TextEditingController(
       text: widget.initialNote?.title ?? '',
     );
@@ -479,13 +484,22 @@ class _NoteEditorState extends State<NoteEditor> {
       text: widget.initialNote?.content ?? '',
     );
     _previousText = _contentController.text;
-
     _contentController.addListener(_onContentChanged);
-    SettingsController.instance.addListener(_onSettingsChanged);
     _selectedColor =
         widget.initialNote?.indicatorColor ?? const Color(0xFF635BFF);
     _tags = List.from(widget.initialNote?.tags ?? ['#new']);
     _isPinned = widget.initialNote?.isPinned ?? false;
+  }
+
+  @override
+  void didUpdateWidget(covariant NoteEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialNote?.id != widget.initialNote?.id) {
+      _contentController.removeListener(_onContentChanged);
+      _titleController.dispose();
+      _contentController.dispose();
+      _initControllers();
+    }
   }
 
   @override

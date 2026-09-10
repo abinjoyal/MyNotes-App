@@ -26,8 +26,9 @@ class NoteList extends StatelessWidget {
     Color iconColor = const Color(0xFF635BFF);
     Color bgColor = const Color(0xFFEEECFF);
     String title = 'No Notes Found';
-    String subtitle = 'Click "+ New Note" in the sidebar to create your first note.';
-    String? buttonText = '+ Create New Note';
+    String subtitle =
+        'Click "+ New Note" in the sidebar to create your first note.';
+    String? buttonText = 'Create New Note';
 
     if (activeRoute == 'pinned') {
       iconData = Icons.push_pin_rounded;
@@ -41,22 +42,37 @@ class NoteList extends StatelessWidget {
       iconColor = const Color(0xFF00C853);
       bgColor = const Color(0xFFE8F8EE);
       title = 'No Tasks Found';
-      subtitle = 'Add checklist items (- [ ]) inside your notes to track tasks here.';
-      buttonText = '+ Create Task Checklist';
+      subtitle =
+          'Add checklist items (- [ ]) inside your notes to track tasks here.';
+      buttonText = 'Create Task Checklist';
+    } else if (activeRoute == 'folder') {
+      iconData = Icons.folder_open_rounded;
+      iconColor = const Color(0xFF635BFF);
+      bgColor = const Color(0xFFEEECFF);
+      title = 'Folder is Empty';
+      subtitle = 'Create a new note in this folder to get started.';
+      buttonText = 'Create New Note';
     } else if (activeRoute == 'trash') {
       iconData = Icons.delete_outline_rounded;
       iconColor = const Color(0xFFFF4B4B);
       bgColor = const Color(0xFFFFEEEE);
       title = 'Trash is Empty';
-      subtitle = 'Deleted notes will appear here before being permanently removed.';
+      subtitle =
+          'Deleted notes will appear here before being permanently removed.';
       buttonText = null;
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF0F0F3);
-    final titleColor = isDark ? const Color(0xFFE0E0E0) : const Color(0xFF1D2939);
-    final subtitleColor = isDark ? const Color(0xFF98A2B3) : const Color(0xFF667085);
+    final borderColor = isDark
+        ? const Color(0xFF2C2C2C)
+        : const Color(0xFFF0F0F3);
+    final titleColor = isDark
+        ? const Color(0xFFE0E0E0)
+        : const Color(0xFF1D2939);
+    final subtitleColor = isDark
+        ? const Color(0xFF98A2B3)
+        : const Color(0xFF667085);
     final iconCircleBg = isDark ? iconColor.withOpacity(0.2) : bgColor;
 
     return Center(
@@ -85,11 +101,7 @@ class NoteList extends StatelessWidget {
                 color: iconCircleBg,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                iconData,
-                size: 38,
-                color: iconColor,
-              ),
+              child: Icon(iconData, size: 38, color: iconColor),
             ),
             const SizedBox(height: 20),
             Text(
@@ -104,11 +116,7 @@ class NoteList extends StatelessWidget {
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                height: 1.4,
-                color: subtitleColor,
-              ),
+              style: TextStyle(fontSize: 13, height: 1.4, color: subtitleColor),
             ),
             if (buttonText != null && onActionTap != null) ...[
               const SizedBox(height: 24),
@@ -223,4 +231,3 @@ class NoteList extends StatelessWidget {
     );
   }
 }
-

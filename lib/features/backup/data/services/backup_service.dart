@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../notes/domain/entities/note.dart';
 import '../../../notes/presentation/controllers/notes_controller.dart';
+import '../../../folders/presentation/controllers/folders_controller.dart';
 import '../../../settings/presentation/controllers/settings_controller.dart';
 
 class BackupResult {
@@ -32,9 +33,11 @@ class BackupService {
     final now = DateTime.now();
     final timestampStr = _formatDate(now);
 
+    final foldersController = FoldersController.instance;
+
     final notesData = notesController.notes.map((note) => _noteToMap(note)).toList();
     final trashedNotesData = notesController.trashedNotes.map((note) => _noteToMap(note)).toList();
-    final foldersData = notesController.folders.map((folder) => {
+    final foldersData = foldersController.folders.map((folder) => {
       'id': folder.id,
       'name': folder.name,
       'colorValue': folder.color.value,
@@ -48,7 +51,7 @@ class BackupService {
       'metadata': {
         'totalNotes': notesController.totalNotesCount,
         'totalTrashed': notesController.trashedNotesCount,
-        'totalFolders': notesController.folders.length,
+        'totalFolders': foldersController.folders.length,
       },
       'settings': {
         'theme': settingsController.selectedTheme,
@@ -109,11 +112,12 @@ class BackupService {
 
       // Restore Folders
       if (decoded['folders'] is List) {
+        final foldersController = FoldersController.instance;
         for (final folderItem in decoded['folders']) {
           final name = folderItem['name'] ?? '';
           final colorVal = folderItem['colorValue'] ?? 0xFF635BFF;
           if (name.toString().isNotEmpty) {
-            notesController.addFolder(name.toString(), Color(colorVal as int));
+            foldersController.addFolder(name.toString(), Color(colorVal as int));
           }
         }
       }

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import '../../features/notes/domain/entities/note.dart';
-import '../../features/notes/presentation/controllers/notes_controller.dart';
+import '../../features/folders/data/models/folder_model.dart';
 import 'tables/notes_table.dart';
 import 'tables/folders_table.dart';
 import 'tables/attachments_table.dart';
@@ -17,7 +17,7 @@ class AppDatabase {
 
   List<Note> _notesDb = [];
   List<Note> _trashedNotesDb = [];
-  List<FolderItemModel> _foldersDb = [];
+  List<FolderModel> _foldersDb = [];
 
   Future<void> init() async {
     if (_isInitialized) return;
@@ -70,7 +70,7 @@ class AppDatabase {
     return List.unmodifiable(_trashedNotesDb);
   }
 
-  Future<List<FolderItemModel>> getAllFolders() async {
+  Future<List<FolderModel>> getAllFolders() async {
     await init();
     return List.unmodifiable(_foldersDb);
   }
@@ -118,7 +118,7 @@ class AppDatabase {
     await _flushToDisk();
   }
 
-  Future<void> saveFolder(FolderItemModel folder) async {
+  Future<void> saveFolder(FolderModel folder) async {
     await init();
     final index = _foldersDb.indexWhere((f) => f.name == folder.name);
     if (index != -1) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../features/notes/presentation/controllers/notes_controller.dart';
+import '../../../features/folders/data/models/folder_model.dart';
 
 class FoldersTable {
   static const String tableName = 'folders';
@@ -16,7 +16,7 @@ class FoldersTable {
     );
   ''';
 
-  static Map<String, dynamic> toMap(FolderItemModel folder) {
+  static Map<String, dynamic> toMap(FolderModel folder) {
     return {
       colId: folder.id,
       colName: folder.name,
@@ -24,8 +24,8 @@ class FoldersTable {
     };
   }
 
-  static FolderItemModel fromMap(Map<String, dynamic> map) {
-    return FolderItemModel(
+  static FolderModel fromMap(Map<String, dynamic> map) {
+    return FolderModel(
       id: map[colId]?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
       name: map[colName]?.toString() ?? 'Folder',
       color: Color(map[colColorValue] is int ? map[colColorValue] : 0xFF635BFF),

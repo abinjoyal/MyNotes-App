@@ -4,6 +4,7 @@ import '../constants/app_colors.dart';
 import '../constants/app_icons.dart';
 import '../constants/app_sizes.dart';
 import '../../features/notes/presentation/controllers/notes_provider.dart';
+import '../../features/folders/presentation/controllers/folders_controller.dart';
 
 class SidebarLayout extends ConsumerStatefulWidget {
   final String activeRoute;
@@ -32,6 +33,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
   @override
   Widget build(BuildContext context) {
     final _controller = ref.watch(notesProvider);
+    final _foldersController = ref.watch(foldersProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final sidebarBg = isDark
         ? const Color(0xFF18181C)
@@ -333,7 +335,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                       onAddTap: () => _showCreateFolderDialog(context),
                     ),
                     const SizedBox(height: 6),
-                    if (_controller.folders.isEmpty)
+                    if (_foldersController.folders.isEmpty)
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         child: Text(
@@ -345,7 +347,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                         ),
                       )
                     else
-                    ..._controller.folders.map(
+                    ..._foldersController.folders.map(
                       (folder) => _FolderItem(
                         title: folder.name,
                         count: _controller.getFolderNotesCount(folder.name),
@@ -392,7 +394,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                     const SizedBox(height: 20),
                   ] else ...[
                     // Just icons for folders when collapsed
-                    ..._controller.folders.map(
+                    ..._foldersController.folders.map(
                       (folder) => _FolderItem(
                         title: folder.name,
                         count: _controller.getFolderNotesCount(folder.name),
@@ -566,7 +568,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
             ElevatedButton(
               onPressed: () {
                 if (controller.text.trim().isNotEmpty) {
-                  ref.read(notesProvider).addFolder(controller.text.trim(), selectedColor);
+                  ref.read(foldersProvider).addFolder(controller.text.trim(), selectedColor);
                   Navigator.of(ctx).pop();
                 }
               },

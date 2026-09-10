@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mynotes/features/folders/domain/entities/folder.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../../notes/domain/entities/note.dart';
-import '../../../notes/presentation/controllers/notes_controller.dart';
 import '../../../notes/presentation/controllers/notes_provider.dart';
 import '../../../notes/presentation/widgets/note_list.dart';
+import '../controllers/folders_controller.dart';
 
 class FoldersScreen extends ConsumerStatefulWidget {
   final String? selectedFolderName;
@@ -63,8 +64,9 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
   }
 
   Widget _buildFolderGridOverview(BuildContext context) {
-    final _controller = ref.watch(notesProvider);
-    final folders = _controller.folders;
+    final _notesController = ref.watch(notesProvider);
+    final _foldersController = ref.watch(foldersProvider);
+    final folders = _foldersController.folders;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -136,7 +138,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                   itemCount: folders.length,
                   itemBuilder: (context, index) {
                     final folder = folders[index];
-                    final count = _controller.getFolderNotesCount(folder.name);
+                    final count = _notesController.getFolderNotesCount(folder.name);
 
                     return GestureDetector(
                       onTap: () {
@@ -225,18 +227,18 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
   }
 
   Widget _buildFolderDetailView(BuildContext context, String folderName) {
-    final _controller = ref.watch(notesProvider);
-    final folderNotes = _controller.getNotesByFolder(folderName);
-    FolderItemModel? folderModel;
-    try {
-      folderModel = _controller.folders.firstWhere((f) => f.name == folderName);
-    } catch (_) {
-      folderModel = FolderItemModel(
+    final _notesController = ref.watch(notesProvider);
+    final _foldersController = ref.watch(foldersProvider);
+    final folderNotes = _notesController.getNotesByFolder(folderName);
+    
+    final folderModel = _foldersController.folders.firstWhere(
+      (f) => f.name == folderName,
+      orElse: () => Folder(
         id: '0',
         name: folderName,
         color: const Color(0xFF635BFF),
-      );
-    }
+      ),
+    );
 
     return Scaffold(
       backgroundColor: Colors.white,

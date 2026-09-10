@@ -3,17 +3,7 @@ import 'package:mynotes/features/notes/data/services/version_history_service.dar
 import '../../domain/entities/note.dart';
 import '../../../../core/database/database.dart';
 
-class FolderItemModel {
-  final String id;
-  final String name;
-  final Color color;
 
-  const FolderItemModel({
-    required this.id,
-    required this.name,
-    required this.color,
-  });
-}
 
 class NotesController extends ChangeNotifier {
   static final NotesController instance = NotesController._internal();
@@ -29,7 +19,7 @@ class NotesController extends ChangeNotifier {
   Future<void> loadFromDatabase() async {
     final dbNotes = await AppDatabase.instance.getAllNotes();
     final dbTrashed = await AppDatabase.instance.getTrashedNotes();
-    final dbFolders = await AppDatabase.instance.getAllFolders();
+  
 
     _notes.clear();
     _notes.addAll(dbNotes);
@@ -37,19 +27,14 @@ class NotesController extends ChangeNotifier {
     _trashedNotes.clear();
     _trashedNotes.addAll(dbTrashed);
 
-    _folders.clear();
-    _folders.addAll(dbFolders);
-
     notifyListeners();
   }
 
   final List<Note> _notes = [];
   final List<Note> _trashedNotes = [];
-  final List<FolderItemModel> _folders = [];
 
   List<Note> get notes => List.unmodifiable(_notes);
   List<Note> get trashedNotes => List.unmodifiable(_trashedNotes);
-  List<FolderItemModel> get folders => List.unmodifiable(_folders);
 
   bool _isTaskChecklistNote(Note note) {
     final content = note.content.trim();
@@ -77,17 +62,7 @@ class NotesController extends ChangeNotifier {
   int get pinnedNotesCount => pinnedNotes.length;
   int get trashedNotesCount => _trashedNotes.length;
 
-  void addFolder(String name, Color color) {
-    if (name.trim().isEmpty) return;
-    final folder = FolderItemModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      name: name.trim(),
-      color: color,
-    );
-    _folders.add(folder);
-    AppDatabase.instance.saveFolder(folder);
-    notifyListeners();
-  }
+
 
   List<String> get allTags {
     final set = <String>{};

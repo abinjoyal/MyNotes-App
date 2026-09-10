@@ -67,9 +67,14 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
     final _notesController = ref.watch(notesProvider);
     final _foldersController = ref.watch(foldersProvider);
     final folders = _foldersController.folders;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF18181C) : Colors.white;
+    final textColor = isDark ? Colors.white : AppColors.darkText;
+    final cardBg = isDark ? const Color(0xFF232329) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF333333) : const Color(0xFFEAEAEE);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
@@ -85,12 +90,12 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                     children: [
                       Row(
                         children: [
-                          const Text(
+                          Text(
                             '📁 Folders',
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.darkText,
+                              color: textColor,
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -149,9 +154,9 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: cardBg,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFFEAEAEE)),
+                          border: Border.all(color: borderColor),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.02),
@@ -195,10 +200,10 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                               children: [
                                 Text(
                                   folder.name,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.darkText,
+                                    color: textColor,
                                   ),
                                 ),
                                 const SizedBox(height: 2),
@@ -231,6 +236,12 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
     final _foldersController = ref.watch(foldersProvider);
     final folderNotes = _notesController.getNotesByFolder(folderName);
     
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF18181C) : Colors.white;
+    final textColor = isDark ? Colors.white : AppColors.darkText;
+    final buttonBg = isDark ? const Color(0xFF232329) : const Color(0xFFF7F8FA);
+    final borderColor = isDark ? const Color(0xFF333333) : const Color(0xFFEAEAEE);
+
     final folderModel = _foldersController.folders.firstWhere(
       (f) => f.name == folderName,
       orElse: () => Folder(
@@ -241,7 +252,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
@@ -261,20 +272,20 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF7F8FA),
+                        color: buttonBg,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: const Color(0xFFEAEAEE)),
+                        border: Border.all(color: borderColor),
                       ),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.arrow_back_rounded, size: 16, color: AppColors.darkText),
-                          SizedBox(width: 4),
+                          Icon(Icons.arrow_back_rounded, size: 16, color: textColor),
+                          const SizedBox(width: 4),
                           Text(
                             'All Folders',
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.darkText,
+                              color: textColor,
                             ),
                           ),
                         ],
@@ -295,10 +306,10 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                       const SizedBox(width: 10),
                       Text(
                         '${folderModel.name} Notes',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.darkText,
+                          color: textColor,
                         ),
                       ),
                       const SizedBox(width: 10),

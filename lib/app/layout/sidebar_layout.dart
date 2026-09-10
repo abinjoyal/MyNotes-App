@@ -492,19 +492,26 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
       Color(0xFF6B7280),
     ];
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF1E1E24) : Colors.white;
+    final textColor = isDark ? Colors.white : AppColors.darkText;
+    final inputBg = isDark ? const Color(0xFF2A2A35) : const Color(0xFFF7F8FA);
+    final borderColor = isDark ? const Color(0xFF333333) : const Color(0xFFEAEAEE);
+
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
+          backgroundColor: bgColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title: const Text(
+          title: Text(
             'Create New Folder',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppColors.darkText,
+              color: textColor,
             ),
           ),
           content: Column(
@@ -514,17 +521,19 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
               TextField(
                 controller: controller,
                 autofocus: true,
+                style: TextStyle(color: textColor),
                 decoration: InputDecoration(
                   hintText: 'Folder name (e.g. Design System)',
+                  hintStyle: TextStyle(color: isDark ? const Color(0xFF8C98A9) : const Color(0xFF9CA3AF)),
                   filled: true,
-                  fillColor: const Color(0xFFF7F8FA),
+                  fillColor: inputBg,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: Color(0xFFEAEAEE)),
+                    borderSide: BorderSide(color: borderColor),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: Color(0xFFEAEAEE)),
+                    borderSide: BorderSide(color: borderColor),
                   ),
                 ),
               ),
@@ -551,7 +560,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                         color: c,
                         shape: BoxShape.circle,
                         border: isSelected
-                            ? Border.all(color: AppColors.darkText, width: 2)
+                            ? Border.all(color: textColor, width: 2)
                             : null,
                       ),
                     ),

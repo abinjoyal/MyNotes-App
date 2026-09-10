@@ -64,9 +64,9 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
   }
 
   Widget _buildFolderGridOverview(BuildContext context) {
-    final _notesController = ref.watch(notesProvider);
-    final _foldersController = ref.watch(foldersProvider);
-    final folders = _foldersController.folders;
+    final notesController = ref.watch(notesProvider);
+    final foldersController = ref.watch(foldersProvider);
+    final folders = foldersController.folders;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? const Color(0xFF18181C) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.darkText;
@@ -145,7 +145,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                   itemCount: folders.length,
                   itemBuilder: (context, index) {
                     final folder = folders[index];
-                    final count = _notesController.getFolderNotesCount(
+                    final count = notesController.getFolderNotesCount(
                       folder.name,
                     );
 
@@ -170,9 +170,9 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
   }
 
   Widget _buildFolderDetailView(BuildContext context, String folderName) {
-    final _notesController = ref.watch(notesProvider);
-    final _foldersController = ref.watch(foldersProvider);
-    final folderNotes = _notesController.getNotesByFolder(folderName);
+    final notesController = ref.watch(notesProvider);
+    final foldersController = ref.watch(foldersProvider);
+    final folderNotes = notesController.getNotesByFolder(folderName);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? const Color(0xFF18181C) : Colors.white;
@@ -182,7 +182,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
         ? const Color(0xFF333333)
         : const Color(0xFFEAEAEE);
 
-    final folderModel = _foldersController.folders.firstWhere(
+    final folderModel = foldersController.folders.firstWhere(
       (f) => f.name == folderName,
       orElse: () =>
           Folder(id: '0', name: folderName, color: const Color(0xFF635BFF)),

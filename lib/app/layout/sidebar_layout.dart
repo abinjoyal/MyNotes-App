@@ -32,8 +32,8 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final _controller = ref.watch(notesProvider);
-    final _foldersController = ref.watch(foldersProvider);
+    final notesController = ref.watch(notesProvider);
+    final foldersController = ref.watch(foldersProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final sidebarBg = isDark
         ? const Color(0xFF18181C)
@@ -305,7 +305,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                   _NavItem(
                     icon: AppIcons.notes,
                     title: 'All Notes',
-                    badgeCount: _controller.regularNotesCount,
+                    badgeCount: notesController.regularNotesCount,
                     isSelected: _selectedRoute == 'all_notes',
                     isCollapsed: _isCollapsed,
                     onTap: () => _select('all_notes'),
@@ -313,7 +313,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                   _NavItem(
                     icon: AppIcons.pin,
                     title: 'Pinned',
-                    badgeCount: _controller.pinnedNotesCount,
+                    badgeCount: notesController.pinnedNotesCount,
                     isSelected: _selectedRoute == 'pinned',
                     isCollapsed: _isCollapsed,
                     onTap: () => _select('pinned'),
@@ -321,7 +321,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                   _NavItem(
                     icon: AppIcons.checkbox,
                     title: 'Tasks',
-                    badgeCount: _controller.taskChecklistNotesCount,
+                    badgeCount: notesController.taskChecklistNotesCount,
                     isSelected: _selectedRoute == 'tasks',
                     isCollapsed: _isCollapsed,
                     onTap: () => _select('tasks'),
@@ -335,7 +335,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                       onAddTap: () => _showCreateFolderDialog(context),
                     ),
                     const SizedBox(height: 6),
-                    if (_foldersController.folders.isEmpty)
+                    if (foldersController.folders.isEmpty)
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         child: Text(
@@ -347,10 +347,10 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                         ),
                       )
                     else
-                    ..._foldersController.folders.map(
+                    ...foldersController.folders.map(
                       (folder) => _FolderItem(
                         title: folder.name,
-                        count: _controller.getFolderNotesCount(folder.name),
+                        count: notesController.getFolderNotesCount(folder.name),
                         folderColor: folder.color,
                         isCollapsed: _isCollapsed,
                         onTap: () => _select('folder:${folder.name}'),
@@ -369,7 +369,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    if (_controller.regularNotes.isEmpty)
+                    if (notesController.regularNotes.isEmpty)
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         child: Text(
@@ -381,7 +381,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                         ),
                       )
                     else
-                      ..._controller.regularNotes
+                      ...notesController.regularNotes
                           .take(5)
                           .map(
                             (note) => _RecentNoteItem(
@@ -394,10 +394,10 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                     const SizedBox(height: 20),
                   ] else ...[
                     // Just icons for folders when collapsed
-                    ..._foldersController.folders.map(
+                    ...foldersController.folders.map(
                       (folder) => _FolderItem(
                         title: folder.name,
-                        count: _controller.getFolderNotesCount(folder.name),
+                        count: notesController.getFolderNotesCount(folder.name),
                         folderColor: folder.color,
                         isCollapsed: _isCollapsed,
                         onTap: () => _select('folder:${folder.name}'),
@@ -410,7 +410,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                   _NavItem(
                     icon: AppIcons.trash,
                     title: 'Trash',
-                    badgeCount: _controller.trashedNotesCount,
+                    badgeCount: notesController.trashedNotesCount,
                     isSelected: _selectedRoute == 'trash',
                     isCollapsed: _isCollapsed,
                     onTap: () => _select('trash'),

@@ -5,17 +5,14 @@ import '../../../../app/constants/app_colors.dart';
 import '../../../notes/domain/entities/note.dart';
 import '../../../notes/presentation/controllers/notes_provider.dart';
 import '../../../notes/presentation/widgets/note_list.dart';
+import '../../../settings/presentation/controllers/settings_controller.dart';
 import '../controllers/folders_controller.dart';
 
 class FoldersScreen extends ConsumerStatefulWidget {
   final String? selectedFolderName;
   final Function(Note)? onNoteSelect;
 
-  const FoldersScreen({
-    super.key,
-    this.selectedFolderName,
-    this.onNoteSelect,
-  });
+  const FoldersScreen({super.key, this.selectedFolderName, this.onNoteSelect});
 
   @override
   ConsumerState<FoldersScreen> createState() => _FoldersScreenState();
@@ -23,11 +20,13 @@ class FoldersScreen extends ConsumerStatefulWidget {
 
 class _FoldersScreenState extends ConsumerState<FoldersScreen> {
   late String? _currentFolder;
+  late bool _isGridView;
 
   @override
   void initState() {
     super.initState();
     _currentFolder = widget.selectedFolderName;
+    _isGridView = SettingsController.instance.isGridView;
   }
 
   @override
@@ -71,7 +70,9 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
     final bgColor = isDark ? const Color(0xFF18181C) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.darkText;
     final cardBg = isDark ? const Color(0xFF232329) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF333333) : const Color(0xFFEAEAEE);
+    final borderColor = isDark
+        ? const Color(0xFF333333)
+        : const Color(0xFFEAEAEE);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -100,7 +101,10 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                           ),
                           const SizedBox(width: 10),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.lightLavender,
                               borderRadius: BorderRadius.circular(12),
@@ -143,7 +147,9 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                   itemCount: folders.length,
                   itemBuilder: (context, index) {
                     final folder = folders[index];
-                    final count = _notesController.getFolderNotesCount(folder.name);
+                    final count = _notesController.getFolderNotesCount(
+                      folder.name,
+                    );
 
                     return GestureDetector(
                       onTap: () {
@@ -191,7 +197,8 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                                     size: 20,
                                     color: AppColors.primaryPurple,
                                   ),
-                                  onPressed: () => _createNoteInFolder(folder.name),
+                                  onPressed: () =>
+                                      _createNoteInFolder(folder.name),
                                 ),
                               ],
                             ),
@@ -235,20 +242,19 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
     final _notesController = ref.watch(notesProvider);
     final _foldersController = ref.watch(foldersProvider);
     final folderNotes = _notesController.getNotesByFolder(folderName);
-    
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? const Color(0xFF18181C) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.darkText;
     final buttonBg = isDark ? const Color(0xFF232329) : const Color(0xFFF7F8FA);
-    final borderColor = isDark ? const Color(0xFF333333) : const Color(0xFFEAEAEE);
+    final borderColor = isDark
+        ? const Color(0xFF333333)
+        : const Color(0xFFEAEAEE);
 
     final folderModel = _foldersController.folders.firstWhere(
       (f) => f.name == folderName,
-      orElse: () => Folder(
-        id: '0',
-        name: folderName,
-        color: const Color(0xFF635BFF),
-      ),
+      orElse: () =>
+          Folder(id: '0', name: folderName, color: const Color(0xFF635BFF)),
     );
 
     return Scaffold(
@@ -270,7 +276,10 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                     },
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: buttonBg,
                         borderRadius: BorderRadius.circular(8),
@@ -278,7 +287,11 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.arrow_back_rounded, size: 16, color: textColor),
+                          Icon(
+                            Icons.arrow_back_rounded,
+                            size: 16,
+                            color: textColor,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             'All Folders',
@@ -302,7 +315,11 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.folder_rounded, size: 28, color: folderModel.color),
+                      Icon(
+                        Icons.folder_rounded,
+                        size: 28,
+                        color: folderModel.color,
+                      ),
                       const SizedBox(width: 10),
                       Text(
                         '${folderModel.name} Notes',
@@ -314,7 +331,10 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                       ),
                       const SizedBox(width: 10),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.lightLavender,
                           borderRadius: BorderRadius.circular(12),
@@ -330,19 +350,78 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                       ),
                     ],
                   ),
-                  ElevatedButton.icon(
-                    onPressed: () => _createNoteInFolder(folderName),
-                    icon: const Icon(Icons.add_rounded, size: 18),
-                    label: Text('New Note in ${folderModel.name}'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryPurple,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          color: buttonBg,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: borderColor),
+                        ),
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () => setState(() => _isGridView = false),
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: !_isGridView
+                                      ? AppColors.lightLavender
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Icon(
+                                  Icons.format_list_bulleted_rounded,
+                                  size: 18,
+                                  color: !_isGridView
+                                      ? AppColors.primaryPurple
+                                      : AppColors.lightText,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            GestureDetector(
+                              onTap: () => setState(() => _isGridView = true),
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: _isGridView
+                                      ? AppColors.lightLavender
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Icon(
+                                  Icons.grid_view_rounded,
+                                  size: 18,
+                                  color: _isGridView
+                                      ? AppColors.primaryPurple
+                                      : AppColors.lightText,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      elevation: 0,
-                    ),
+                      const SizedBox(width: 12),
+                      ElevatedButton.icon(
+                        onPressed: () => _createNoteInFolder(folderName),
+                        icon: const Icon(Icons.add_rounded, size: 18),
+                        label: Text('New Note in ${folderModel.name}'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryPurple,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          elevation: 0,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -352,6 +431,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
               Expanded(
                 child: NoteList(
                   notes: folderNotes,
+                  isGridView: _isGridView,
                   activeRoute: 'folder',
                   onNoteSelect: widget.onNoteSelect,
                   onActionTap: () => _createNoteInFolder(folderName),

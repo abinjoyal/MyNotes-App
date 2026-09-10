@@ -7,6 +7,7 @@ import '../../../notes/presentation/controllers/notes_provider.dart';
 import '../../../notes/presentation/widgets/note_list.dart';
 import '../../../settings/presentation/controllers/settings_controller.dart';
 import '../controllers/folders_controller.dart';
+import '../widgets/folder_tile.dart';
 
 class FoldersScreen extends ConsumerStatefulWidget {
   final String? selectedFolderName;
@@ -151,82 +152,15 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                       folder.name,
                     );
 
-                    return GestureDetector(
+                    return FolderTile(
+                      folder: folder,
+                      count: count,
                       onTap: () {
                         setState(() {
                           _currentFolder = folder.name;
                         });
                       },
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: cardBg,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: borderColor),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.02),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: folder.color.withOpacity(0.12),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    Icons.folder_rounded,
-                                    color: folder.color,
-                                    size: 22,
-                                  ),
-                                ),
-                                IconButton(
-                                  tooltip: 'Add note to ${folder.name}',
-                                  icon: const Icon(
-                                    Icons.add_circle_outline_rounded,
-                                    size: 20,
-                                    color: AppColors.primaryPurple,
-                                  ),
-                                  onPressed: () =>
-                                      _createNoteInFolder(folder.name),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  folder.name,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: textColor,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  '$count ${count == 1 ? 'note' : 'notes'}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF8C98A9),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      onAddNote: () => _createNoteInFolder(folder.name),
                     );
                   },
                 ),

@@ -238,23 +238,31 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
 
               // 3. Notes List View / Contextual Empty State
               if (widget.activeRoute == 'trash' && _foldersController.trashedFolders.isNotEmpty) ...[
-                const Text(
-                  'Trashed Folders',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  children: [
+                    Icon(Icons.folder_delete_outlined, color: textColor, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Trashed Folders',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: textColor,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
                 SizedBox(
-                  height: 140, // Height for folder tiles row
+                  height: 140, // Increased height to prevent overflow
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: _foldersController.trashedFolders.length,
                     itemBuilder: (context, index) {
                       final folder = _foldersController.trashedFolders[index];
                       return Container(
-                        width: 250,
+                        width: 240,
                         margin: const EdgeInsets.only(right: 16),
                         child: FolderTile(
                           folder: folder,
@@ -269,16 +277,25 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                     },
                   ),
                 ),
-                const SizedBox(height: 20),
-                if (filteredNotes.isNotEmpty)
-                  const Text(
-                    'Trashed Notes',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                const SizedBox(height: 24),
+                if (filteredNotes.isNotEmpty) ...[
+                  Row(
+                    children: [
+                      Icon(Icons.description_outlined, color: textColor, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Trashed Notes',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: textColor,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
                   ),
-                const SizedBox(height: 10),
+                  const SizedBox(height: 12),
+                ],
               ],
               Expanded(
                 child: NoteList(

@@ -336,6 +336,14 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                             isCollapsed: _isCollapsed,
                             onTap: () => _select('tasks'),
                           ),
+                          _NavItem(
+                            icon: AppIcons.calendar,
+                            title: 'Calendar',
+                            badgeCount: 0,
+                            isSelected: _selectedRoute == 'calendar',
+                            isCollapsed: _isCollapsed,
+                            onTap: () => _select('calendar'),
+                          ),
                           const SizedBox(height: 20),
 
                           // FOLDERS Section

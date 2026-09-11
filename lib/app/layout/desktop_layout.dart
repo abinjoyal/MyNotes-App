@@ -9,6 +9,7 @@ import '../../features/notes/presentation/screens/notes_screen.dart';
 import '../../features/notes/presentation/screens/note_editor_screen.dart';
 import '../../features/pin/presentation/screens/pinned_notes_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
+import '../../features/calendar/presentation/screens/calendar_screen.dart';
 
 class DesktopLayout extends StatefulWidget {
   final Widget? notesListWidget;
@@ -84,6 +85,16 @@ class _DesktopLayoutState extends State<DesktopLayout> {
     }
     if (_activeRoute == 'settings') {
       return const SettingsScreen();
+    }
+    if (_activeRoute == 'calendar') {
+      return CalendarScreen(
+        onNoteSelect: (note) {
+          setState(() {
+            _selectedNote = note;
+            _activeRoute = 'edit_note';
+          });
+        },
+      );
     }
     if (_activeRoute == 'all_notes' ||
         _activeRoute == 'tasks' ||

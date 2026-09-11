@@ -18,6 +18,7 @@ abstract class AppIcons {
 
   // Navigation & Views
   static const IconData notes = Icons.description_outlined;
+  static const IconData calendar = Icons.calendar_month_outlined;
   static const IconData search = Icons.search_rounded;
   static const IconData filter = Icons.filter_list_rounded;
   static const IconData gridView = Icons.grid_view_rounded;

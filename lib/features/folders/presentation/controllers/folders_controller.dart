@@ -69,4 +69,11 @@ class FoldersController extends ChangeNotifier {
 
     await repository.saveFolder(newFolder);
   }
+
+  void deleteFolder(String name) async {
+    _folders.removeWhere((f) => f.name == name);
+    notifyListeners();
+
+    await repository.deleteFolder(name);
+  }
 }

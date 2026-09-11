@@ -20,4 +20,9 @@ class FolderRepositoryImpl implements FolderRepository {
     final folderModel = FolderModel.fromEntity(folder);
     await localDataSource.saveFolder(folderModel);
   }
+
+  @override
+  Future<void> deleteFolder(String name) async {
+    await localDataSource.deleteFolder(name);
+  }
 }

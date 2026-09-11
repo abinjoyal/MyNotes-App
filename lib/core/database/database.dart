@@ -129,6 +129,44 @@ class AppDatabase {
     await _flushToDisk();
   }
 
+  Future<void> deleteFolder(String name) async {
+    await init();
+    
+    _foldersDb.removeWhere((f) => f.name == name);
+    
+    for (int i = 0; i < _notesDb.length; i++) {
+      if (_notesDb[i].folderName == name) {
+        _notesDb[i] = Note(
+          id: _notesDb[i].id,
+          title: _notesDb[i].title,
+          content: _notesDb[i].content,
+          indicatorColor: _notesDb[i].indicatorColor,
+          tags: _notesDb[i].tags,
+          updatedAt: _notesDb[i].updatedAt,
+          isPinned: _notesDb[i].isPinned,
+          folderName: null,
+        );
+      }
+    }
+    
+    for (int i = 0; i < _trashedNotesDb.length; i++) {
+      if (_trashedNotesDb[i].folderName == name) {
+        _trashedNotesDb[i] = Note(
+          id: _trashedNotesDb[i].id,
+          title: _trashedNotesDb[i].title,
+          content: _trashedNotesDb[i].content,
+          indicatorColor: _trashedNotesDb[i].indicatorColor,
+          tags: _trashedNotesDb[i].tags,
+          updatedAt: _trashedNotesDb[i].updatedAt,
+          isPinned: _trashedNotesDb[i].isPinned,
+          folderName: null,
+        );
+      }
+    }
+    
+    await _flushToDisk();
+  }
+
   Future<void> _flushToDisk() async {
     try {
       final dataMap = {

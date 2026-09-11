@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mynotes/features/folders/domain/entities/folder.dart';
+import 'package:mynotes/features/notes/presentation/controllers/notes_controller.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../../notes/domain/entities/note.dart';
 import '../../../notes/presentation/controllers/notes_provider.dart';
@@ -53,6 +54,67 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
       );
       widget.onNoteSelect!(newNote);
     }
+  }
+
+  void _confirmDeleteFolder(String folderName, FoldersController controller, NotesController notesController) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete $folderName?'),
+        content: const Text('Are you sure you want to delete this folder? Your notes inside will NOT be deleted, but they will be removed from this folder.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              controller.deleteFolder(folderName);
+              notesController.loadFromDatabase();
+              Navigator.pop(context);
+              if (_currentFolder == folderName) {
+                setState(() => _currentFolder = null);
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Delete', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCreateFolderDialog(FoldersController controller) {
+    final TextEditingController nameController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Create New Folder'),
+        content: TextField(
+          controller: nameController,
+          decoration: const InputDecoration(
+            hintText: 'Folder Name',
+            border: OutlineInputBorder(),
+          ),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (nameController.text.isNotEmpty) {
+                controller.addFolder(nameController.text, AppColors.primaryPurple);
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -138,6 +200,11 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                       ),
                     ],
                   ),
+                  IconButton(
+                    onPressed: () => _showCreateFolderDialog(foldersController),
+                    icon: Icon(Icons.add_rounded, size: 28, color: textColor),
+                    tooltip: 'Create New Folder',
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
@@ -168,6 +235,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                         });
                       },
                       onAddNote: () => _createNoteInFolder(folder.name),
+                      onDelete: () => _confirmDeleteFolder(folder.name, foldersController, notesController),
                     );
                   },
                 ),

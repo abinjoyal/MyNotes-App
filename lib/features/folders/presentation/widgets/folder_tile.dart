@@ -7,6 +7,7 @@ class FolderTile extends StatefulWidget {
   final int count;
   final VoidCallback onTap;
   final VoidCallback onAddNote;
+  final VoidCallback onDelete;
 
   const FolderTile({
     super.key,
@@ -14,6 +15,7 @@ class FolderTile extends StatefulWidget {
     required this.count,
     required this.onTap,
     required this.onAddNote,
+    required this.onDelete,
   });
 
   @override
@@ -102,15 +104,29 @@ class _FolderTileState extends State<FolderTile> {
                       size: 24,
                     ),
                   ),
-                  IconButton(
-                    tooltip: 'Add note to ${widget.folder.name}',
-                    icon: Icon(
-                      Icons.add_circle_rounded,
-                      size: 26,
-                      color: _isHovered ? AppColors.primaryPink : AppColors.primaryPurple.withOpacity(0.7),
-                    ),
-                    onPressed: widget.onAddNote,
-                    splashRadius: 20,
+                  Row(
+                    children: [
+                      IconButton(
+                        tooltip: 'Delete ${widget.folder.name}',
+                        icon: Icon(
+                          Icons.delete_outline_rounded,
+                          size: 22,
+                          color: _isHovered ? AppColors.primaryPink.withOpacity(0.8) : Colors.transparent,
+                        ),
+                        onPressed: widget.onDelete,
+                        splashRadius: 20,
+                      ),
+                      IconButton(
+                        tooltip: 'Add note to ${widget.folder.name}',
+                        icon: Icon(
+                          Icons.add_circle_rounded,
+                          size: 26,
+                          color: _isHovered ? AppColors.primaryPink : AppColors.primaryPurple.withOpacity(0.7),
+                        ),
+                        onPressed: widget.onAddNote,
+                        splashRadius: 20,
+                      ),
+                    ],
                   ),
                 ],
               ),

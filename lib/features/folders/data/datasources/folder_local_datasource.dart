@@ -4,6 +4,7 @@ import '../models/folder_model.dart';
 abstract class FolderLocalDataSource {
   Future<List<FolderModel>> getAllFolders();
   Future<void> saveFolder(FolderModel folder);
+  Future<void> deleteFolder(String name);
 }
 
 class FolderLocalDataSourceImpl implements FolderLocalDataSource {
@@ -19,5 +20,10 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
   @override
   Future<void> saveFolder(FolderModel folder) async {
     await database.saveFolder(folder);
+  }
+
+  @override
+  Future<void> deleteFolder(String name) async {
+    await database.deleteFolder(name);
   }
 }

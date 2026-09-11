@@ -3,7 +3,7 @@ import '../../../../app/constants/app_colors.dart';
 import '../../../../app/constants/app_strings.dart';
 import '../../../../app/layout/desktop_layout.dart';
 import '../../../../app/layout/responsive_layout.dart';
-import '../../../settings/presentation/controllers/settings_controller.dart';
+import '../../../settings/controllers/settings_controller.dart';
 import '../../../pin/presentation/screens/passcode_lock_screen.dart';
 
 class SplashScreen extends StatefulWidget {

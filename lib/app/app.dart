@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'constants/app_strings.dart';
 import 'theme/app_theme.dart';
-import '../features/settings/presentation/controllers/settings_controller.dart';
+import '../features/settings/controllers/settings_controller.dart';
 import '../features/splash/presentation/screens/splash_screen.dart';
 
 class MyNotesApp extends StatefulWidget {

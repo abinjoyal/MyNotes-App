@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../app/constants/app_colors.dart';
-import '../../../settings/presentation/controllers/settings_controller.dart';
+import '../../../settings/controllers/settings_controller.dart';
 
 class PasscodeLockScreen extends StatefulWidget {
   final bool isSetupMode;

@@ -3,7 +3,7 @@ import 'package:mynotes/features/notes/data/services/version_history_service.dar
 import '../../../../app/constants/app_colors.dart';
 import '../../domain/entities/note.dart';
 import 'editor_toolbar.dart';
-import '../../../settings/presentation/controllers/settings_controller.dart';
+import '../../../settings/controllers/settings_controller.dart';
 import 'package:screenshot/screenshot.dart';
 import '../../../../core/services/export_service.dart';
 

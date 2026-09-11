@@ -5,7 +5,7 @@ import '../../../../app/constants/app_colors.dart';
 import '../../../notes/domain/entities/note.dart';
 import '../../../notes/presentation/controllers/notes_provider.dart';
 import '../../../notes/presentation/widgets/note_list.dart';
-import '../../../settings/presentation/controllers/settings_controller.dart';
+import '../../../settings/controllers/settings_controller.dart';
 import '../controllers/folders_controller.dart';
 import '../widgets/folder_tile.dart';
 

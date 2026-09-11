@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../notes/domain/entities/note.dart';
 import '../../../notes/presentation/controllers/notes_controller.dart';
 import '../../../folders/presentation/controllers/folders_controller.dart';
-import '../../../settings/presentation/controllers/settings_controller.dart';
+import '../../../settings/controllers/settings_controller.dart';
 
 class BackupResult {
   final String jsonContent;

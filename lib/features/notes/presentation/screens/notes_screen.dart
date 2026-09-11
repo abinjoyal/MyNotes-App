@@ -8,7 +8,7 @@ import '../widgets/notes_header_widget.dart';
 import '../widgets/notes_filter_bar_widget.dart';
 import '../widgets/notes_tag_list_widget.dart';
 import '../../../tasks/presentation/widgets/tasks_checklist_view.dart';
-import '../../../settings/presentation/controllers/settings_controller.dart';
+import '../../../settings/controllers/settings_controller.dart';
 
 class NotesScreen extends ConsumerStatefulWidget {
   final Function(Note)? onNoteSelect;

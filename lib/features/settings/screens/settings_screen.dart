@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../../app/constants/app_colors.dart';
+import '../../../app/constants/app_colors.dart';
 import '../controllers/settings_controller.dart';
-import '../../../pin/presentation/screens/passcode_lock_screen.dart';
-import '../../../backup/data/services/backup_service.dart';
-import '../../../backup/data/services/google_drive_service.dart';
-import '../../../notes/presentation/controllers/notes_controller.dart';
+import '../../pin/presentation/screens/passcode_lock_screen.dart';
+import '../../backup/data/services/backup_service.dart';
+import '../../backup/data/services/google_drive_service.dart';
+import '../../notes/presentation/controllers/notes_controller.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

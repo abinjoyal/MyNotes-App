@@ -10,12 +10,6 @@ import '../../features/tasks/presentation/screens/tasks_screen.dart';
 import '../../features/pin/presentation/screens/pinned_notes_screen.dart';
 import '../../features/folders/presentation/screens/folders_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
-import '../../features/pin/data/datasources/pin_local_datasource.dart';
-import '../../features/pin/data/repositories/pin_repository_impl.dart';
-import '../../features/pin/domain/usecases/get_pinned_notes.dart';
-import '../../features/pin/domain/usecases/pin_note_usecase.dart';
-import '../../features/pin/domain/usecases/unpin_note_usecase.dart';
-import '../../features/pin/presentation/controllers/pin_controller.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -52,16 +46,7 @@ class AppRouter {
 
       case RouteNames.pinned:
         return MaterialPageRoute(
-          builder: (_) {
-            final localDataSource = PinLocalDataSourceImpl();
-            final repository = PinRepositoryImpl(localDataSource);
-            final controller = PinController(
-              getPinnedNotesUseCase: GetPinnedNotes(repository),
-              pinNoteUseCase: PinNoteUseCase(repository),
-              unpinNoteUseCase: UnpinNoteUseCase(repository),
-            );
-            return PinnedNotesScreen(controller: controller);
-          },
+          builder: (_) => const PinnedNotesScreen(),
         );
 
       case RouteNames.folders:

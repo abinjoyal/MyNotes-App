@@ -44,6 +44,8 @@ dependencies:
   share_plus: ^13.3.0
   screenshot: ^3.0.0
   printing: ^5.15.0
+  table_calendar: ^3.2.1
+  intl: ^0.20.3
 
 dev_dependencies:
   flutter_test:

@@ -146,11 +146,25 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         });
                       },
                       eventLoader: (day) => _getEventsForDay(day, notesList),
+                      calendarBuilders: CalendarBuilders(
+                        markerBuilder: (context, date, events) {
+                          if (events.isNotEmpty) {
+                            return Positioned(
+                              bottom: 6,
+                              child: Container(
+                                width: 5,
+                                height: 5,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryPink,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            );
+                          }
+                          return null;
+                        },
+                      ),
                       calendarStyle: CalendarStyle(
-                        markerDecoration: BoxDecoration(
-                          color: AppColors.primaryPink,
-                          shape: BoxShape.circle,
-                        ),
                         selectedDecoration: BoxDecoration(
                           color: AppColors.primaryPurple,
                           shape: BoxShape.circle,

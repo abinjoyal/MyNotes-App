@@ -9,6 +9,8 @@ import '../widgets/notes_filter_bar_widget.dart';
 import '../widgets/notes_tag_list_widget.dart';
 import '../../../tasks/presentation/widgets/tasks_checklist_view.dart';
 import '../../../settings/controllers/settings_controller.dart';
+import '../../../folders/presentation/controllers/folders_controller.dart';
+import '../../../folders/presentation/widgets/folder_tile.dart';
 
 class NotesScreen extends ConsumerStatefulWidget {
   final Function(Note)? onNoteSelect;
@@ -80,6 +82,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
   @override
   Widget build(BuildContext context) {
     final _controller = ref.watch(notesProvider);
+    final _foldersController = ref.watch(foldersProvider);
     final headerInfo = _getHeaderInfo();
     final allNotes = widget.activeRoute == 'pinned'
         ? _controller.pinnedNotes
@@ -184,6 +187,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 activeRoute: widget.activeRoute,
                 onEmptyTrash: () {
                   _controller.emptyTrash();
+                  _foldersController.emptyTrash();
                 },
               ),
               const SizedBox(height: 16),
@@ -233,6 +237,49 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
               const SizedBox(height: 16),
 
               // 3. Notes List View / Contextual Empty State
+              if (widget.activeRoute == 'trash' && _foldersController.trashedFolders.isNotEmpty) ...[
+                const Text(
+                  'Trashed Folders',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 140, // Height for folder tiles row
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _foldersController.trashedFolders.length,
+                    itemBuilder: (context, index) {
+                      final folder = _foldersController.trashedFolders[index];
+                      return Container(
+                        width: 250,
+                        margin: const EdgeInsets.only(right: 16),
+                        child: FolderTile(
+                          folder: folder,
+                          count: _controller.getFolderNotesCount(folder.name),
+                          isTrashed: true,
+                          onTap: () {},
+                          onAddNote: () {},
+                          onDelete: () => _foldersController.permanentlyDeleteFolderFromTrash(folder.name),
+                          onRestore: () => _foldersController.restoreFolderFromTrash(folder.name),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20),
+                if (filteredNotes.isNotEmpty)
+                  const Text(
+                    'Trashed Notes',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                const SizedBox(height: 10),
+              ],
               Expanded(
                 child: NoteList(
                   notes: filteredNotes,

@@ -16,13 +16,29 @@ class FolderRepositoryImpl implements FolderRepository {
   }
 
   @override
+  Future<List<Folder>> getTrashedFolders() async {
+    final folderModels = await localDataSource.getTrashedFolders();
+    return folderModels.cast<Folder>();
+  }
+
+  @override
   Future<void> saveFolder(Folder folder) async {
     final folderModel = FolderModel.fromEntity(folder);
     await localDataSource.saveFolder(folderModel);
   }
 
   @override
-  Future<void> deleteFolder(String name) async {
-    await localDataSource.deleteFolder(name);
+  Future<void> deleteFolderToTrash(String name) async {
+    await localDataSource.deleteFolderToTrash(name);
+  }
+
+  @override
+  Future<void> restoreFolderFromTrash(String name) async {
+    await localDataSource.restoreFolderFromTrash(name);
+  }
+
+  @override
+  Future<void> permanentlyDeleteFolderFromTrash(String name) async {
+    await localDataSource.permanentlyDeleteFolderFromTrash(name);
   }
 }

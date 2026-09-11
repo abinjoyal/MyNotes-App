@@ -69,7 +69,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              controller.deleteFolder(folderName);
+              controller.deleteFolderToTrash(folderName);
               notesController.loadFromDatabase();
               Navigator.pop(context);
               if (_currentFolder == folderName) {

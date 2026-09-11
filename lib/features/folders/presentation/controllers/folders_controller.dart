@@ -45,13 +45,18 @@ class FoldersController extends ChangeNotifier {
   }
 
   final List<Folder> _folders = [];
+  final List<Folder> _trashedFolders = [];
 
   List<Folder> get folders => List.unmodifiable(_folders);
+  List<Folder> get trashedFolders => List.unmodifiable(_trashedFolders);
 
   Future<void> loadFolders() async {
     final fetchedFolders = await getFoldersUseCase();
+    final fetchedTrashed = await repository.getTrashedFolders();
     _folders.clear();
     _folders.addAll(fetchedFolders);
+    _trashedFolders.clear();
+    _trashedFolders.addAll(fetchedTrashed);
     notifyListeners();
   }
 
@@ -70,10 +75,34 @@ class FoldersController extends ChangeNotifier {
     await repository.saveFolder(newFolder);
   }
 
-  void deleteFolder(String name) async {
-    _folders.removeWhere((f) => f.name == name);
-    notifyListeners();
+  void deleteFolderToTrash(String name) async {
+    final index = _folders.indexWhere((f) => f.name == name);
+    if (index != -1) {
+      final deleted = _folders.removeAt(index);
+      _trashedFolders.insert(0, deleted);
+      notifyListeners();
+      await repository.deleteFolderToTrash(name);
+    }
+  }
 
-    await repository.deleteFolder(name);
+  void restoreFolderFromTrash(String name) async {
+    final index = _trashedFolders.indexWhere((f) => f.name == name);
+    if (index != -1) {
+      final restored = _trashedFolders.removeAt(index);
+      _folders.add(restored);
+      notifyListeners();
+      await repository.restoreFolderFromTrash(name);
+    }
+  }
+
+  void permanentlyDeleteFolderFromTrash(String name) async {
+    _trashedFolders.removeWhere((f) => f.name == name);
+    notifyListeners();
+    await repository.permanentlyDeleteFolderFromTrash(name);
+  }
+
+  void emptyTrash() {
+    _trashedFolders.clear();
+    notifyListeners();
   }
 }

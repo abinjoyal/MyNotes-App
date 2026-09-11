@@ -18,6 +18,7 @@ class AppDatabase {
   List<Note> _notesDb = [];
   List<Note> _trashedNotesDb = [];
   List<FolderModel> _foldersDb = [];
+  List<FolderModel> _trashedFoldersDb = [];
 
   Future<void> init() async {
     if (_isInitialized) return;
@@ -50,6 +51,11 @@ class AppDatabase {
                   .map((map) => FoldersTable.fromMap(Map<String, dynamic>.from(map)))
                   .toList();
             }
+            if (decoded['trashedFolders'] is List) {
+              _trashedFoldersDb = (decoded['trashedFolders'] as List)
+                  .map((map) => FoldersTable.fromMap(Map<String, dynamic>.from(map)))
+                  .toList();
+            }
           }
         }
       } else {
@@ -73,6 +79,11 @@ class AppDatabase {
   Future<List<FolderModel>> getAllFolders() async {
     await init();
     return List.unmodifiable(_foldersDb);
+  }
+
+  Future<List<FolderModel>> getTrashedFolders() async {
+    await init();
+    return List.unmodifiable(_trashedFoldersDb);
   }
 
   Future<void> saveNote(Note note) async {
@@ -115,6 +126,7 @@ class AppDatabase {
   Future<void> emptyTrash() async {
     await init();
     _trashedNotesDb.clear();
+    _trashedFoldersDb.clear();
     await _flushToDisk();
   }
 
@@ -129,10 +141,30 @@ class AppDatabase {
     await _flushToDisk();
   }
 
-  Future<void> deleteFolder(String name) async {
+  Future<void> deleteFolderToTrash(String name) async {
     await init();
     
-    _foldersDb.removeWhere((f) => f.name == name);
+    final index = _foldersDb.indexWhere((f) => f.name == name);
+    if (index != -1) {
+      final deleted = _foldersDb.removeAt(index);
+      _trashedFoldersDb.insert(0, deleted);
+      await _flushToDisk();
+    }
+  }
+
+  Future<void> restoreFolderFromTrash(String name) async {
+    await init();
+    final index = _trashedFoldersDb.indexWhere((f) => f.name == name);
+    if (index != -1) {
+      final restored = _trashedFoldersDb.removeAt(index);
+      _foldersDb.add(restored);
+      await _flushToDisk();
+    }
+  }
+
+  Future<void> permanentlyDeleteFolderFromTrash(String name) async {
+    await init();
+    _trashedFoldersDb.removeWhere((f) => f.name == name);
     
     for (int i = 0; i < _notesDb.length; i++) {
       if (_notesDb[i].folderName == name) {
@@ -180,6 +212,7 @@ class AppDatabase {
         'notes': _notesDb.map((n) => NotesTable.toMap(n)).toList(),
         'trashedNotes': _trashedNotesDb.map((n) => NotesTable.toMap(n)).toList(),
         'folders': _foldersDb.map((f) => FoldersTable.toMap(f)).toList(),
+        'trashedFolders': _trashedFoldersDb.map((f) => FoldersTable.toMap(f)).toList(),
       };
       final jsonStr = const JsonEncoder.withIndent('  ').convert(dataMap);
       await _dbFile.writeAsString(jsonStr);

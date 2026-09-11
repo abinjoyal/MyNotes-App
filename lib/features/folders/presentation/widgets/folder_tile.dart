@@ -8,6 +8,8 @@ class FolderTile extends StatefulWidget {
   final VoidCallback onTap;
   final VoidCallback onAddNote;
   final VoidCallback onDelete;
+  final VoidCallback? onRestore;
+  final bool isTrashed;
 
   const FolderTile({
     super.key,
@@ -16,6 +18,8 @@ class FolderTile extends StatefulWidget {
     required this.onTap,
     required this.onAddNote,
     required this.onDelete,
+    this.onRestore,
+    this.isTrashed = false,
   });
 
   @override
@@ -106,26 +110,38 @@ class _FolderTileState extends State<FolderTile> {
                   ),
                   Row(
                     children: [
+                      if (widget.isTrashed && widget.onRestore != null)
+                        IconButton(
+                          tooltip: 'Restore ${widget.folder.name}',
+                          icon: Icon(
+                            Icons.restore_rounded,
+                            size: 26,
+                            color: _isHovered ? AppColors.primaryPurple : AppColors.primaryPurple.withOpacity(0.7),
+                          ),
+                          onPressed: widget.onRestore,
+                          splashRadius: 20,
+                        ),
                       IconButton(
-                        tooltip: 'Delete ${widget.folder.name}',
+                        tooltip: widget.isTrashed ? 'Permanently Delete' : 'Delete ${widget.folder.name}',
                         icon: Icon(
-                          Icons.delete_outline_rounded,
+                          widget.isTrashed ? Icons.delete_forever_rounded : Icons.delete_outline_rounded,
                           size: 22,
                           color: _isHovered ? AppColors.primaryPink.withOpacity(0.8) : Colors.transparent,
                         ),
                         onPressed: widget.onDelete,
                         splashRadius: 20,
                       ),
-                      IconButton(
-                        tooltip: 'Add note to ${widget.folder.name}',
-                        icon: Icon(
-                          Icons.add_circle_rounded,
-                          size: 26,
-                          color: _isHovered ? AppColors.primaryPink : AppColors.primaryPurple.withOpacity(0.7),
+                      if (!widget.isTrashed)
+                        IconButton(
+                          tooltip: 'Add note to ${widget.folder.name}',
+                          icon: Icon(
+                            Icons.add_circle_rounded,
+                            size: 26,
+                            color: _isHovered ? AppColors.primaryPink : AppColors.primaryPurple.withOpacity(0.7),
+                          ),
+                          onPressed: widget.onAddNote,
+                          splashRadius: 20,
                         ),
-                        onPressed: widget.onAddNote,
-                        splashRadius: 20,
-                      ),
                     ],
                   ),
                 ],

@@ -72,9 +72,19 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
     final textColor = isDark ? Colors.white : AppColors.darkText;
    
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: SafeArea(
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark 
+              ? [const Color(0xFF1A1A24), const Color(0xFF121212)]
+              : [const Color(0xFFF8F9FF), const Color(0xFFF1F3F6)],
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
           child: Column(
@@ -166,6 +176,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
           ),
         ),
       ),
+      ),
     );
   }
 
@@ -188,9 +199,19 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
           Folder(id: '0', name: folderName, color: const Color(0xFF635BFF)),
     );
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: SafeArea(
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark 
+              ? [const Color(0xFF1A1A24), const Color(0xFF121212)]
+              : [const Color(0xFFF8F9FF), const Color(0xFFF1F3F6)],
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
           child: Column(
@@ -371,6 +392,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

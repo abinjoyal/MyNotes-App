@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class PinnedNote {
   final String id;
   final String noteId;

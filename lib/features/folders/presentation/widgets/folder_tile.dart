@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../domain/entities/folder.dart';
 
-class FolderTile extends StatelessWidget {
+class FolderTile extends StatefulWidget {
   final Folder folder;
   final int count;
   final VoidCallback onTap;
@@ -17,81 +17,130 @@ class FolderTile extends StatelessWidget {
   });
 
   @override
+  State<FolderTile> createState() => _FolderTileState();
+}
+
+class _FolderTileState extends State<FolderTile> {
+  bool _isHovered = false;
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF232329) : Colors.white;
+    
+    // Dynamic styles based on state
+    final double scale = _isPressed ? 0.96 : (_isHovered ? 1.02 : 1.0);
+    final cardBg = isDark ? const Color(0xFF1E1E24) : Colors.white;
+    final hoverCardBg = isDark ? const Color(0xFF25252E) : const Color(0xFFF4F6FA);
     final textColor = isDark ? Colors.white : AppColors.darkText;
     final borderColor = isDark ? const Color(0xFF333333) : const Color(0xFFEAEAEE);
+    final hoverBorderColor = widget.folder.color.withOpacity(0.5);
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: cardBg,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: borderColor),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.02),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) {
+          setState(() => _isPressed = false);
+          widget.onTap();
+        },
+        onTapCancel: () => setState(() => _isPressed = false),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.identity()..scale(scale),
+          transformAlignment: Alignment.center,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: _isHovered ? hoverCardBg : cardBg,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: _isHovered ? hoverBorderColor : borderColor,
+              width: _isHovered ? 1.5 : 1.0,
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: folder.color.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    Icons.folder_rounded,
-                    color: folder.color,
-                    size: 22,
-                  ),
+            boxShadow: [
+              BoxShadow(
+                color: widget.folder.color.withOpacity(_isHovered ? 0.15 : 0.0),
+                blurRadius: 15,
+                spreadRadius: _isHovered ? 2 : 0,
+                offset: const Offset(0, 4),
+              ),
+              if (!isDark)
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
                 ),
-                IconButton(
-                  tooltip: 'Add note to ${folder.name}',
-                  icon: const Icon(
-                    Icons.add_circle_outline_rounded,
-                    size: 20,
-                    color: AppColors.primaryPurple,
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: widget.folder.color.withOpacity(_isHovered ? 0.2 : 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        if (_isHovered)
+                          BoxShadow(
+                            color: widget.folder.color.withOpacity(0.4),
+                            blurRadius: 8,
+                            spreadRadius: -2,
+                          )
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.folder_rounded,
+                      color: widget.folder.color,
+                      size: 24,
+                    ),
                   ),
-                  onPressed: onAddNote,
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  folder.name,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
+                  IconButton(
+                    tooltip: 'Add note to ${widget.folder.name}',
+                    icon: Icon(
+                      Icons.add_circle_rounded,
+                      size: 26,
+                      color: _isHovered ? AppColors.primaryPink : AppColors.primaryPurple.withOpacity(0.7),
+                    ),
+                    onPressed: widget.onAddNote,
+                    splashRadius: 20,
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '$count ${count == 1 ? 'note' : 'notes'}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF8C98A9),
-                    fontWeight: FontWeight.w500,
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.folder.name,
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                      color: textColor,
+                      letterSpacing: 0.3,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(height: 4),
+                  Text(
+                    '${widget.count} ${widget.count == 1 ? 'note' : 'notes'}',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? const Color(0xFFA0A0AB) : const Color(0xFF7A869A),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

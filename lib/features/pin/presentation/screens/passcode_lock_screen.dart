@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../../settings/controllers/settings_controller.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:flutter/services.dart';
 
 class PasscodeLockScreen extends StatefulWidget {
   final bool isSetupMode;
@@ -27,6 +29,9 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
 
   late AnimationController _shakeController;
   late Animation<double> _shakeAnimation;
+  
+  final LocalAuthentication _auth = LocalAuthentication();
+  bool _canCheckBiometrics = false;
 
   @override
   void initState() {
@@ -43,6 +48,25 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
       TweenSequenceItem(tween: Tween(begin: -8.0, end: 8.0), weight: 2),
       TweenSequenceItem(tween: Tween(begin: 8.0, end: 0.0), weight: 1),
     ]).animate(_shakeController);
+
+    _checkBiometricsSupport();
+  }
+
+  Future<void> _checkBiometricsSupport() async {
+    try {
+      final canCheck = await _auth.canCheckBiometrics || await _auth.isDeviceSupported();
+      if (mounted) {
+        setState(() {
+          _canCheckBiometrics = canCheck;
+        });
+      }
+    } on PlatformException catch (_) {
+      if (mounted) {
+        setState(() {
+          _canCheckBiometrics = false;
+        });
+      }
+    }
   }
 
   @override
@@ -122,20 +146,34 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
     _shakeController.forward(from: 0.0);
   }
 
-  void _triggerBiometrics() {
+  Future<void> _triggerBiometrics() async {
+    if (!_canCheckBiometrics) {
+      _triggerError('Biometrics not supported on this device.');
+      return;
+    }
+
     if (_settingsController.enableBiometrics) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Scanning Fingerprint / Face ID... Authorized!'),
-          backgroundColor: AppColors.primaryPurple,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-      );
-      if (widget.onSuccess != null) {
-        widget.onSuccess!();
-      } else if (mounted && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop(true);
+      try {
+        final didAuthenticate = await _auth.authenticate(
+          localizedReason: 'Please authenticate to unlock MyNotes',
+          options: const AuthenticationOptions(
+            biometricOnly: true,
+            useErrorDialogs: true,
+            stickyAuth: true,
+          ),
+        );
+
+        if (didAuthenticate) {
+          if (widget.onSuccess != null) {
+            widget.onSuccess!();
+          } else if (mounted && Navigator.of(context).canPop()) {
+            Navigator.of(context).pop(true);
+          }
+        } else {
+          _triggerError('Authentication failed.');
+        }
+      } on PlatformException catch (e) {
+        _triggerError(e.message ?? 'Authentication error');
       }
     } else {
       _triggerError('Biometrics not enabled in Settings.');
@@ -290,12 +328,16 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             // Biometrics button (Unlock mode)
-                            _buildIconButton(
-                              icon: Icons.fingerprint_rounded,
-                              textColor: AppColors.primaryPurple,
-                              isDark: isDark,
-                              onTap: _triggerBiometrics,
-                            ),
+                            if (!widget.isSetupMode && _canCheckBiometrics)
+                              _buildIconButton(
+                                icon: Icons.fingerprint_rounded,
+                                textColor: AppColors.primaryPurple,
+                                isDark: isDark,
+                                onTap: _triggerBiometrics,
+                              )
+                            else
+                              const SizedBox(width: 68), // Spacer
+
                             // Number 0
                             _buildKeypadButton('0', textColor, isDark),
                             // Backspace button

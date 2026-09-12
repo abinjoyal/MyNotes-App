@@ -7,12 +7,14 @@ class FoldersTable {
   static const String colId = 'id';
   static const String colName = 'name';
   static const String colColorValue = 'color_value';
+  static const String colIsTrashed = 'is_trashed';
 
   static const String createTableSql = '''
     CREATE TABLE IF NOT EXISTS $tableName (
       $colId TEXT PRIMARY KEY,
       $colName TEXT NOT NULL UNIQUE,
-      $colColorValue INTEGER NOT NULL
+      $colColorValue INTEGER NOT NULL,
+      $colIsTrashed INTEGER NOT NULL DEFAULT 0
     );
   ''';
 

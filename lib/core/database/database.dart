@@ -1,5 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:path/path.dart';
 import '../../features/notes/domain/entities/note.dart';
 import '../../features/folders/data/models/folder_model.dart';
 import 'tables/notes_table.dart';
@@ -12,210 +14,186 @@ class AppDatabase {
   factory AppDatabase() => instance;
   AppDatabase._internal();
 
-  bool _isInitialized = false;
-  late File _dbFile;
-
-  List<Note> _notesDb = [];
-  List<Note> _trashedNotesDb = [];
-  List<FolderModel> _foldersDb = [];
-  List<FolderModel> _trashedFoldersDb = [];
+  Database? _database;
 
   Future<void> init() async {
-    if (_isInitialized) return;
+    await database;
+  }
 
-    try {
-      final dir = Directory.current;
-      final dbDir = Directory('${dir.path}/database');
-      if (!await dbDir.exists()) {
-        await dbDir.create(recursive: true);
-      }
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDB('mynotes.db');
+    return _database!;
+  }
 
-      _dbFile = File('${dbDir.path}/mynotes_local_db.json');
-      if (await _dbFile.exists()) {
-        final content = await _dbFile.readAsString();
-        if (content.isNotEmpty) {
-          final decoded = jsonDecode(content);
-          if (decoded is Map<String, dynamic>) {
-            if (decoded['notes'] is List) {
-              _notesDb = (decoded['notes'] as List)
-                  .map((map) => NotesTable.fromMap(Map<String, dynamic>.from(map)))
-                  .toList();
-            }
-            if (decoded['trashedNotes'] is List) {
-              _trashedNotesDb = (decoded['trashedNotes'] as List)
-                  .map((map) => NotesTable.fromMap(Map<String, dynamic>.from(map)))
-                  .toList();
-            }
-            if (decoded['folders'] is List) {
-              _foldersDb = (decoded['folders'] as List)
-                  .map((map) => FoldersTable.fromMap(Map<String, dynamic>.from(map)))
-                  .toList();
-            }
-            if (decoded['trashedFolders'] is List) {
-              _trashedFoldersDb = (decoded['trashedFolders'] as List)
-                  .map((map) => FoldersTable.fromMap(Map<String, dynamic>.from(map)))
-                  .toList();
-            }
-          }
-        }
-      } else {
-        await _flushToDisk();
-      }
-    } catch (_) {}
+  Future<Database> _initDB(String filePath) async {
+    if (Platform.isWindows || Platform.isLinux) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
+    
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, filePath);
 
-    _isInitialized = true;
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: _createDB,
+    );
+  }
+
+  Future _createDB(Database db, int version) async {
+    await db.execute(NotesTable.createTableSql);
+    await db.execute(FoldersTable.createTableSql);
+    await db.execute(AttachmentsTable.createTableSql);
+    await db.execute(RecentNotesTable.createTableSql);
   }
 
   Future<List<Note>> getAllNotes() async {
-    await init();
-    return List.unmodifiable(_notesDb);
+    final db = await instance.database;
+    final result = await db.query(
+      NotesTable.tableName,
+      where: '${NotesTable.colIsTrashed} = ?',
+      whereArgs: [0],
+      orderBy: '${NotesTable.colUpdatedAt} DESC',
+    );
+    return result.map((json) => NotesTable.fromMap(json)).toList();
   }
 
   Future<List<Note>> getTrashedNotes() async {
-    await init();
-    return List.unmodifiable(_trashedNotesDb);
+    final db = await instance.database;
+    final result = await db.query(
+      NotesTable.tableName,
+      where: '${NotesTable.colIsTrashed} = ?',
+      whereArgs: [1],
+      orderBy: '${NotesTable.colUpdatedAt} DESC',
+    );
+    return result.map((json) => NotesTable.fromMap(json)).toList();
   }
 
   Future<List<FolderModel>> getAllFolders() async {
-    await init();
-    return List.unmodifiable(_foldersDb);
+    final db = await instance.database;
+    final result = await db.query(
+      FoldersTable.tableName,
+      where: '${FoldersTable.colIsTrashed} = ?',
+      whereArgs: [0],
+    );
+    return result.map((json) => FoldersTable.fromMap(json)).toList();
   }
 
   Future<List<FolderModel>> getTrashedFolders() async {
-    await init();
-    return List.unmodifiable(_trashedFoldersDb);
+    final db = await instance.database;
+    final result = await db.query(
+      FoldersTable.tableName,
+      where: '${FoldersTable.colIsTrashed} = ?',
+      whereArgs: [1],
+    );
+    return result.map((json) => FoldersTable.fromMap(json)).toList();
   }
 
   Future<void> saveNote(Note note) async {
-    await init();
-    final index = _notesDb.indexWhere((n) => n.id == note.id);
-    if (index != -1) {
-      _notesDb[index] = note;
-    } else {
-      _notesDb.insert(0, note);
-    }
-    await _flushToDisk();
+    final db = await instance.database;
+    final map = NotesTable.toMap(note);
+    map[NotesTable.colIsTrashed] = 0;
+    
+    await db.insert(
+      NotesTable.tableName,
+      map,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<void> deleteNoteToTrash(String id) async {
-    await init();
-    final index = _notesDb.indexWhere((n) => n.id == id);
-    if (index != -1) {
-      final deleted = _notesDb.removeAt(index);
-      _trashedNotesDb.insert(0, deleted);
-      await _flushToDisk();
-    }
+    final db = await instance.database;
+    await db.update(
+      NotesTable.tableName,
+      {NotesTable.colIsTrashed: 1},
+      where: '${NotesTable.colId} = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<void> restoreFromTrash(String id) async {
-    await init();
-    final index = _trashedNotesDb.indexWhere((n) => n.id == id);
-    if (index != -1) {
-      final restored = _trashedNotesDb.removeAt(index);
-      _notesDb.insert(0, restored);
-      await _flushToDisk();
-    }
+    final db = await instance.database;
+    await db.update(
+      NotesTable.tableName,
+      {NotesTable.colIsTrashed: 0},
+      where: '${NotesTable.colId} = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<void> permanentlyDeleteFromTrash(String id) async {
-    await init();
-    _trashedNotesDb.removeWhere((n) => n.id == id);
-    await _flushToDisk();
+    final db = await instance.database;
+    await db.delete(
+      NotesTable.tableName,
+      where: '${NotesTable.colId} = ? AND ${NotesTable.colIsTrashed} = ?',
+      whereArgs: [id, 1],
+    );
   }
 
   Future<void> emptyTrash() async {
-    await init();
-    _trashedNotesDb.clear();
-    _trashedFoldersDb.clear();
-    await _flushToDisk();
+    final db = await instance.database;
+    await db.delete(
+      NotesTable.tableName,
+      where: '${NotesTable.colIsTrashed} = ?',
+      whereArgs: [1],
+    );
+    await db.delete(
+      FoldersTable.tableName,
+      where: '${FoldersTable.colIsTrashed} = ?',
+      whereArgs: [1],
+    );
   }
 
   Future<void> saveFolder(FolderModel folder) async {
-    await init();
-    final index = _foldersDb.indexWhere((f) => f.name == folder.name);
-    if (index != -1) {
-      _foldersDb[index] = folder;
-    } else {
-      _foldersDb.add(folder);
-    }
-    await _flushToDisk();
+    final db = await instance.database;
+    final map = FoldersTable.toMap(folder);
+    map[FoldersTable.colIsTrashed] = 0;
+    
+    await db.insert(
+      FoldersTable.tableName,
+      map,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<void> deleteFolderToTrash(String name) async {
-    await init();
-    
-    final index = _foldersDb.indexWhere((f) => f.name == name);
-    if (index != -1) {
-      final deleted = _foldersDb.removeAt(index);
-      _trashedFoldersDb.insert(0, deleted);
-      await _flushToDisk();
-    }
+    final db = await instance.database;
+    await db.update(
+      FoldersTable.tableName,
+      {FoldersTable.colIsTrashed: 1},
+      where: '${FoldersTable.colName} = ?',
+      whereArgs: [name],
+    );
   }
 
   Future<void> restoreFolderFromTrash(String name) async {
-    await init();
-    final index = _trashedFoldersDb.indexWhere((f) => f.name == name);
-    if (index != -1) {
-      final restored = _trashedFoldersDb.removeAt(index);
-      _foldersDb.add(restored);
-      await _flushToDisk();
-    }
+    final db = await instance.database;
+    await db.update(
+      FoldersTable.tableName,
+      {FoldersTable.colIsTrashed: 0},
+      where: '${FoldersTable.colName} = ?',
+      whereArgs: [name],
+    );
   }
 
   Future<void> permanentlyDeleteFolderFromTrash(String name) async {
-    await init();
-    _trashedFoldersDb.removeWhere((f) => f.name == name);
+    final db = await instance.database;
     
-    for (int i = 0; i < _notesDb.length; i++) {
-      if (_notesDb[i].folderName == name) {
-        _notesDb[i] = Note(
-          id: _notesDb[i].id,
-          title: _notesDb[i].title,
-          content: _notesDb[i].content,
-          indicatorColor: _notesDb[i].indicatorColor,
-          tags: _notesDb[i].tags,
-          updatedAt: _notesDb[i].updatedAt,
-          isPinned: _notesDb[i].isPinned,
-          folderName: null,
-        );
-      }
-    }
-    
-    for (int i = 0; i < _trashedNotesDb.length; i++) {
-      if (_trashedNotesDb[i].folderName == name) {
-        _trashedNotesDb[i] = Note(
-          id: _trashedNotesDb[i].id,
-          title: _trashedNotesDb[i].title,
-          content: _trashedNotesDb[i].content,
-          indicatorColor: _trashedNotesDb[i].indicatorColor,
-          tags: _trashedNotesDb[i].tags,
-          updatedAt: _trashedNotesDb[i].updatedAt,
-          isPinned: _trashedNotesDb[i].isPinned,
-          folderName: null,
-        );
-      }
-    }
-    
-    await _flushToDisk();
-  }
+    // Set notes in this folder to have null folderName
+    await db.update(
+      NotesTable.tableName,
+      {NotesTable.colFolderName: null},
+      where: '${NotesTable.colFolderName} = ?',
+      whereArgs: [name],
+    );
 
-  Future<void> _flushToDisk() async {
-    try {
-      final dataMap = {
-        'version': 1,
-        'schemas': [
-          NotesTable.tableName,
-          FoldersTable.tableName,
-          AttachmentsTable.tableName,
-          RecentNotesTable.tableName,
-        ],
-        'notes': _notesDb.map((n) => NotesTable.toMap(n)).toList(),
-        'trashedNotes': _trashedNotesDb.map((n) => NotesTable.toMap(n)).toList(),
-        'folders': _foldersDb.map((f) => FoldersTable.toMap(f)).toList(),
-        'trashedFolders': _trashedFoldersDb.map((f) => FoldersTable.toMap(f)).toList(),
-      };
-      final jsonStr = const JsonEncoder.withIndent('  ').convert(dataMap);
-      await _dbFile.writeAsString(jsonStr);
-    } catch (_) {}
+    // Delete the folder
+    await db.delete(
+      FoldersTable.tableName,
+      where: '${FoldersTable.colName} = ? AND ${FoldersTable.colIsTrashed} = ?',
+      whereArgs: [name, 1],
+    );
   }
 }

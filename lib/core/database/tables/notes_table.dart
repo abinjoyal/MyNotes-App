@@ -13,6 +13,7 @@ class NotesTable {
   static const String colUpdatedAt = 'updated_at';
   static const String colIsPinned = 'is_pinned';
   static const String colFolderName = 'folder_name';
+  static const String colIsTrashed = 'is_trashed';
 
   static const String createTableSql = '''
     CREATE TABLE IF NOT EXISTS $tableName (
@@ -23,7 +24,8 @@ class NotesTable {
       $colTags TEXT,
       $colUpdatedAt TEXT NOT NULL,
       $colIsPinned INTEGER NOT NULL DEFAULT 0,
-      $colFolderName TEXT
+      $colFolderName TEXT,
+      $colIsTrashed INTEGER NOT NULL DEFAULT 0
     );
   ''';
 

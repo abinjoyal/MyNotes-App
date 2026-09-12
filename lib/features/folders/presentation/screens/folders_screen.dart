@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mynotes/features/folders/domain/entities/folder.dart';
 import 'package:mynotes/features/notes/presentation/controllers/notes_controller.dart';
+import 'package:mynotes/features/pin/presentation/screens/passcode_lock_screen.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../../notes/domain/entities/note.dart';
 import '../../../notes/presentation/controllers/notes_provider.dart';
@@ -230,7 +231,40 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                     return FolderTile(
                       folder: folder,
                       count: count,
-                      onTap: () {
+                      onToggleLock: () async {
+                        if (folder.isLocked) {
+                          // Unlock
+                          final success = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => PasscodeLockScreen(isSetupMode: false),
+                            ),
+                          );
+                          if (success == true) {
+                            foldersController.toggleFolderLock(folder.name, false);
+                          }
+                        } else {
+                          // Lock
+                          if (SettingsController.instance.hasPinCode) {
+                            foldersController.toggleFolderLock(folder.name, true);
+                          } else {
+                            // Prompt to set up PIN
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Please set up a Passcode in Settings first.')),
+                            );
+                          }
+                        }
+                      },
+                      onTap: () async {
+                        if (folder.isLocked) {
+                          final success = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => PasscodeLockScreen(isSetupMode: false),
+                            ),
+                          );
+                          if (success != true) return;
+                        }
                         setState(() {
                           _currentFolder = folder.name;
                         });

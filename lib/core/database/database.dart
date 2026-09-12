@@ -35,11 +35,20 @@ class AppDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(
+    final db = await openDatabase(
       path,
       version: 1,
       onCreate: _createDB,
     );
+    
+    // Migration for is_locked column
+    try {
+      await db.execute('ALTER TABLE folders ADD COLUMN is_locked INTEGER NOT NULL DEFAULT 0');
+    } catch (e) {
+      // Column might already exist, ignore error
+    }
+    
+    return db;
   }
 
   Future _createDB(Database db, int version) async {
@@ -173,6 +182,16 @@ class AppDatabase {
     await db.update(
       FoldersTable.tableName,
       {FoldersTable.colIsTrashed: 0},
+      where: '${FoldersTable.colName} = ?',
+      whereArgs: [name],
+    );
+  }
+
+  Future<void> toggleFolderLock(String name, bool isLocked) async {
+    final db = await instance.database;
+    await db.update(
+      FoldersTable.tableName,
+      {FoldersTable.colIsLocked: isLocked ? 1 : 0},
       where: '${FoldersTable.colName} = ?',
       whereArgs: [name],
     );

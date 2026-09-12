@@ -9,6 +9,7 @@ class FolderTile extends StatefulWidget {
   final VoidCallback onAddNote;
   final VoidCallback onDelete;
   final VoidCallback? onRestore;
+  final VoidCallback? onToggleLock;
   final bool isTrashed;
 
   const FolderTile({
@@ -19,6 +20,7 @@ class FolderTile extends StatefulWidget {
     required this.onAddNote,
     required this.onDelete,
     this.onRestore,
+    this.onToggleLock,
     this.isTrashed = false,
   });
 
@@ -102,10 +104,32 @@ class _FolderTileState extends State<FolderTile> {
                           )
                       ],
                     ),
-                    child: Icon(
-                      Icons.folder_rounded,
-                      color: widget.folder.color,
-                      size: 24,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Icon(
+                          Icons.folder_rounded,
+                          color: widget.folder.color,
+                          size: 24,
+                        ),
+                        if (widget.folder.isLocked)
+                          Positioned(
+                            right: -4,
+                            bottom: -4,
+                            child: Container(
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: cardBg,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.lock_rounded,
+                                size: 12,
+                                color: widget.folder.color,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   Row(
@@ -119,6 +143,17 @@ class _FolderTileState extends State<FolderTile> {
                             color: _isHovered ? AppColors.primaryPurple : AppColors.primaryPurple.withOpacity(0.7),
                           ),
                           onPressed: widget.onRestore,
+                          splashRadius: 20,
+                        ),
+                      if (!widget.isTrashed && widget.onToggleLock != null)
+                        IconButton(
+                          tooltip: widget.folder.isLocked ? 'Unlock ${widget.folder.name}' : 'Lock ${widget.folder.name}',
+                          icon: Icon(
+                            widget.folder.isLocked ? Icons.lock_rounded : Icons.lock_open_rounded,
+                            size: 22,
+                            color: _isHovered ? AppColors.primaryPurple : Colors.transparent,
+                          ),
+                          onPressed: widget.onToggleLock,
                           splashRadius: 20,
                         ),
                       IconButton(

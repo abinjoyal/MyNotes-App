@@ -5,6 +5,7 @@ class FolderModel extends Folder {
     required super.id,
     required super.name,
     required super.color,
+    super.isLocked,
   });
 
   factory FolderModel.fromEntity(Folder folder) {
@@ -12,6 +13,7 @@ class FolderModel extends Folder {
       id: folder.id,
       name: folder.name,
       color: folder.color,
+      isLocked: folder.isLocked,
     );
   }
 }

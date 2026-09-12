@@ -105,4 +105,19 @@ class FoldersController extends ChangeNotifier {
     _trashedFolders.clear();
     notifyListeners();
   }
+
+  void toggleFolderLock(String name, bool isLocked) async {
+    final index = _folders.indexWhere((f) => f.name == name);
+    if (index != -1) {
+      final updatedFolder = Folder(
+        id: _folders[index].id,
+        name: _folders[index].name,
+        color: _folders[index].color,
+        isLocked: isLocked,
+      );
+      _folders[index] = updatedFolder;
+      notifyListeners();
+      await repository.toggleFolderLock(name, isLocked);
+    }
+  }
 }

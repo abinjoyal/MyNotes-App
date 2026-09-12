@@ -38,6 +38,11 @@ class FolderRepositoryImpl implements FolderRepository {
   }
 
   @override
+  Future<void> toggleFolderLock(String name, bool isLocked) async {
+    await localDataSource.toggleFolderLock(name, isLocked);
+  }
+
+  @override
   Future<void> permanentlyDeleteFolderFromTrash(String name) async {
     await localDataSource.permanentlyDeleteFolderFromTrash(name);
   }

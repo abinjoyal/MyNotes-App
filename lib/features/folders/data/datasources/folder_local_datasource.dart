@@ -5,6 +5,7 @@ abstract class FolderLocalDataSource {
   Future<List<FolderModel>> getAllFolders();
   Future<List<FolderModel>> getTrashedFolders();
   Future<void> saveFolder(FolderModel folder);
+  Future<void> toggleFolderLock(String name, bool isLocked);
   Future<void> deleteFolderToTrash(String name);
   Future<void> restoreFolderFromTrash(String name);
   Future<void> permanentlyDeleteFolderFromTrash(String name);
@@ -35,9 +36,13 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
     await database.deleteFolderToTrash(name);
   }
 
-  @override
   Future<void> restoreFolderFromTrash(String name) async {
     await database.restoreFolderFromTrash(name);
+  }
+
+  @override
+  Future<void> toggleFolderLock(String name, bool isLocked) async {
+    await database.toggleFolderLock(name, isLocked);
   }
 
   @override

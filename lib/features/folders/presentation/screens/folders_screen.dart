@@ -9,6 +9,7 @@ import '../../../notes/presentation/widgets/note_list.dart';
 import '../../../settings/controllers/settings_controller.dart';
 import '../controllers/folders_controller.dart';
 import '../widgets/folder_tile.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class FoldersScreen extends ConsumerStatefulWidget {
   final String? selectedFolderName;
@@ -236,7 +237,9 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                       },
                       onAddNote: () => _createNoteInFolder(folder.name),
                       onDelete: () => _confirmDeleteFolder(folder.name, foldersController, notesController),
-                    );
+                    ).animate()
+                     .fade(duration: 300.ms, delay: (index * 40).ms)
+                     .scaleXY(begin: 0.95, duration: 300.ms, curve: Curves.easeOutBack);
                   },
                 ),
               ),

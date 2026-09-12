@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/note.dart';
 import '../controllers/notes_controller.dart';
 import 'note_card.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class NoteList extends StatelessWidget {
   final List<Note> notes;
@@ -190,7 +191,9 @@ class NoteList extends StatelessWidget {
             onPermanentDelete: () {
               NotesController.instance.permanentlyDeleteFromTrash(note.id);
             },
-          );
+          ).animate()
+           .fade(duration: 300.ms, delay: (index * 30).ms)
+           .slideY(begin: 0.05, duration: 300.ms, curve: Curves.easeOutQuad);
         },
       );
     }
@@ -226,7 +229,9 @@ class NoteList extends StatelessWidget {
           onPermanentDelete: () {
             NotesController.instance.permanentlyDeleteFromTrash(note.id);
           },
-        );
+        ).animate()
+         .fade(duration: 300.ms, delay: (index * 30).ms)
+         .slideX(begin: 0.05, duration: 300.ms, curve: Curves.easeOutQuad);
       },
     );
   }

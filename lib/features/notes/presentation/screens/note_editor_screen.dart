@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/note.dart';
 import '../widgets/note_editor.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class NoteEditorScreen extends StatelessWidget {
   final Note? note;
@@ -29,7 +30,9 @@ class NoteEditorScreen extends StatelessWidget {
           initialNote: note,
           onSave: onSave,
           onClose: onClose,
-        ),
+        ).animate()
+         .fade(duration: 250.ms)
+         .slideY(begin: 0.03, duration: 250.ms, curve: Curves.easeOut),
       ),
     );
   }

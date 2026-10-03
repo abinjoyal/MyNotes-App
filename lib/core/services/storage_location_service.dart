@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import '../../features/notes/domain/entities/note.dart';
 import 'storage_service.dart';
 
 enum StorageMigrationOption {
@@ -155,5 +156,88 @@ class StorageLocationService {
 
   String _basename(String path) {
     return path.split(Platform.pathSeparator).last;
+  }
+
+  String sanitizeFilename(String name) {
+    final sanitized = name.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_').trim();
+    return sanitized.isEmpty ? 'Untitled' : sanitized;
+  }
+
+  Future<void> saveNoteToFile(Note note) async {
+    try {
+      final rootPath = await getStoragePath();
+      await initializeDirectoryStructure(rootPath);
+
+      String targetDirPath;
+      if (note.folderName != null && note.folderName!.trim().isNotEmpty) {
+        final folderNameSanitized = sanitizeFilename(note.folderName!);
+        targetDirPath = '$rootPath${Platform.pathSeparator}Folders${Platform.pathSeparator}$folderNameSanitized';
+      } else if (_isTaskChecklist(note)) {
+        targetDirPath = '$rootPath${Platform.pathSeparator}Tasks';
+      } else {
+        targetDirPath = '$rootPath${Platform.pathSeparator}Notes';
+      }
+
+      final dir = Directory(targetDirPath);
+      if (!await dir.exists()) {
+        await dir.create(recursive: true);
+      }
+
+      final filename = sanitizeFilename(note.title.isEmpty ? 'Untitled Note' : note.title);
+      final filePath = '$targetDirPath${Platform.pathSeparator}$filename.md';
+
+      final file = File(filePath);
+      final tagsStr = note.tags.isNotEmpty ? note.tags.join(', ') : 'None';
+      final markdownContent = '''# ${note.title.isEmpty ? 'Untitled Note' : note.title}
+
+Updated: ${note.updatedAt}
+Tags: $tagsStr
+
+${note.content}
+''';
+
+      await file.writeAsString(markdownContent);
+    } catch (_) {}
+  }
+
+  Future<void> deleteNoteFile(Note note) async {
+    try {
+      final rootPath = await getStoragePath();
+      final filename = sanitizeFilename(note.title.isEmpty ? 'Untitled Note' : note.title);
+
+      final pathsToTry = [
+        '$rootPath${Platform.pathSeparator}Notes${Platform.pathSeparator}$filename.md',
+        '$rootPath${Platform.pathSeparator}Tasks${Platform.pathSeparator}$filename.md',
+      ];
+
+      if (note.folderName != null && note.folderName!.trim().isNotEmpty) {
+        final folderNameSanitized = sanitizeFilename(note.folderName!);
+        pathsToTry.add('$rootPath${Platform.pathSeparator}Folders${Platform.pathSeparator}$folderNameSanitized${Platform.pathSeparator}$filename.md');
+      }
+
+      for (final p in pathsToTry) {
+        final f = File(p);
+        if (await f.exists()) {
+          await f.delete();
+        }
+      }
+    } catch (_) {}
+  }
+
+  Future<void> syncAllNotesToFiles(List<Note> notes) async {
+    for (final note in notes) {
+      await saveNoteToFile(note);
+    }
+  }
+
+  bool _isTaskChecklist(Note note) {
+    final content = note.content.trim();
+    return note.tags.contains('#task') ||
+        note.tags.contains('#checklist') ||
+        note.tags.contains('task') ||
+        note.tags.contains('checklist') ||
+        content.startsWith('- [ ]') ||
+        content.startsWith('- [x]') ||
+        content.startsWith('- [X]');
   }
 }

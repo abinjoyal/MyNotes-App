@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mynotes/features/notes/data/services/version_history_service.dart';
 import '../../domain/entities/note.dart';
 import '../../../../core/database/database.dart';
+import '../../../../core/services/storage_location_service.dart';
 
 
 
@@ -26,6 +27,8 @@ class NotesController extends ChangeNotifier {
 
     _trashedNotes.clear();
     _trashedNotes.addAll(dbTrashed);
+
+    StorageLocationService.instance.syncAllNotesToFiles(dbNotes);
 
     notifyListeners();
   }
@@ -155,6 +158,7 @@ class NotesController extends ChangeNotifier {
         );
         _notes[index] = updatedNote;
         AppDatabase.instance.saveNote(updatedNote);
+        StorageLocationService.instance.saveNoteToFile(updatedNote);
         VersionHistoryService.instance.saveSnapshot(
           noteId: updatedNote.id,
           title: updatedNote.title,
@@ -180,6 +184,7 @@ class NotesController extends ChangeNotifier {
 
     _notes.insert(0, newNote);
     AppDatabase.instance.saveNote(newNote);
+    StorageLocationService.instance.saveNoteToFile(newNote);
     VersionHistoryService.instance.saveSnapshot(
       noteId: newNote.id,
       title: newNote.title,
@@ -196,6 +201,7 @@ class NotesController extends ChangeNotifier {
       final deletedNote = _notes.removeAt(index);
       _trashedNotes.insert(0, deletedNote);
       AppDatabase.instance.deleteNoteToTrash(id);
+      StorageLocationService.instance.deleteNoteFile(deletedNote);
       notifyListeners();
     }
   }
@@ -206,14 +212,19 @@ class NotesController extends ChangeNotifier {
       final restoredNote = _trashedNotes.removeAt(index);
       _notes.insert(0, restoredNote);
       AppDatabase.instance.restoreFromTrash(id);
+      StorageLocationService.instance.saveNoteToFile(restoredNote);
       notifyListeners();
     }
   }
 
   void permanentlyDeleteFromTrash(String id) {
-    _trashedNotes.removeWhere((note) => note.id == id);
-    AppDatabase.instance.permanentlyDeleteFromTrash(id);
-    notifyListeners();
+    final index = _trashedNotes.indexWhere((note) => note.id == id);
+    if (index != -1) {
+      final note = _trashedNotes.removeAt(index);
+      AppDatabase.instance.permanentlyDeleteFromTrash(id);
+      StorageLocationService.instance.deleteNoteFile(note);
+      notifyListeners();
+    }
   }
 
   void emptyTrash() {

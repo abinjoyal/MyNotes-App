@@ -58,22 +58,22 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
     switch (widget.activeRoute) {
       case 'pinned':
         return {
-          'title': '📌 Pinned Notes',
+          'title': 'Pinned Notes',
           'subtitle': 'Important items pinned for quick reference.',
         };
       case 'tasks':
         return {
-          'title': '✅ Tasks Checklist',
+          'title': 'Tasks Checklist',
           'subtitle': 'Checklists and task notes.',
         };
       case 'trash':
         return {
-          'title': '🗑️ Trash',
+          'title': 'Trash',
           'subtitle': 'Deleted items waiting for cleanup.',
         };
       default:
         return {
-          'title': '📝 All Notes',
+          'title': 'All Notes',
           'subtitle': 'Manage and organize all your personal workspace notes.',
         };
     }

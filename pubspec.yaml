@@ -53,6 +53,7 @@ dependencies:
   local_auth: ^2.2.0
   local_auth_windows: ^1.0.11
   file_picker: ^12.2.0
+  archive: ^4.0.2
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:archive/archive_io.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../features/notes/domain/entities/note.dart';
 import 'storage_service.dart';
@@ -239,5 +240,25 @@ ${note.content}
         content.startsWith('- [ ]') ||
         content.startsWith('- [x]') ||
         content.startsWith('- [X]');
+  }
+
+  Future<File?> createZipBackup() async {
+    try {
+      final rootPath = await getStoragePath();
+      final sourceDir = Directory(rootPath);
+      if (!await sourceDir.exists()) return null;
+
+      final tempDir = await getTemporaryDirectory();
+      final zipPath = '${tempDir.path}${Platform.pathSeparator}MyNotes_Backup.zip';
+
+      final encoder = ZipFileEncoder();
+      encoder.create(zipPath);
+      await encoder.addDirectory(sourceDir, includeDirName: true);
+      encoder.close();
+
+      return File(zipPath);
+    } catch (_) {
+      return null;
+    }
   }
 }

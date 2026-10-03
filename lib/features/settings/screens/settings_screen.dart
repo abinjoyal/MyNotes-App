@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
-
 import '../../../app/constants/app_colors.dart';
+import '../../../app/theme/app_theme_colors.dart';
 import '../../../core/services/storage_location_service.dart';
 import '../../notes/presentation/controllers/notes_controller.dart';
 import '../../pin/presentation/screens/passcode_lock_screen.dart';
@@ -15,45 +15,16 @@ import '../widgets/setting_section_header.dart';
 import '../widgets/setting_selection_tile.dart';
 import '../widgets/setting_switch_tile.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  final SettingsController _controller = SettingsController.instance;
-  String _currentStoragePath = '';
-  String _storageUsage = '0.0 MB';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadStorageInfo();
-  }
-
-  Future<void> _loadStorageInfo() async {
-    final path = await StorageLocationService.instance.getStoragePath();
-    final usage = await StorageLocationService.instance.getFormattedStorageUsage(path);
-    if (!mounted) return;
-    setState(() {
-      _currentStoragePath = path;
-      _storageUsage = usage;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final scaffoldBg = isDark ? AppColors.darkScaffoldBackground : const Color(0xFFF9FAFC);
-    final cardBg = isDark ? AppColors.darkSurface : Colors.white;
-    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
-    final borderColor = isDark ? AppColors.darkBorder : const Color(0xFFEAEAEE);
-    final secondaryTextColor = isDark ? const Color(0xFF98A2B3) : AppColors.secondaryText;
+    final SettingsController controller = SettingsController.instance;
+    final colors = context.appColors;
 
     return Scaffold(
-      backgroundColor: scaffoldBg,
+      backgroundColor: colors.scaffoldBg,
       body: SafeArea(
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
@@ -63,15 +34,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Container(
                 padding: const EdgeInsets.all(24.0),
                 decoration: BoxDecoration(
-                  color: cardBg,
-                  border: Border(bottom: BorderSide(color: borderColor)),
+                  color: colors.cardBg,
+                  border: Border(bottom: BorderSide(color: colors.borderColor)),
                 ),
                 child: Row(
                   children: [
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: isDark
+                        color: colors.isDark
                             ? AppColors.primaryPurple.withOpacity(0.2)
                             : AppColors.lightLavender,
                         borderRadius: BorderRadius.circular(12),
@@ -91,7 +62,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: textColor,
+                            color: colors.textColor,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -99,7 +70,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           'Manage app preferences, theme, security & storage',
                           style: TextStyle(
                             fontSize: 13,
-                            color: secondaryTextColor,
+                            color: colors.secondaryTextColor,
                           ),
                         ),
                       ],
@@ -118,55 +89,55 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SettingSectionHeader(
                     title: 'Appearance & Display',
                     icon: Icons.palette_outlined,
-                    textColor: textColor,
+                    textColor: colors.textColor,
                   ),
                   const SizedBox(height: 12),
                   SettingCardContainer(
-                    cardBg: cardBg,
-                    borderColor: borderColor,
+                    cardBg: colors.cardBg,
+                    borderColor: colors.borderColor,
                     children: [
                       SettingSelectionTile(
                         title: 'Theme Mode',
                         subtitle: 'Choose your preferred visual theme',
                         icon: Icons.brightness_6_outlined,
-                        currentValue: _controller.selectedTheme,
+                        currentValue: controller.selectedTheme,
                         options: const ['Light', 'Dark', 'System'],
-                        textColor: textColor,
-                        secondaryTextColor: secondaryTextColor,
-                        dropdownBg: isDark ? const Color(0xFF2A2A30) : const Color(0xFFF1F3F6),
+                        textColor: colors.textColor,
+                        secondaryTextColor: colors.secondaryTextColor,
+                        dropdownBg: colors.dropdownBg,
                         onChanged: (val) {
-                          _controller.updateTheme(val);
-                          _showSnackBar('Theme updated to $val mode');
+                          controller.updateTheme(val);
+                          _showSnackBar(context, 'Theme updated to $val mode');
                         },
                       ),
-                      Divider(height: 1, color: borderColor),
+                      Divider(height: 1, color: colors.borderColor),
                       SettingSelectionTile(
                         title: 'Default Note Layout',
                         subtitle: 'Grid or List view on main dashboard',
                         icon: Icons.grid_view_rounded,
-                        currentValue: _controller.selectedLayout,
+                        currentValue: controller.selectedLayout,
                         options: const ['Grid', 'List'],
-                        textColor: textColor,
-                        secondaryTextColor: secondaryTextColor,
-                        dropdownBg: isDark ? const Color(0xFF2A2A30) : const Color(0xFFF1F3F6),
+                        textColor: colors.textColor,
+                        secondaryTextColor: colors.secondaryTextColor,
+                        dropdownBg: colors.dropdownBg,
                         onChanged: (val) {
-                          _controller.updateLayout(val);
-                          _showSnackBar('Default note view updated to $val');
+                          controller.updateLayout(val);
+                          _showSnackBar(context, 'Default note view updated to $val');
                         },
                       ),
-                      Divider(height: 1, color: borderColor),
+                      Divider(height: 1, color: colors.borderColor),
                       SettingSelectionTile(
                         title: 'Editor Font Size',
                         subtitle: 'Text size inside note editor',
                         icon: Icons.format_size_rounded,
-                        currentValue: _controller.fontSize,
+                        currentValue: controller.fontSize,
                         options: const ['Small', 'Medium', 'Large'],
-                        textColor: textColor,
-                        secondaryTextColor: secondaryTextColor,
-                        dropdownBg: isDark ? const Color(0xFF2A2A30) : const Color(0xFFF1F3F6),
+                        textColor: colors.textColor,
+                        secondaryTextColor: colors.secondaryTextColor,
+                        dropdownBg: colors.dropdownBg,
                         onChanged: (val) {
-                          _controller.updateFontSize(val);
-                          _showSnackBar('Editor font size set to $val');
+                          controller.updateFontSize(val);
+                          _showSnackBar(context, 'Editor font size set to $val');
                         },
                       ),
                     ],
@@ -178,22 +149,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SettingSectionHeader(
                     title: 'Security & Lock',
                     icon: Icons.lock_outline_rounded,
-                    textColor: textColor,
+                    textColor: colors.textColor,
                   ),
                   const SizedBox(height: 12),
                   SettingCardContainer(
-                    cardBg: cardBg,
-                    borderColor: borderColor,
+                    cardBg: colors.cardBg,
+                    borderColor: colors.borderColor,
                     children: [
                       SettingSwitchTile(
                         title: 'Passcode Lock',
-                        subtitle: _controller.enablePinLock
-                            ? 'PIN Lock Active (${_controller.pinCode.replaceAll(RegExp(r'.'), '•')})'
+                        subtitle: controller.enablePinLock
+                            ? 'PIN Lock Active (${controller.pinCode.replaceAll(RegExp(r'.'), '•')})'
                             : 'Require PIN passcode when opening app',
                         icon: Icons.pin_outlined,
-                        value: _controller.enablePinLock,
-                        textColor: textColor,
-                        secondaryTextColor: secondaryTextColor,
+                        value: controller.enablePinLock,
+                        textColor: colors.textColor,
+                        secondaryTextColor: colors.secondaryTextColor,
                         onChanged: (val) async {
                           if (val) {
                             final setupSuccess = await Navigator.of(context).push<bool>(
@@ -202,23 +173,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                             );
                             if (setupSuccess == true) {
-                              _showSnackBar('PIN Passcode set successfully!');
+                              _showSnackBar(context, 'PIN Passcode set successfully!');
                             }
                           } else {
-                            _controller.togglePinLock(false);
-                            _showSnackBar('PIN Passcode Disabled');
+                            controller.togglePinLock(false);
+                            _showSnackBar(context, 'PIN Passcode Disabled');
                           }
                         },
                       ),
-                      if (_controller.enablePinLock) ...[
-                        Divider(height: 1, color: borderColor),
+                      if (controller.enablePinLock) ...[
+                        Divider(height: 1, color: colors.borderColor),
                         SettingActionTile(
                           title: 'Change Passcode',
                           subtitle: 'Update your 4-digit security PIN',
                           icon: Icons.password_rounded,
                           actionLabel: 'Change',
-                          textColor: textColor,
-                          secondaryTextColor: secondaryTextColor,
+                          textColor: colors.textColor,
+                          secondaryTextColor: colors.secondaryTextColor,
                           onTap: () async {
                             final setupSuccess = await Navigator.of(context).push<bool>(
                               MaterialPageRoute(
@@ -226,25 +197,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                             );
                             if (setupSuccess == true) {
-                              _showSnackBar('Passcode updated successfully!');
+                              _showSnackBar(context, 'Passcode updated successfully!');
                             }
                           },
                         ),
                       ],
-                      Divider(height: 1, color: borderColor),
+                      Divider(height: 1, color: colors.borderColor),
                       SettingSwitchTile(
                         title: 'Biometric Authentication',
                         subtitle: 'Use Fingerprint / Face ID to unlock notes',
                         icon: Icons.fingerprint_rounded,
-                        value: _controller.enableBiometrics,
-                        textColor: textColor,
-                        secondaryTextColor: secondaryTextColor,
+                        value: controller.enableBiometrics,
+                        textColor: colors.textColor,
+                        secondaryTextColor: colors.secondaryTextColor,
                         onChanged: (val) {
-                          if (val && !_controller.enablePinLock) {
-                            _showSnackBar('Please enable Passcode Lock first');
+                          if (val && !controller.enablePinLock) {
+                            _showSnackBar(context, 'Please enable Passcode Lock first');
                           } else {
-                            _controller.toggleBiometrics(val);
-                            _showSnackBar(val ? 'Biometric Authentication Enabled' : 'Biometric Auth Disabled');
+                            controller.toggleBiometrics(val);
+                            _showSnackBar(context, val ? 'Biometric Authentication Enabled' : 'Biometric Auth Disabled');
                           }
                         },
                       ),
@@ -257,121 +228,129 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SettingSectionHeader(
                     title: 'Data & Storage Location',
                     icon: Icons.folder_open_outlined,
-                    textColor: textColor,
+                    textColor: colors.textColor,
                   ),
                   const SizedBox(height: 12),
-                  SettingCardContainer(
-                    cardBg: cardBg,
-                    borderColor: borderColor,
-                    children: [
-                      SettingActionTile(
-                        title: 'Storage Location',
-                        subtitle: _currentStoragePath.isEmpty ? 'Loading path...' : _currentStoragePath,
-                        icon: Icons.folder_special_rounded,
-                        actionLabel: 'Change',
-                        textColor: textColor,
-                        secondaryTextColor: secondaryTextColor,
-                        onTap: _onChangeStorageClick,
-                      ),
-                      Divider(height: 1, color: borderColor),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        child: Row(
-                          children: [
-                            Icon(Icons.pie_chart_outline_rounded, size: 20, color: secondaryTextColor),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Storage Usage',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: textColor,
-                                    ),
+                  FutureBuilder<Map<String, String>>(
+                    future: _fetchStorageDetails(),
+                    builder: (context, snapshot) {
+                      final path = snapshot.data?['path'] ?? 'Loading storage path...';
+                      final usage = snapshot.data?['usage'] ?? '0.0 MB';
+
+                      return SettingCardContainer(
+                        cardBg: colors.cardBg,
+                        borderColor: colors.borderColor,
+                        children: [
+                          SettingActionTile(
+                            title: 'Storage Location',
+                            subtitle: path,
+                            icon: Icons.folder_special_rounded,
+                            actionLabel: 'Change',
+                            textColor: colors.textColor,
+                            secondaryTextColor: colors.secondaryTextColor,
+                            onTap: () => _onChangeStorageClick(context, path),
+                          ),
+                          Divider(height: 1, color: colors.borderColor),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Row(
+                              children: [
+                                Icon(Icons.pie_chart_outline_rounded, size: 20, color: colors.secondaryTextColor),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Storage Usage',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: colors.textColor,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        'Total size of local notes, tasks & folders',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: colors.secondaryTextColor,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    'Total size of local notes, tasks & folders',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: secondaryTextColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? AppColors.primaryPurple.withOpacity(0.2)
-                                    : AppColors.lightLavender,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                _storageUsage,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primaryPurple,
                                 ),
-                              ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: colors.isDark
+                                        ? AppColors.primaryPurple.withOpacity(0.2)
+                                        : AppColors.lightLavender,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    usage,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primaryPurple,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                      Divider(height: 1, color: borderColor),
-                      SettingSwitchTile(
-                        title: 'Auto-Clean Trash',
-                        subtitle: 'Permanently remove notes deleted over 30 days ago',
-                        icon: Icons.auto_delete_outlined,
-                        value: _controller.autoCleanTrash,
-                        textColor: textColor,
-                        secondaryTextColor: secondaryTextColor,
-                        onChanged: (val) {
-                          _controller.toggleAutoCleanTrash(val);
-                          _showSnackBar(val ? 'Auto-clean trash enabled' : 'Auto-clean trash disabled');
-                        },
-                      ),
-                      Divider(height: 1, color: borderColor),
-                      SettingActionTile(
-                        title: 'Export Notes Data',
-                        subtitle: 'Compress and download all notes, tasks & folders as MyNotes_Backup.zip',
-                        icon: Icons.archive_rounded,
-                        actionLabel: 'Export ZIP',
-                        textColor: textColor,
-                        secondaryTextColor: secondaryTextColor,
-                        onTap: _onExportZipClick,
-                      ),
-                      Divider(height: 1, color: borderColor),
-                      SettingActionTile(
-                        title: 'Clear Trash Bin',
-                        subtitle: 'Permanently remove all items in trash right now',
-                        icon: Icons.delete_forever_outlined,
-                        actionLabel: 'Empty Trash',
-                        isDestructive: true,
-                        textColor: textColor,
-                        secondaryTextColor: secondaryTextColor,
-                        onTap: () {
-                          NotesController.instance.emptyTrash();
-                          _showSnackBar('Trash bin cleared!');
-                        },
-                      ),
-                    ],
+                          ),
+                          Divider(height: 1, color: colors.borderColor),
+                          SettingSwitchTile(
+                            title: 'Auto-Clean Trash',
+                            subtitle: 'Permanently remove notes deleted over 30 days ago',
+                            icon: Icons.auto_delete_outlined,
+                            value: controller.autoCleanTrash,
+                            textColor: colors.textColor,
+                            secondaryTextColor: colors.secondaryTextColor,
+                            onChanged: (val) {
+                              controller.toggleAutoCleanTrash(val);
+                              _showSnackBar(context, val ? 'Auto-clean trash enabled' : 'Auto-clean trash disabled');
+                            },
+                          ),
+                          Divider(height: 1, color: colors.borderColor),
+                          SettingActionTile(
+                            title: 'Export Notes Data',
+                            subtitle: 'Compress and download all notes, tasks & folders as MyNotes_Backup.zip',
+                            icon: Icons.archive_rounded,
+                            actionLabel: 'Export ZIP',
+                            textColor: colors.textColor,
+                            secondaryTextColor: colors.secondaryTextColor,
+                            onTap: () => _onExportZipClick(context),
+                          ),
+                          Divider(height: 1, color: colors.borderColor),
+                          SettingActionTile(
+                            title: 'Clear Trash Bin',
+                            subtitle: 'Permanently remove all items in trash right now',
+                            icon: Icons.delete_forever_outlined,
+                            actionLabel: 'Empty Trash',
+                            isDestructive: true,
+                            textColor: colors.textColor,
+                            secondaryTextColor: colors.secondaryTextColor,
+                            onTap: () {
+                              NotesController.instance.emptyTrash();
+                              _showSnackBar(context, 'Trash bin cleared!');
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 28),
 
                   // 4. App Info Card
                   AppInfoCard(
-                    cardBg: cardBg,
-                    borderColor: borderColor,
-                    textColor: textColor,
-                    secondaryTextColor: secondaryTextColor,
-                    isDark: isDark,
+                    cardBg: colors.cardBg,
+                    borderColor: colors.borderColor,
+                    textColor: colors.textColor,
+                    secondaryTextColor: colors.secondaryTextColor,
+                    isDark: colors.isDark,
                   ),
 
                   const SizedBox(height: 40),
@@ -384,7 +363,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _showSnackBar(String message) {
+  static Future<Map<String, String>> _fetchStorageDetails() async {
+    final path = await StorageLocationService.instance.getStoragePath();
+    final usage = await StorageLocationService.instance.getFormattedStorageUsage(path);
+    return {'path': path, 'usage': usage};
+  }
+
+  static void _showSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -395,9 +380,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Future<void> _onChangeStorageClick() async {
+  static Future<void> _onChangeStorageClick(BuildContext context, String currentPath) async {
     try {
-      String? initialDir = _currentStoragePath;
+      String? initialDir = currentPath;
       if (initialDir.isNotEmpty && !Directory(initialDir).existsSync()) {
         final parentDir = Directory(initialDir).parent;
         initialDir = parentDir.existsSync() ? parentDir.path : null;
@@ -408,18 +393,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
         initialDirectory: initialDir,
       );
 
-      if (selectedDirectory == null || selectedDirectory.isEmpty || selectedDirectory == _currentStoragePath) {
+      if (selectedDirectory == null || selectedDirectory.isEmpty || selectedDirectory == currentPath) {
         return;
       }
 
-      if (!mounted) return;
-      _showMigrationDialog(selectedDirectory);
+      if (!context.mounted) return;
+      _showMigrationDialog(context, currentPath, selectedDirectory);
     } catch (e) {
-      _showSnackBar('Could not open folder picker: $e');
+      _showSnackBar(context, 'Could not open folder picker: $e');
     }
   }
 
-  void _showMigrationDialog(String newPath) {
+  static void _showMigrationDialog(BuildContext context, String currentPath, String newPath) {
     StorageMigrationOption selectedOption = StorageMigrationOption.move;
 
     showDialog(
@@ -488,14 +473,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ElevatedButton(
                   onPressed: () async {
                     Navigator.of(ctx).pop();
-                    _showSnackBar('Migrating storage data...');
+                    _showSnackBar(context, 'Migrating storage data...');
                     await StorageLocationService.instance.changeStoragePath(
-                      oldPath: _currentStoragePath,
+                      oldPath: currentPath,
                       newPath: newPath,
                       option: selectedOption,
                     );
-                    await _loadStorageInfo();
-                    _showSnackBar('Storage folder changed successfully!');
+                    if (context.mounted) {
+                      (context as Element).markNeedsBuild();
+                      _showSnackBar(context, 'Storage folder changed successfully!');
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryPurple,
@@ -512,11 +499,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Future<void> _onExportZipClick() async {
-    _showSnackBar('Generating MyNotes_Backup.zip...');
+  static Future<void> _onExportZipClick(BuildContext context) async {
+    _showSnackBar(context, 'Generating MyNotes_Backup.zip...');
     final zipFile = await StorageLocationService.instance.createZipBackup();
     if (zipFile == null || !await zipFile.exists()) {
-      _showSnackBar('Could not create ZIP backup archive');
+      _showSnackBar(context, 'Could not create ZIP backup archive');
       return;
     }
 
@@ -526,9 +513,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         subject: 'MyNotes Backup Archive (.zip)',
         text: 'Here is your complete MyNotes backup archive containing all notes, tasks, and folders.',
       );
-      _showSnackBar('MyNotes_Backup.zip export ready!');
+      _showSnackBar(context, 'MyNotes_Backup.zip export ready!');
     } catch (e) {
-      _showSnackBar('Backup ZIP created at: ${zipFile.path}');
+      _showSnackBar(context, 'Backup ZIP created at: ${zipFile.path}');
     }
   }
 }

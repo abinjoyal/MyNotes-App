@@ -52,6 +52,7 @@ dependencies:
   flutter_animate: ^4.5.0
   local_auth: ^2.2.0
   local_auth_windows: ^1.0.11
+  file_picker: ^12.2.0
 
 dev_dependencies:
   flutter_test:

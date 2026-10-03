@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../../app/constants/app_colors.dart';
 import '../controllers/settings_controller.dart';
 import '../../pin/presentation/screens/passcode_lock_screen.dart';
@@ -8,6 +10,7 @@ import '../../pin/presentation/screens/passcode_lock_screen.dart';
 import '../../notes/presentation/controllers/notes_controller.dart';
 import '../../../core/database/database.dart';
 import '../../../core/database/tables/notes_table.dart';
+import '../../../core/services/storage_location_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -18,6 +21,24 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final SettingsController _controller = SettingsController.instance;
+  String _currentStoragePath = '';
+  String _storageUsage = '0.0 MB';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStorageInfo();
+  }
+
+  Future<void> _loadStorageInfo() async {
+    final path = await StorageLocationService.instance.getStoragePath();
+    final usage = await StorageLocationService.instance.getFormattedStorageUsage(path);
+    if (!mounted) return;
+    setState(() {
+      _currentStoragePath = path;
+      _storageUsage = usage;
+    });
+  }
  
   @override
   Widget build(BuildContext context) {
@@ -261,10 +282,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                   const SizedBox(height: 28),
 
-                  // 4. Data & Export Section
-                  _buildSectionHeader('Data & Storage', Icons.folder_open_outlined, textColor),
+                  // 4. Data & Storage Section
+                  _buildSectionHeader('Data & Storage Location', Icons.folder_open_outlined, textColor),
                   const SizedBox(height: 12),
                   _buildCardContainer(cardBg, borderColor, [
+                    _buildActionTile(
+                      title: 'Storage Location',
+                      subtitle: _currentStoragePath.isEmpty ? 'Loading path...' : _currentStoragePath,
+                      icon: Icons.folder_special_rounded,
+                      actionLabel: 'Change',
+                      textColor: textColor,
+                      secondaryTextColor: secondaryTextColor,
+                      onTap: _onChangeStorageClick,
+                    ),
+                    Divider(height: 1, color: borderColor),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      child: Row(
+                        children: [
+                          Icon(Icons.pie_chart_outline_rounded, size: 20, color: secondaryTextColor),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Storage Usage',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: textColor,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'Total size of local notes, tasks & folders',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: secondaryTextColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? AppColors.primaryPurple.withOpacity(0.2)
+                                  : AppColors.lightLavender,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              _storageUsage,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryPurple,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(height: 1, color: borderColor),
                     _buildSwitchTile(
                       title: 'Auto-Clean Trash',
                       subtitle: 'Permanently remove notes deleted over 30 days ago',
@@ -750,6 +831,123 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _onChangeStorageClick() async {
+    try {
+      String? initialDir = _currentStoragePath;
+      if (initialDir.isNotEmpty && !Directory(initialDir).existsSync()) {
+        final parentDir = Directory(initialDir).parent;
+        initialDir = parentDir.existsSync() ? parentDir.path : null;
+      }
+
+      final String? selectedDirectory = await FilePicker.getDirectoryPath(
+        dialogTitle: 'Select New Storage Folder for MyNotes',
+        initialDirectory: initialDir,
+      );
+
+      if (selectedDirectory == null || selectedDirectory.isEmpty || selectedDirectory == _currentStoragePath) {
+        return;
+      }
+
+      if (!mounted) return;
+      _showMigrationDialog(selectedDirectory);
+    } catch (e) {
+      _showSnackBar('Could not open folder picker: $e');
+    }
+  }
+
+  void _showMigrationDialog(String newPath) {
+    StorageMigrationOption selectedOption = StorageMigrationOption.move;
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: const Row(
+                children: [
+                  Icon(Icons.drive_file_move_rounded, color: AppColors.primaryPurple),
+                  SizedBox(width: 10),
+                  Text('Change Storage Location', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Where should your existing data go?',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                  ),
+                  const SizedBox(height: 12),
+                  RadioListTile<StorageMigrationOption>(
+                    title: const Text('Move existing notes', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                    subtitle: const Text('Transfer files from old folder to new folder', style: TextStyle(fontSize: 11)),
+                    value: StorageMigrationOption.move,
+                    groupValue: selectedOption,
+                    activeColor: AppColors.primaryPurple,
+                    contentPadding: EdgeInsets.zero,
+                    onChanged: (val) {
+                      if (val != null) setDialogState(() => selectedOption = val);
+                    },
+                  ),
+                  RadioListTile<StorageMigrationOption>(
+                    title: const Text('Copy existing notes', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                    subtitle: const Text('Duplicate files to new folder, keep old copy', style: TextStyle(fontSize: 11)),
+                    value: StorageMigrationOption.copy,
+                    groupValue: selectedOption,
+                    activeColor: AppColors.primaryPurple,
+                    contentPadding: EdgeInsets.zero,
+                    onChanged: (val) {
+                      if (val != null) setDialogState(() => selectedOption = val);
+                    },
+                  ),
+                  RadioListTile<StorageMigrationOption>(
+                    title: const Text('Use new folder only', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                    subtitle: const Text('Switch active folder without touching old files', style: TextStyle(fontSize: 11)),
+                    value: StorageMigrationOption.switchOnly,
+                    groupValue: selectedOption,
+                    activeColor: AppColors.primaryPurple,
+                    contentPadding: EdgeInsets.zero,
+                    onChanged: (val) {
+                      if (val != null) setDialogState(() => selectedOption = val);
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    Navigator.of(ctx).pop();
+                    _showSnackBar('Migrating storage data...');
+                    await StorageLocationService.instance.changeStoragePath(
+                      oldPath: _currentStoragePath,
+                      newPath: newPath,
+                      option: selectedOption,
+                    );
+                    await _loadStorageInfo();
+                    _showSnackBar('Storage folder changed successfully!');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryPurple,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  child: const Text('Continue'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

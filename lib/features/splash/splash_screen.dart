@@ -5,6 +5,8 @@ import '../../app/layout/desktop_layout.dart';
 import '../../app/layout/responsive_layout.dart';
 import '../settings/controllers/settings_controller.dart';
 import '../pin/presentation/screens/passcode_lock_screen.dart';
+import '../setup/presentation/screens/storage_setup_wizard_screen.dart';
+import '../../core/services/storage_location_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -49,6 +51,20 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _navigateToNextScreen() async {
     await Future.delayed(const Duration(seconds: 2, milliseconds: 500));
     if (!mounted) return;
+
+    if (!StorageLocationService.instance.isSetupCompleted) {
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 600),
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const StorageSetupWizardScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+      );
+      return;
+    }
 
     final settings = SettingsController.instance;
     final Widget targetScreen = settings.enablePinLock

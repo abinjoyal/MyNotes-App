@@ -516,8 +516,9 @@ class SettingsScreen extends StatelessWidget {
                     activeColor: AppColors.primaryPurple,
                     contentPadding: EdgeInsets.zero,
                     onChanged: (val) {
-                      if (val != null)
+                      if (val != null) {
                         setDialogState(() => selectedOption = val);
+                      }
                     },
                   ),
                   RadioListTile<StorageMigrationOption>(
@@ -537,8 +538,9 @@ class SettingsScreen extends StatelessWidget {
                     activeColor: AppColors.primaryPurple,
                     contentPadding: EdgeInsets.zero,
                     onChanged: (val) {
-                      if (val != null)
+                      if (val != null) {
                         setDialogState(() => selectedOption = val);
+                      }
                     },
                   ),
                   RadioListTile<StorageMigrationOption>(
@@ -558,8 +560,9 @@ class SettingsScreen extends StatelessWidget {
                     activeColor: AppColors.primaryPurple,
                     contentPadding: EdgeInsets.zero,
                     onChanged: (val) {
-                      if (val != null)
+                      if (val != null) {
                         setDialogState(() => selectedOption = val);
+                      }
                     },
                   ),
                 ],

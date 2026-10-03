@@ -38,10 +38,7 @@ class CalendarController extends ChangeNotifier {
   CalendarFormat get calendarFormat => _state.calendarFormat;
 
   void setSelectedDay(DateTime selectedDay, DateTime focusedDay) {
-    _state = _state.copyWith(
-      selectedDay: selectedDay,
-      focusedDay: focusedDay,
-    );
+    _state = _state.copyWith(selectedDay: selectedDay, focusedDay: focusedDay);
     notifyListeners();
   }
 
@@ -52,10 +49,7 @@ class CalendarController extends ChangeNotifier {
 
   void jumpToToday() {
     final now = DateTime.now();
-    _state = _state.copyWith(
-      selectedDay: now,
-      focusedDay: now,
-    );
+    _state = _state.copyWith(selectedDay: now, focusedDay: now);
     notifyListeners();
   }
 

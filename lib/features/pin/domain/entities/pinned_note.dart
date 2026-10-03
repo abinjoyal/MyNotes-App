@@ -9,11 +9,7 @@ class PinnedNote {
     required this.pinnedAt,
   });
 
-  PinnedNote copyWith({
-    String? id,
-    String? noteId,
-    DateTime? pinnedAt,
-  }) {
+  PinnedNote copyWith({String? id, String? noteId, DateTime? pinnedAt}) {
     return PinnedNote(
       id: id ?? this.id,
       noteId: noteId ?? this.noteId,

@@ -35,13 +35,17 @@ class _FolderTileState extends State<FolderTile> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     // Dynamic styles based on state
     final double scale = _isPressed ? 0.96 : (_isHovered ? 1.02 : 1.0);
     final cardBg = isDark ? const Color(0xFF1E1E24) : Colors.white;
-    final hoverCardBg = isDark ? const Color(0xFF25252E) : const Color(0xFFF4F6FA);
+    final hoverCardBg = isDark
+        ? const Color(0xFF25252E)
+        : const Color(0xFFF4F6FA);
     final textColor = isDark ? Colors.white : AppColors.darkText;
-    final borderColor = isDark ? const Color(0xFF333333) : const Color(0xFFEAEAEE);
+    final borderColor = isDark
+        ? const Color(0xFF333333)
+        : const Color(0xFFEAEAEE);
     final hoverBorderColor = widget.folder.color.withOpacity(0.5);
 
     return MouseRegion(
@@ -93,7 +97,9 @@ class _FolderTileState extends State<FolderTile> {
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: widget.folder.color.withOpacity(_isHovered ? 0.2 : 0.12),
+                      color: widget.folder.color.withOpacity(
+                        _isHovered ? 0.2 : 0.12,
+                      ),
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: [
                         if (_isHovered)
@@ -101,7 +107,7 @@ class _FolderTileState extends State<FolderTile> {
                             color: widget.folder.color.withOpacity(0.4),
                             blurRadius: 8,
                             spreadRadius: -2,
-                          )
+                          ),
                       ],
                     ),
                     child: Stack(
@@ -140,28 +146,42 @@ class _FolderTileState extends State<FolderTile> {
                           icon: Icon(
                             Icons.restore_rounded,
                             size: 26,
-                            color: _isHovered ? AppColors.primaryPurple : AppColors.primaryPurple.withOpacity(0.7),
+                            color: _isHovered
+                                ? AppColors.primaryPurple
+                                : AppColors.primaryPurple.withOpacity(0.7),
                           ),
                           onPressed: widget.onRestore,
                           splashRadius: 20,
                         ),
                       if (!widget.isTrashed && widget.onToggleLock != null)
                         IconButton(
-                          tooltip: widget.folder.isLocked ? 'Unlock ${widget.folder.name}' : 'Lock ${widget.folder.name}',
+                          tooltip: widget.folder.isLocked
+                              ? 'Unlock ${widget.folder.name}'
+                              : 'Lock ${widget.folder.name}',
                           icon: Icon(
-                            widget.folder.isLocked ? Icons.lock_rounded : Icons.lock_open_rounded,
+                            widget.folder.isLocked
+                                ? Icons.lock_rounded
+                                : Icons.lock_open_rounded,
                             size: 22,
-                            color: _isHovered ? AppColors.primaryPurple : Colors.transparent,
+                            color: _isHovered
+                                ? AppColors.primaryPurple
+                                : Colors.transparent,
                           ),
                           onPressed: widget.onToggleLock,
                           splashRadius: 20,
                         ),
                       IconButton(
-                        tooltip: widget.isTrashed ? 'Permanently Delete' : 'Delete ${widget.folder.name}',
+                        tooltip: widget.isTrashed
+                            ? 'Permanently Delete'
+                            : 'Delete ${widget.folder.name}',
                         icon: Icon(
-                          widget.isTrashed ? Icons.delete_forever_rounded : Icons.delete_outline_rounded,
+                          widget.isTrashed
+                              ? Icons.delete_forever_rounded
+                              : Icons.delete_outline_rounded,
                           size: 22,
-                          color: _isHovered ? AppColors.primaryPink.withOpacity(0.8) : Colors.transparent,
+                          color: _isHovered
+                              ? AppColors.primaryPink.withOpacity(0.8)
+                              : Colors.transparent,
                         ),
                         onPressed: widget.onDelete,
                         splashRadius: 20,
@@ -172,7 +192,9 @@ class _FolderTileState extends State<FolderTile> {
                           icon: Icon(
                             Icons.add_circle_rounded,
                             size: 26,
-                            color: _isHovered ? AppColors.primaryPink : AppColors.primaryPurple.withOpacity(0.7),
+                            color: _isHovered
+                                ? AppColors.primaryPink
+                                : AppColors.primaryPurple.withOpacity(0.7),
                           ),
                           onPressed: widget.onAddNote,
                           splashRadius: 20,
@@ -200,7 +222,9 @@ class _FolderTileState extends State<FolderTile> {
                     '${widget.count} ${widget.count == 1 ? 'note' : 'notes'}',
                     style: TextStyle(
                       fontSize: 13,
-                      color: isDark ? const Color(0xFFA0A0AB) : const Color(0xFF7A869A),
+                      color: isDark
+                          ? const Color(0xFFA0A0AB)
+                          : const Color(0xFF7A869A),
                       fontWeight: FontWeight.w500,
                     ),
                   ),

@@ -23,7 +23,9 @@ class PinnedNoteCard extends StatelessWidget {
         onTap: onTap,
         leading: const Icon(Icons.push_pin, color: Colors.blue),
         title: Text('Pinned Note: ${pinnedNote.noteId}'),
-        subtitle: Text('Pinned at: ${pinnedNote.pinnedAt.toLocal().toString().split('.')[0]}'),
+        subtitle: Text(
+          'Pinned at: ${pinnedNote.pinnedAt.toLocal().toString().split('.')[0]}',
+        ),
         trailing: IconButton(
           icon: const Icon(Icons.push_pin_outlined, color: Colors.grey),
           onPressed: onUnpin,

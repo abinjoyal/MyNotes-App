@@ -4,14 +4,11 @@ import 'package:path_provider/path_provider.dart';
 import '../../features/notes/domain/entities/note.dart';
 import 'storage_service.dart';
 
-enum StorageMigrationOption {
-  move,
-  copy,
-  switchOnly,
-}
+enum StorageMigrationOption { move, copy, switchOnly }
 
 class StorageLocationService {
-  static final StorageLocationService instance = StorageLocationService._internal();
+  static final StorageLocationService instance =
+      StorageLocationService._internal();
   factory StorageLocationService() => instance;
   StorageLocationService._internal();
 
@@ -19,7 +16,10 @@ class StorageLocationService {
   static const String keyStoragePath = 'root_storage_path';
 
   bool get isSetupCompleted {
-    return StorageService.instance.getBool(keySetupCompleted, defaultValue: false);
+    return StorageService.instance.getBool(
+      keySetupCompleted,
+      defaultValue: false,
+    );
   }
 
   Future<String> getDefaultStoragePath() async {
@@ -45,8 +45,13 @@ class StorageLocationService {
   String ensureMyNotesSubfolder(String rawPath) {
     if (rawPath.isEmpty) return rawPath;
     final trimmed = rawPath.trim();
-    final normalized = trimmed.replaceAll('/', Platform.pathSeparator).replaceAll('\\', Platform.pathSeparator);
-    final segments = normalized.split(Platform.pathSeparator).where((s) => s.isNotEmpty).toList();
+    final normalized = trimmed
+        .replaceAll('/', Platform.pathSeparator)
+        .replaceAll('\\', Platform.pathSeparator);
+    final segments = normalized
+        .split(Platform.pathSeparator)
+        .where((s) => s.isNotEmpty)
+        .toList();
     if (segments.isNotEmpty) {
       final lastSegment = segments.last.toLowerCase();
       if (lastSegment == 'mynotes' || lastSegment == 'my notes') {
@@ -124,7 +129,8 @@ class StorageLocationService {
     final finalNewPath = ensureMyNotesSubfolder(newPath);
     await initializeDirectoryStructure(finalNewPath);
 
-    if (option == StorageMigrationOption.move || option == StorageMigrationOption.copy) {
+    if (option == StorageMigrationOption.move ||
+        option == StorageMigrationOption.copy) {
       final oldDir = Directory(oldPath);
       if (await oldDir.exists()) {
         await _copyDirectory(oldDir, Directory(finalNewPath));
@@ -145,7 +151,8 @@ class StorageLocationService {
     }
 
     await for (final entity in source.list(recursive: false)) {
-      final newPath = '${destination.path}${Platform.pathSeparator}${_basename(entity.path)}';
+      final newPath =
+          '${destination.path}${Platform.pathSeparator}${_basename(entity.path)}';
       if (entity is Directory) {
         final newDir = Directory(newPath);
         await _copyDirectory(entity, newDir);
@@ -172,7 +179,8 @@ class StorageLocationService {
       String targetDirPath;
       if (note.folderName != null && note.folderName!.trim().isNotEmpty) {
         final folderNameSanitized = sanitizeFilename(note.folderName!);
-        targetDirPath = '$rootPath${Platform.pathSeparator}Folders${Platform.pathSeparator}$folderNameSanitized';
+        targetDirPath =
+            '$rootPath${Platform.pathSeparator}Folders${Platform.pathSeparator}$folderNameSanitized';
       } else if (_isTaskChecklist(note)) {
         targetDirPath = '$rootPath${Platform.pathSeparator}Tasks';
       } else {
@@ -184,12 +192,15 @@ class StorageLocationService {
         await dir.create(recursive: true);
       }
 
-      final filename = sanitizeFilename(note.title.isEmpty ? 'Untitled Note' : note.title);
+      final filename = sanitizeFilename(
+        note.title.isEmpty ? 'Untitled Note' : note.title,
+      );
       final filePath = '$targetDirPath${Platform.pathSeparator}$filename.md';
 
       final file = File(filePath);
       final tagsStr = note.tags.isNotEmpty ? note.tags.join(', ') : 'None';
-      final markdownContent = '''# ${note.title.isEmpty ? 'Untitled Note' : note.title}
+      final markdownContent =
+          '''# ${note.title.isEmpty ? 'Untitled Note' : note.title}
 
 Updated: ${note.updatedAt}
 Tags: $tagsStr
@@ -204,7 +215,9 @@ ${note.content}
   Future<void> deleteNoteFile(Note note) async {
     try {
       final rootPath = await getStoragePath();
-      final filename = sanitizeFilename(note.title.isEmpty ? 'Untitled Note' : note.title);
+      final filename = sanitizeFilename(
+        note.title.isEmpty ? 'Untitled Note' : note.title,
+      );
 
       final pathsToTry = [
         '$rootPath${Platform.pathSeparator}Notes${Platform.pathSeparator}$filename.md',
@@ -213,7 +226,9 @@ ${note.content}
 
       if (note.folderName != null && note.folderName!.trim().isNotEmpty) {
         final folderNameSanitized = sanitizeFilename(note.folderName!);
-        pathsToTry.add('$rootPath${Platform.pathSeparator}Folders${Platform.pathSeparator}$folderNameSanitized${Platform.pathSeparator}$filename.md');
+        pathsToTry.add(
+          '$rootPath${Platform.pathSeparator}Folders${Platform.pathSeparator}$folderNameSanitized${Platform.pathSeparator}$filename.md',
+        );
       }
 
       for (final p in pathsToTry) {
@@ -249,7 +264,8 @@ ${note.content}
       if (!await sourceDir.exists()) return null;
 
       final tempDir = await getTemporaryDirectory();
-      final zipPath = '${tempDir.path}${Platform.pathSeparator}MyNotes_Backup.zip';
+      final zipPath =
+          '${tempDir.path}${Platform.pathSeparator}MyNotes_Backup.zip';
 
       final encoder = ZipFileEncoder();
       encoder.create(zipPath);

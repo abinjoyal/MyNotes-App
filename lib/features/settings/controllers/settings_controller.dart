@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class SettingsController extends ChangeNotifier {
   static final SettingsController instance = SettingsController._internal();
 
@@ -13,8 +12,8 @@ class SettingsController extends ChangeNotifier {
   // Appearance State
   ThemeMode _themeMode = ThemeMode.system;
   String _selectedTheme = 'System'; // 'Light', 'Dark', 'System'
-  String _selectedLayout = 'Grid';  // 'Grid', 'List'
-  String _fontSize = 'Medium';       // 'Small', 'Medium', 'Large'
+  String _selectedLayout = 'Grid'; // 'Grid', 'List'
+  String _fontSize = 'Medium'; // 'Small', 'Medium', 'Large'
 
   // Security State
   bool _enablePinLock = false;

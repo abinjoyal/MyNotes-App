@@ -87,16 +87,18 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
     final allNotes = widget.activeRoute == 'pinned'
         ? controller.pinnedNotes
         : (widget.activeRoute == 'trash'
-            ? controller.trashedNotes
-            : controller.regularNotes);
+              ? controller.trashedNotes
+              : controller.regularNotes);
 
     final filteredNotes = allNotes.where((note) {
       final query = _searchQuery.toLowerCase();
-      final matchesQuery = note.title.toLowerCase().contains(query) ||
+      final matchesQuery =
+          note.title.toLowerCase().contains(query) ||
           note.content.toLowerCase().contains(query) ||
           note.tags.any((t) => t.toLowerCase().contains(query));
 
-      final matchesTag = _selectedTag == null || note.tags.contains(_selectedTag);
+      final matchesTag =
+          _selectedTag == null || note.tags.contains(_selectedTag);
       return matchesQuery && matchesTag;
     }).toList();
 
@@ -104,14 +106,13 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
 
-
     if (widget.activeRoute == 'tasks') {
       return Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: isDark 
+            colors: isDark
                 ? [const Color(0xFF1A1A24), const Color(0xFF121212)]
                 : [const Color(0xFFF8F9FF), const Color(0xFFF1F3F6)],
           ),
@@ -120,10 +121,11 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           backgroundColor: Colors.transparent,
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-              child: TasksChecklistView(
-                onNoteSelect: widget.onNoteSelect,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 16.0,
               ),
+              child: TasksChecklistView(onNoteSelect: widget.onNoteSelect),
             ),
           ),
         ),
@@ -135,156 +137,129 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isDark 
+          colors: isDark
               ? [const Color(0xFF1A1A24), const Color(0xFF121212)]
               : [const Color(0xFFF8F9FF), const Color(0xFFF1F3F6)],
         ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        floatingActionButton: widget.activeRoute != 'trash' ? Container(
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [AppColors.primaryPurple, AppColors.primaryPink],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primaryPink.withOpacity(0.4),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: FloatingActionButton(
-            onPressed: () {
-              if (widget.onNoteSelect != null) {
-                Note templateNote = controller.createTemplateNote(
-                  widget.activeRoute == 'tasks' ? 'checklist' : 'blank',
-                );
-                widget.onNoteSelect!(templateNote);
-              }
-            },
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            child: const Icon(Icons.add_rounded, color: Colors.white, size: 28),
-          ),
-        ) : null,
-        body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 0. Section Title & Subtitle Header
-              NotesHeaderWidget(
-                title: headerInfo['title']!,
-                subtitle: headerInfo['subtitle']!,
-                noteCount: allNotes.length,
-                textColor: textColor,
-                activeRoute: widget.activeRoute,
-                onEmptyTrash: () {
-                  controller.emptyTrash();
-                  foldersController.emptyTrash();
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // 1. Top Search Bar & Filter Row
-              NotesSearchBarWidget(
-                isDark: isDark,
-                onChanged: (val) {
-                  setState(() {
-                    _searchQuery = val;
-                  });
-                },
-                onFilterTap: () {},
-              ),
-
-              if (availableTags.isNotEmpty)
-                NotesTagListWidget(
-                  availableTags: availableTags,
-                  selectedTag: _selectedTag,
-                  onTagSelect: (tag) {
-                    setState(() {
-                      _selectedTag = tag;
-                    });
-                  },
-                  isDark: isDark,
-                ),
-
-              const SizedBox(height: 14),
-
-              // 2. Sorting & Layout Toggle Controls Sub-header
-              NotesLayoutControlsWidget(
-                isDark: isDark,
-                selectedSort: _selectedSort,
-                onSortChanged: (val) {
-                  setState(() {
-                    _selectedSort = val;
-                  });
-                },
-                isGridView: _isGridView,
-                onLayoutChanged: (isGrid) {
-                  setState(() {
-                    _isGridView = isGrid;
-                  });
-                },
-              ),
-
-              const SizedBox(height: 16),
-
-              // 3. Notes List View / Contextual Empty State
-              if (widget.activeRoute == 'trash' && foldersController.trashedFolders.isNotEmpty) ...[
-                Row(
-                  children: [
-                    Icon(Icons.folder_delete_outlined, color: textColor, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Trashed Folders',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: textColor,
-                        letterSpacing: 0.3,
-                      ),
+        floatingActionButton: widget.activeRoute != 'trash'
+            ? Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [AppColors.primaryPurple, AppColors.primaryPink],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primaryPink.withOpacity(0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: 140, // Increased height to prevent overflow
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: foldersController.trashedFolders.length,
-                    itemBuilder: (context, index) {
-                      final folder = foldersController.trashedFolders[index];
-                      return Container(
-                        width: 240,
-                        margin: const EdgeInsets.only(right: 16),
-                        child: FolderTile(
-                          folder: folder,
-                          count: controller.getFolderNotesCount(folder.name),
-                          isTrashed: true,
-                          onTap: () {},
-                          onAddNote: () {},
-                          onDelete: () => foldersController.permanentlyDeleteFolderFromTrash(folder.name),
-                          onRestore: () => foldersController.restoreFolderFromTrash(folder.name),
-                        ),
+                child: FloatingActionButton(
+                  onPressed: () {
+                    if (widget.onNoteSelect != null) {
+                      Note templateNote = controller.createTemplateNote(
+                        widget.activeRoute == 'tasks' ? 'checklist' : 'blank',
                       );
-                    },
+                      widget.onNoteSelect!(templateNote);
+                    }
+                  },
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  child: const Icon(
+                    Icons.add_rounded,
+                    color: Colors.white,
+                    size: 28,
                   ),
                 ),
-                const SizedBox(height: 24),
-                if (filteredNotes.isNotEmpty) ...[
+              )
+            : null,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 16.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 0. Section Title & Subtitle Header
+                NotesHeaderWidget(
+                  title: headerInfo['title']!,
+                  subtitle: headerInfo['subtitle']!,
+                  noteCount: allNotes.length,
+                  textColor: textColor,
+                  activeRoute: widget.activeRoute,
+                  onEmptyTrash: () {
+                    controller.emptyTrash();
+                    foldersController.emptyTrash();
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                // 1. Top Search Bar & Filter Row
+                NotesSearchBarWidget(
+                  isDark: isDark,
+                  onChanged: (val) {
+                    setState(() {
+                      _searchQuery = val;
+                    });
+                  },
+                  onFilterTap: () {},
+                ),
+
+                if (availableTags.isNotEmpty)
+                  NotesTagListWidget(
+                    availableTags: availableTags,
+                    selectedTag: _selectedTag,
+                    onTagSelect: (tag) {
+                      setState(() {
+                        _selectedTag = tag;
+                      });
+                    },
+                    isDark: isDark,
+                  ),
+
+                const SizedBox(height: 14),
+
+                // 2. Sorting & Layout Toggle Controls Sub-header
+                NotesLayoutControlsWidget(
+                  isDark: isDark,
+                  selectedSort: _selectedSort,
+                  onSortChanged: (val) {
+                    setState(() {
+                      _selectedSort = val;
+                    });
+                  },
+                  isGridView: _isGridView,
+                  onLayoutChanged: (isGrid) {
+                    setState(() {
+                      _isGridView = isGrid;
+                    });
+                  },
+                ),
+
+                const SizedBox(height: 16),
+
+                // 3. Notes List View / Contextual Empty State
+                if (widget.activeRoute == 'trash' &&
+                    foldersController.trashedFolders.isNotEmpty) ...[
                   Row(
                     children: [
-                      Icon(Icons.description_outlined, color: textColor, size: 20),
+                      Icon(
+                        Icons.folder_delete_outlined,
+                        color: textColor,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Text(
-                        'Trashed Notes',
+                        'Trashed Folders',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -295,30 +270,76 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                     ],
                   ),
                   const SizedBox(height: 12),
+                  SizedBox(
+                    height: 140, // Increased height to prevent overflow
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: foldersController.trashedFolders.length,
+                      itemBuilder: (context, index) {
+                        final folder = foldersController.trashedFolders[index];
+                        return Container(
+                          width: 240,
+                          margin: const EdgeInsets.only(right: 16),
+                          child: FolderTile(
+                            folder: folder,
+                            count: controller.getFolderNotesCount(folder.name),
+                            isTrashed: true,
+                            onTap: () {},
+                            onAddNote: () {},
+                            onDelete: () => foldersController
+                                .permanentlyDeleteFolderFromTrash(folder.name),
+                            onRestore: () => foldersController
+                                .restoreFolderFromTrash(folder.name),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  if (filteredNotes.isNotEmpty) ...[
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.description_outlined,
+                          color: textColor,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Trashed Notes',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: textColor,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                 ],
-              ],
-              Expanded(
-                child: NoteList(
-                  notes: filteredNotes,
-                  isGridView: _isGridView,
-                  activeRoute: widget.activeRoute,
-                  onNoteSelect: widget.onNoteSelect,
-                  onActionTap: () {
-                    if (widget.onNoteSelect != null) {
-                      Note templateNote = controller.createTemplateNote(
-                        widget.activeRoute == 'tasks' ? 'checklist' : 'blank',
-                      );
-                      widget.onNoteSelect!(templateNote);
-                    }
-                  },
+                Expanded(
+                  child: NoteList(
+                    notes: filteredNotes,
+                    isGridView: _isGridView,
+                    activeRoute: widget.activeRoute,
+                    onNoteSelect: widget.onNoteSelect,
+                    onActionTap: () {
+                      if (widget.onNoteSelect != null) {
+                        Note templateNote = controller.createTemplateNote(
+                          widget.activeRoute == 'tasks' ? 'checklist' : 'blank',
+                        );
+                        widget.onNoteSelect!(templateNote);
+                      }
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }
 }
-

@@ -51,10 +51,7 @@ class TasksDetailWorkspace extends StatelessWidget {
         child: Center(
           child: Text(
             'Select or create a checklist to get started',
-            style: TextStyle(
-              color: subtextColor,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: subtextColor, fontSize: 14),
           ),
         ),
       );
@@ -109,10 +106,7 @@ class TasksDetailWorkspace extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         'Stay productive and get things done.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: subtextColor,
-                        ),
+                        style: TextStyle(fontSize: 13, color: subtextColor),
                       ),
                     ],
                   ),
@@ -126,10 +120,7 @@ class TasksDetailWorkspace extends StatelessWidget {
                         onNoteEditSelect!(note);
                       }
                     },
-                    icon: const Icon(
-                      Icons.edit_outlined,
-                      size: 16,
-                    ),
+                    icon: const Icon(Icons.edit_outlined, size: 16),
                     label: const Text('Edit'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: textColor,
@@ -142,10 +133,7 @@ class TasksDetailWorkspace extends StatelessWidget {
                   const SizedBox(width: 8),
                   IconButton(
                     tooltip: 'Close Workspace Panel',
-                    icon: const Icon(
-                      Icons.close_rounded,
-                      size: 22,
-                    ),
+                    icon: const Icon(Icons.close_rounded, size: 22),
                     color: subtextColor,
                     onPressed: onCloseWorkspace,
                   ),
@@ -207,10 +195,7 @@ class TasksDetailWorkspace extends StatelessWidget {
                   child: TextField(
                     controller: newTaskController,
                     onSubmitted: (_) => onAddNewTask(note),
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: textColor,
-                    ),
+                    style: TextStyle(fontSize: 14, color: textColor),
                     decoration: const InputDecoration(
                       hintText: 'O  Add a new task...',
                       hintStyle: TextStyle(
@@ -242,9 +227,7 @@ class TasksDetailWorkspace extends StatelessWidget {
                 ),
                 child: const Text(
                   'Add',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -257,10 +240,7 @@ class TasksDetailWorkspace extends StatelessWidget {
                 ? Center(
                     child: Text(
                       'No tasks added yet. Type above to add your first task!',
-                      style: TextStyle(
-                        color: subtextColor,
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: subtextColor, fontSize: 13),
                     ),
                   )
                 : ListView.builder(
@@ -317,7 +297,9 @@ class TasksDetailWorkspace extends StatelessWidget {
                                   vertical: 3,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: getTagColor(task.tag).withOpacity(0.15),
+                                  color: getTagColor(
+                                    task.tag,
+                                  ).withOpacity(0.15),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(

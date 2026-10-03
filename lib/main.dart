@@ -4,9 +4,5 @@ import 'app/app.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    const ProviderScope(
-      child: MyNotesApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: MyNotesApp()));
 }

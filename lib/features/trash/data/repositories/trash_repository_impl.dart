@@ -7,7 +7,9 @@ class TrashRepositoryImpl implements TrashRepository {
   final TrashLocalDataSource localDataSource;
 
   TrashRepositoryImpl([AppDatabase? db])
-      : localDataSource = TrashLocalDataSourceImpl(database: db ?? AppDatabase.instance);
+    : localDataSource = TrashLocalDataSourceImpl(
+        database: db ?? AppDatabase.instance,
+      );
 
   TrashRepositoryImpl.withDataSource(this.localDataSource);
 

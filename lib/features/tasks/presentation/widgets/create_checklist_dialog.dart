@@ -5,10 +5,7 @@ import '../../../../app/theme/app_theme_colors.dart';
 class CreateChecklistDialog extends StatefulWidget {
   final Function(String title) onCreate;
 
-  const CreateChecklistDialog({
-    super.key,
-    required this.onCreate,
-  });
+  const CreateChecklistDialog({super.key, required this.onCreate});
 
   @override
   State<CreateChecklistDialog> createState() => _CreateChecklistDialogState();
@@ -84,10 +81,7 @@ class _CreateChecklistDialogState extends State<CreateChecklistDialog> {
                       const SizedBox(height: 2),
                       Text(
                         'Organize your goals with a new checklist.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: subtextColor,
-                        ),
+                        style: TextStyle(fontSize: 13, color: subtextColor),
                       ),
                     ],
                   ),

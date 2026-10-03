@@ -5,7 +5,8 @@ class RecentNotesTable {
   static const String colNoteId = 'note_id';
   static const String colAccessedAt = 'accessed_at';
 
-  static const String createTableSql = '''
+  static const String createTableSql =
+      '''
     CREATE TABLE IF NOT EXISTS $tableName (
       $colId TEXT PRIMARY KEY,
       $colNoteId TEXT NOT NULL,

@@ -17,7 +17,9 @@ class NotesSearchBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
     final inputBg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF7F8FA);
-    final borderColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFEAEAEE);
+    final borderColor = isDark
+        ? const Color(0xFF2C2C2C)
+        : const Color(0xFFEAEAEE);
 
     return Row(
       children: [
@@ -54,10 +56,15 @@ class NotesSearchBarWidget extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 3,
+                  ),
                   margin: const EdgeInsets.only(right: 10),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF2A2A30) : const Color(0xFFEAEAEE),
+                    color: isDark
+                        ? const Color(0xFF2A2A30)
+                        : const Color(0xFFEAEAEE),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Text(
@@ -83,11 +90,7 @@ class NotesSearchBarWidget extends StatelessWidget {
             border: Border.all(color: borderColor.withOpacity(0.5)),
           ),
           child: IconButton(
-            icon: Icon(
-              Icons.tune_rounded,
-              color: textColor,
-              size: 20,
-            ),
+            icon: Icon(Icons.tune_rounded, color: textColor, size: 20),
             onPressed: onFilterTap,
           ),
         ),
@@ -116,7 +119,9 @@ class NotesLayoutControlsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
     final inputBg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF7F8FA);
-    final borderColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFEAEAEE);
+    final borderColor = isDark
+        ? const Color(0xFF2C2C2C)
+        : const Color(0xFFEAEAEE);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -131,10 +136,7 @@ class NotesLayoutControlsWidget extends StatelessWidget {
             children: [
               const Text(
                 'Sort by: ',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: AppColors.lightText,
-                ),
+                style: TextStyle(fontSize: 13, color: AppColors.lightText),
               ),
               Text(
                 selectedSort,
@@ -145,26 +147,13 @@ class NotesLayoutControlsWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              Icon(
-                Icons.keyboard_arrow_down,
-                size: 16,
-                color: textColor,
-              ),
+              Icon(Icons.keyboard_arrow_down, size: 16, color: textColor),
             ],
           ),
           itemBuilder: (context) => const [
-            PopupMenuItem(
-              value: 'Last edited',
-              child: Text('Last edited'),
-            ),
-            PopupMenuItem(
-              value: 'Title',
-              child: Text('Title'),
-            ),
-            PopupMenuItem(
-              value: 'Date created',
-              child: Text('Date created'),
-            ),
+            PopupMenuItem(value: 'Last edited', child: Text('Last edited')),
+            PopupMenuItem(value: 'Title', child: Text('Title')),
+            PopupMenuItem(value: 'Date created', child: Text('Date created')),
           ],
         ),
         Container(

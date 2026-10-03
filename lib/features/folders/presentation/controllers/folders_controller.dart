@@ -6,12 +6,11 @@ import 'package:mynotes/features/folders/domain/entities/folder.dart';
 import 'package:mynotes/features/folders/domain/usecases/get_folders.dart';
 import '../../../../core/database/database.dart';
 
-
 final foldersProvider = ChangeNotifierProvider<FoldersController>((ref) {
   final dataSource = FolderLocalDataSourceImpl(database: AppDatabase.instance);
   final repository = FolderRepositoryImpl(localDataSource: dataSource);
   final getFoldersUseCase = GetFolders(repository);
-  
+
   return FoldersController(
     getFoldersUseCase: getFoldersUseCase,
     repository: repository,
@@ -22,7 +21,9 @@ class FoldersController extends ChangeNotifier {
   static FoldersController? _instance;
   static FoldersController get instance {
     if (_instance == null) {
-      final dataSource = FolderLocalDataSourceImpl(database: AppDatabase.instance);
+      final dataSource = FolderLocalDataSourceImpl(
+        database: AppDatabase.instance,
+      );
       final repository = FolderRepositoryImpl(localDataSource: dataSource);
       final getFoldersUseCase = GetFolders(repository);
       _instance = FoldersController(
@@ -62,13 +63,13 @@ class FoldersController extends ChangeNotifier {
 
   void addFolder(String name, Color color) async {
     if (name.trim().isEmpty) return;
-    
+
     final newFolder = Folder(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name.trim(),
       color: color,
     );
-    
+
     _folders.add(newFolder);
     notifyListeners();
 

@@ -46,12 +46,16 @@ class TrashScreen extends ConsumerWidget {
                 ),
                 if (trashController.items.isNotEmpty)
                   ElevatedButton.icon(
-                    onPressed: () => _confirmEmptyTrash(context, trashController),
+                    onPressed: () =>
+                        _confirmEmptyTrash(context, trashController),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent.withOpacity(0.1),
                       foregroundColor: Colors.redAccent,
                       elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 16,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -68,52 +72,65 @@ class TrashScreen extends ConsumerWidget {
             child: trashController.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : trashController.items.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.delete_outline,
-                              size: 80,
-                              color: colors.secondaryTextColor.withOpacity(0.4),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Trash is empty',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: colors.secondaryTextColor,
-                              ),
-                            ),
-                          ],
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.delete_outline,
+                          size: 80,
+                          color: colors.secondaryTextColor.withOpacity(0.4),
                         ),
-                      )
-                    : GridView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                        const SizedBox(height: 16),
+                        Text(
+                          'Trash is empty',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: colors.secondaryTextColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : GridView.builder(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 16,
+                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
                           maxCrossAxisExtent: 350,
                           mainAxisExtent: 180,
                           crossAxisSpacing: 24,
                           mainAxisSpacing: 24,
                         ),
-                        itemCount: trashController.items.length,
-                        itemBuilder: (context, index) {
-                          final item = trashController.items[index];
-                          return TrashItemCard(
-                            item: item,
-                            onRestore: () => trashController.restoreNote(item.note.id),
-                            onDelete: () => _confirmDelete(context, trashController, item.note.id),
-                          );
-                        },
-                      ),
+                    itemCount: trashController.items.length,
+                    itemBuilder: (context, index) {
+                      final item = trashController.items[index];
+                      return TrashItemCard(
+                        item: item,
+                        onRestore: () =>
+                            trashController.restoreNote(item.note.id),
+                        onDelete: () => _confirmDelete(
+                          context,
+                          trashController,
+                          item.note.id,
+                        ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _confirmDelete(BuildContext context, trashController, String id) async {
+  Future<void> _confirmDelete(
+    BuildContext context,
+    trashController,
+    String id,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -143,7 +160,9 @@ class TrashScreen extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Empty Trash?'),
-        content: const Text('All items in the trash will be permanently deleted.'),
+        content: const Text(
+          'All items in the trash will be permanently deleted.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),

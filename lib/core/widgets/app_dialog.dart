@@ -70,10 +70,7 @@ class AppDialog extends StatelessWidget {
           if (subtitle != null && subtitle!.isNotEmpty) ...[
             Text(
               subtitle!,
-              style: const TextStyle(
-                fontSize: 13,
-                color: Color(0xFF6C757D),
-              ),
+              style: const TextStyle(fontSize: 13, color: Color(0xFF6C757D)),
             ),
             const SizedBox(height: 12),
           ],

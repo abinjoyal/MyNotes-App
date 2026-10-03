@@ -30,7 +30,11 @@ class SettingActionTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: isDestructive ? AppColors.error : secondaryTextColor),
+          Icon(
+            icon,
+            size: 20,
+            color: isDestructive ? AppColors.error : secondaryTextColor,
+          ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
@@ -47,10 +51,7 @@ class SettingActionTile extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: secondaryTextColor,
-                  ),
+                  style: TextStyle(fontSize: 12, color: secondaryTextColor),
                 ),
               ],
             ),

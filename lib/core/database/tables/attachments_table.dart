@@ -7,7 +7,8 @@ class AttachmentsTable {
   static const String colFileType = 'file_type';
   static const String colCreatedAt = 'created_at';
 
-  static const String createTableSql = '''
+  static const String createTableSql =
+      '''
     CREATE TABLE IF NOT EXISTS $tableName (
       $colId TEXT PRIMARY KEY,
       $colNoteId TEXT NOT NULL,

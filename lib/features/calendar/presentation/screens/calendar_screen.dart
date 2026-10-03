@@ -12,10 +12,7 @@ import '../widgets/calendar_day_notes_list.dart';
 class CalendarScreen extends ConsumerStatefulWidget {
   final Function(Note)? onNoteSelect;
 
-  const CalendarScreen({
-    super.key,
-    this.onNoteSelect,
-  });
+  const CalendarScreen({super.key, this.onNoteSelect});
 
   @override
   ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
@@ -56,7 +53,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final focusedDay = calendarController.focusedDay;
     final format = calendarController.calendarFormat;
 
-    final selectedNotes = calendarController.getEventsForDay(selectedDay, notesList);
+    final selectedNotes = calendarController.getEventsForDay(
+      selectedDay,
+      notesList,
+    );
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
@@ -66,7 +66,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isDark 
+          colors: isDark
               ? [const Color(0xFF1A1A24), const Color(0xFF121212)]
               : [const Color(0xFFF8F9FF), const Color(0xFFF1F3F6)],
         ),
@@ -75,7 +75,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         backgroundColor: Colors.transparent,
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 16.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -110,7 +113,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     onNoteSelect: widget.onNoteSelect,
                     onAddNoteForDate: widget.onNoteSelect != null
                         ? () {
-                            final newNote = notesController.createTemplateNote('blank');
+                            final newNote = notesController.createTemplateNote(
+                              'blank',
+                            );
                             widget.onNoteSelect!(newNote);
                           }
                         : null,

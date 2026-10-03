@@ -40,7 +40,9 @@ class CalendarHeaderWidget extends StatelessWidget {
               'View & manage notes linked to dates',
               style: TextStyle(
                 fontSize: 13,
-                color: isDark ? const Color(0xFF8C98A9) : const Color(0xFF6C757D),
+                color: isDark
+                    ? const Color(0xFF8C98A9)
+                    : const Color(0xFF6C757D),
               ),
             ),
           ],
@@ -50,15 +52,30 @@ class CalendarHeaderWidget extends StatelessWidget {
             // Today Quick Jump Chip
             OutlinedButton.icon(
               onPressed: onTodayTap,
-              icon: const Icon(Icons.today_rounded, size: 14, color: AppColors.primaryPurple),
+              icon: const Icon(
+                Icons.today_rounded,
+                size: 14,
+                color: AppColors.primaryPurple,
+              ),
               label: const Text(
                 'Today',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primaryPurple),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryPurple,
+                ),
               ),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: AppColors.primaryPurple.withOpacity(0.4)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                side: BorderSide(
+                  color: AppColors.primaryPurple.withOpacity(0.4),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
               ),
             ),
             const SizedBox(width: 8),
@@ -67,7 +84,9 @@ class CalendarHeaderWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF262634) : const Color(0xFFEAEAEE),
+                color: isDark
+                    ? const Color(0xFF262634)
+                    : const Color(0xFFEAEAEE),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -98,7 +117,9 @@ class CalendarHeaderWidget extends StatelessWidget {
           style: TextStyle(
             fontSize: 11,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
+            color: isSelected
+                ? Colors.white
+                : (isDark ? Colors.white70 : Colors.black87),
           ),
         ),
       ),

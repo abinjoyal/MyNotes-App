@@ -3,11 +3,7 @@ class AppException implements Exception {
   final String? prefix;
   final String? code;
 
-  const AppException(
-    this.message, {
-    this.prefix,
-    this.code,
-  });
+  const AppException(this.message, {this.prefix, this.code});
 
   @override
   String toString() {

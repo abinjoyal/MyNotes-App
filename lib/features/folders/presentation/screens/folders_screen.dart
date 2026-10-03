@@ -58,12 +58,18 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
     }
   }
 
-  void _confirmDeleteFolder(String folderName, FoldersController controller, NotesController notesController) {
+  void _confirmDeleteFolder(
+    String folderName,
+    FoldersController controller,
+    NotesController notesController,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Delete $folderName?'),
-        content: const Text('Are you sure you want to delete this folder? Your notes inside will NOT be deleted, but they will be removed from this folder.'),
+        content: const Text(
+          'Are you sure you want to delete this folder? Your notes inside will NOT be deleted, but they will be removed from this folder.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -108,7 +114,10 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
           ElevatedButton(
             onPressed: () {
               if (nameController.text.isNotEmpty) {
-                controller.addFolder(nameController.text, AppColors.primaryPurple);
+                controller.addFolder(
+                  nameController.text,
+                  AppColors.primaryPurple,
+                );
                 Navigator.pop(context);
               }
             },
@@ -133,14 +142,13 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
     final folders = foldersController.folders;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.darkText;
-   
 
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isDark 
+          colors: isDark
               ? [const Color(0xFF1A1A24), const Color(0xFF121212)]
               : [const Color(0xFFF8F9FF), const Color(0xFFF1F3F6)],
         ),
@@ -148,138 +156,164 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            '📁 Folders',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: textColor,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.lightLavender,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              '${folders.length}',
-                              style: const TextStyle(
-                                fontSize: 12,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 16.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              '📁 Folders',
+                              style: TextStyle(
+                                fontSize: 22,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.primaryPurple,
+                                color: textColor,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Organize and browse your notes by project folders.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Color(0xFF6C757D),
+                            const SizedBox(width: 10),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.lightLavender,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                '${folders.length}',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primaryPurple,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    onPressed: () => _showCreateFolderDialog(foldersController),
-                    icon: Icon(Icons.add_rounded, size: 28, color: textColor),
-                    tooltip: 'Create New Folder',
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Folders Grid
-              Expanded(
-                child: GridView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 280,
-                    mainAxisExtent: 140,
-                    crossAxisSpacing: 14,
-                    mainAxisSpacing: 14,
-                  ),
-                  itemCount: folders.length,
-                  itemBuilder: (context, index) {
-                    final folder = folders[index];
-                    final count = notesController.getFolderNotesCount(
-                      folder.name,
-                    );
-
-                    return FolderTile(
-                      folder: folder,
-                      count: count,
-                      onToggleLock: () async {
-                        if (folder.isLocked) {
-                          // Unlock
-                          final success = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => PasscodeLockScreen(isSetupMode: false),
-                            ),
-                          );
-                          if (success == true) {
-                            foldersController.toggleFolderLock(folder.name, false);
-                          }
-                        } else {
-                          // Lock
-                          if (SettingsController.instance.hasPinCode) {
-                            foldersController.toggleFolderLock(folder.name, true);
-                          } else {
-                            // Prompt to set up PIN
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Please set up a Passcode in Settings first.')),
-                            );
-                          }
-                        }
-                      },
-                      onTap: () async {
-                        if (folder.isLocked) {
-                          final success = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => PasscodeLockScreen(isSetupMode: false),
-                            ),
-                          );
-                          if (success != true) return;
-                        }
-                        setState(() {
-                          _currentFolder = folder.name;
-                        });
-                      },
-                      onAddNote: () => _createNoteInFolder(folder.name),
-                      onDelete: () => _confirmDeleteFolder(folder.name, foldersController, notesController),
-                    ).animate()
-                     .fade(duration: 300.ms, delay: (index * 40).ms)
-                     .scaleXY(begin: 0.95, duration: 300.ms, curve: Curves.easeOutBack);
-                  },
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Organize and browse your notes by project folders.',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF6C757D),
+                          ),
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                      onPressed: () =>
+                          _showCreateFolderDialog(foldersController),
+                      icon: Icon(Icons.add_rounded, size: 28, color: textColor),
+                      tooltip: 'Create New Folder',
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 20),
+
+                // Folders Grid
+                Expanded(
+                  child: GridView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 280,
+                          mainAxisExtent: 140,
+                          crossAxisSpacing: 14,
+                          mainAxisSpacing: 14,
+                        ),
+                    itemCount: folders.length,
+                    itemBuilder: (context, index) {
+                      final folder = folders[index];
+                      final count = notesController.getFolderNotesCount(
+                        folder.name,
+                      );
+
+                      return FolderTile(
+                            folder: folder,
+                            count: count,
+                            onToggleLock: () async {
+                              if (folder.isLocked) {
+                                // Unlock
+                                final success = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        PasscodeLockScreen(isSetupMode: false),
+                                  ),
+                                );
+                                if (success == true) {
+                                  foldersController.toggleFolderLock(
+                                    folder.name,
+                                    false,
+                                  );
+                                }
+                              } else {
+                                // Lock
+                                if (SettingsController.instance.hasPinCode) {
+                                  foldersController.toggleFolderLock(
+                                    folder.name,
+                                    true,
+                                  );
+                                } else {
+                                  // Prompt to set up PIN
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Please set up a Passcode in Settings first.',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            onTap: () async {
+                              if (folder.isLocked) {
+                                final success = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        PasscodeLockScreen(isSetupMode: false),
+                                  ),
+                                );
+                                if (success != true) return;
+                              }
+                              setState(() {
+                                _currentFolder = folder.name;
+                              });
+                            },
+                            onAddNote: () => _createNoteInFolder(folder.name),
+                            onDelete: () => _confirmDeleteFolder(
+                              folder.name,
+                              foldersController,
+                              notesController,
+                            ),
+                          )
+                          .animate()
+                          .fade(duration: 300.ms, delay: (index * 40).ms)
+                          .scaleXY(
+                            begin: 0.95,
+                            duration: 300.ms,
+                            curve: Curves.easeOutBack,
+                          );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }
@@ -307,7 +341,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isDark 
+          colors: isDark
               ? [const Color(0xFF1A1A24), const Color(0xFF121212)]
               : [const Color(0xFFF8F9FF), const Color(0xFFF1F3F6)],
         ),
@@ -315,100 +349,29 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Back Button & Folder Header Row
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _currentFolder = null;
-                      });
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: buttonBg,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: borderColor),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.arrow_back_rounded,
-                            size: 16,
-                            color: textColor,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'All Folders',
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: textColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              // Title Row with Action Button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.folder_rounded,
-                        size: 28,
-                        color: folderModel.color,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        '${folderModel.name} Notes',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Container(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 16.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Back Button & Folder Header Row
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _currentFolder = null;
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
+                          horizontal: 10,
+                          vertical: 6,
                         ),
-                        decoration: BoxDecoration(
-                          color: AppColors.lightLavender,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '${folderNotes.length}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primaryPurple,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
                           color: buttonBg,
                           borderRadius: BorderRadius.circular(8),
@@ -416,86 +379,161 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                         ),
                         child: Row(
                           children: [
-                            GestureDetector(
-                              onTap: () => setState(() => _isGridView = false),
-                              child: Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: !_isGridView
-                                      ? AppColors.lightLavender
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Icon(
-                                  Icons.format_list_bulleted_rounded,
-                                  size: 18,
-                                  color: !_isGridView
-                                      ? AppColors.primaryPurple
-                                      : AppColors.lightText,
-                                ),
-                              ),
+                            Icon(
+                              Icons.arrow_back_rounded,
+                              size: 16,
+                              color: textColor,
                             ),
                             const SizedBox(width: 4),
-                            GestureDetector(
-                              onTap: () => setState(() => _isGridView = true),
-                              child: Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: _isGridView
-                                      ? AppColors.lightLavender
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Icon(
-                                  Icons.grid_view_rounded,
-                                  size: 18,
-                                  color: _isGridView
-                                      ? AppColors.primaryPurple
-                                      : AppColors.lightText,
-                                ),
+                            Text(
+                              'All Folders',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: textColor,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      ElevatedButton.icon(
-                        onPressed: () => _createNoteInFolder(folderName),
-                        icon: const Icon(Icons.add_rounded, size: 18),
-                        label: Text('New Note in ${folderModel.name}'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryPurple,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          elevation: 0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Folder Notes List / Empty State
-              Expanded(
-                child: NoteList(
-                  notes: folderNotes,
-                  isGridView: _isGridView,
-                  activeRoute: 'folder',
-                  onNoteSelect: widget.onNoteSelect,
-                  onActionTap: () => _createNoteInFolder(folderName),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+
+                // Title Row with Action Button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.folder_rounded,
+                          size: 28,
+                          color: folderModel.color,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          '${folderModel.name} Notes',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.lightLavender,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '${folderNotes.length}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primaryPurple,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            color: buttonBg,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: borderColor),
+                          ),
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () =>
+                                    setState(() => _isGridView = false),
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: !_isGridView
+                                        ? AppColors.lightLavender
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Icon(
+                                    Icons.format_list_bulleted_rounded,
+                                    size: 18,
+                                    color: !_isGridView
+                                        ? AppColors.primaryPurple
+                                        : AppColors.lightText,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              GestureDetector(
+                                onTap: () => setState(() => _isGridView = true),
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: _isGridView
+                                        ? AppColors.lightLavender
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Icon(
+                                    Icons.grid_view_rounded,
+                                    size: 18,
+                                    color: _isGridView
+                                        ? AppColors.primaryPurple
+                                        : AppColors.lightText,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        ElevatedButton.icon(
+                          onPressed: () => _createNoteInFolder(folderName),
+                          icon: const Icon(Icons.add_rounded, size: 18),
+                          label: Text('New Note in ${folderModel.name}'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryPurple,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+
+                // Folder Notes List / Empty State
+                Expanded(
+                  child: NoteList(
+                    notes: folderNotes,
+                    isGridView: _isGridView,
+                    activeRoute: 'folder',
+                    onNoteSelect: widget.onNoteSelect,
+                    onActionTap: () => _createNoteInFolder(folderName),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }

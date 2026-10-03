@@ -88,10 +88,7 @@ class _CustomTimerDialogState extends State<CustomTimerDialog> {
                           const SizedBox(height: 2),
                           Text(
                             'Set your target focus duration in minutes.',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: subtextColor,
-                            ),
+                            style: TextStyle(fontSize: 13, color: subtextColor),
                           ),
                         ],
                       ),
@@ -224,7 +221,9 @@ class _CustomTimerDialogState extends State<CustomTimerDialog> {
                     const SizedBox(width: 10),
                     ElevatedButton.icon(
                       onPressed: () {
-                        final mins = int.tryParse(_customController.text.trim());
+                        final mins = int.tryParse(
+                          _customController.text.trim(),
+                        );
                         if (mins != null && mins > 0) {
                           Navigator.pop(context);
                           widget.onTimerSet(mins * 60);

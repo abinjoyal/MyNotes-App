@@ -62,10 +62,7 @@ class AppInfoCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   'Version 1.0.0 (Build 1) • Offline First',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: secondaryTextColor,
-                  ),
+                  style: TextStyle(fontSize: 12, color: secondaryTextColor),
                 ),
               ],
             ),

@@ -4,8 +4,6 @@ import '../../domain/entities/note.dart';
 import '../../../../core/database/database.dart';
 import '../../../../core/services/storage_location_service.dart';
 
-
-
 class NotesController extends ChangeNotifier {
   static final NotesController instance = NotesController._internal();
 
@@ -20,7 +18,6 @@ class NotesController extends ChangeNotifier {
   Future<void> loadFromDatabase() async {
     final dbNotes = await AppDatabase.instance.getAllNotes();
     final dbTrashed = await AppDatabase.instance.getTrashedNotes();
-  
 
     _notes.clear();
     _notes.addAll(dbNotes);
@@ -56,16 +53,13 @@ class NotesController extends ChangeNotifier {
   List<Note> get taskChecklistNotes =>
       _notes.where((note) => _isTaskChecklistNote(note)).toList();
 
-  List<Note> get pinnedNotes =>
-      _notes.where((note) => note.isPinned).toList();
+  List<Note> get pinnedNotes => _notes.where((note) => note.isPinned).toList();
 
   int get totalNotesCount => _notes.length;
   int get regularNotesCount => regularNotes.length;
   int get taskChecklistNotesCount => taskChecklistNotes.length;
   int get pinnedNotesCount => pinnedNotes.length;
   int get trashedNotesCount => _trashedNotes.length;
-
-
 
   List<String> get allTags {
     final set = <String>{};
@@ -81,7 +75,8 @@ class NotesController extends ChangeNotifier {
         return Note(
           id: '',
           title: 'Project Task Checklist',
-          content: '- [ ] Complete design mockups\n- [ ] Write integration unit tests\n- [ ] Review PR and launch to production',
+          content:
+              '- [ ] Complete design mockups\n- [ ] Write integration unit tests\n- [ ] Review PR and launch to production',
           indicatorColor: const Color(0xFF00C853),
           tags: ['#task', '#project'],
           updatedAt: 'Draft',
@@ -89,8 +84,10 @@ class NotesController extends ChangeNotifier {
       case 'journal':
         return Note(
           id: '',
-          title: 'Daily Journal - ${DateTime.now().day}/${DateTime.now().month}',
-          content: '### Today\'s Focus\n1. Primary goal\n2. Secondary task\n\n### Reflection & Notes\n- What went well today?',
+          title:
+              'Daily Journal - ${DateTime.now().day}/${DateTime.now().month}',
+          content:
+              '### Today\'s Focus\n1. Primary goal\n2. Secondary task\n\n### Reflection & Notes\n- What went well today?',
           indicatorColor: const Color(0xFFFFB020),
           tags: ['#daily', '#reflection'],
           updatedAt: 'Draft',
@@ -99,7 +96,8 @@ class NotesController extends ChangeNotifier {
         return Note(
           id: '',
           title: 'Meeting Notes',
-          content: '### Attendees\n- \n\n### Agenda\n- Discussion points\n\n### Action Items\n- [ ] Next steps',
+          content:
+              '### Attendees\n- \n\n### Agenda\n- Discussion points\n\n### Action Items\n- [ ] Next steps',
           indicatorColor: const Color(0xFF4C6FFF),
           tags: ['#meeting'],
           updatedAt: 'Draft',
@@ -142,7 +140,9 @@ class NotesController extends ChangeNotifier {
     String? folderName,
   }) {
     final nowStr = _formatTimestamp(DateTime.now());
-    final effectiveTitle = title.trim().isEmpty ? 'Untitled Note' : title.trim();
+    final effectiveTitle = title.trim().isEmpty
+        ? 'Untitled Note'
+        : title.trim();
 
     if (id != null && id.isNotEmpty) {
       final index = _notes.indexWhere((n) => n.id == id);
@@ -236,9 +236,7 @@ class NotesController extends ChangeNotifier {
   void togglePin(String id) {
     final index = _notes.indexWhere((note) => note.id == id);
     if (index != -1) {
-      _notes[index] = _notes[index].copyWith(
-        isPinned: !_notes[index].isPinned,
-      );
+      _notes[index] = _notes[index].copyWith(isPinned: !_notes[index].isPinned);
       notifyListeners();
     }
   }

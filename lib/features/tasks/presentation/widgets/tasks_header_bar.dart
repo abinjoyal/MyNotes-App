@@ -61,10 +61,7 @@ class TasksHeaderBar extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 2,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 color: AppColors.lightLavender,
                 borderRadius: BorderRadius.circular(12),
@@ -97,10 +94,7 @@ class TasksHeaderBar extends StatelessWidget {
                 style: TextStyle(fontSize: 13, color: textColor),
                 decoration: const InputDecoration(
                   hintText: 'Search checklists or tasks...',
-                  hintStyle: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF8C98A9),
-                  ),
+                  hintStyle: TextStyle(fontSize: 12, color: Color(0xFF8C98A9)),
                   prefixIcon: Icon(
                     Icons.search_rounded,
                     size: 18,

@@ -11,7 +11,8 @@ class FoldersTable {
 
   static const String colIsLocked = 'is_locked';
 
-  static const String createTableSql = '''
+  static const String createTableSql =
+      '''
     CREATE TABLE IF NOT EXISTS $tableName (
       $colId TEXT PRIMARY KEY,
       $colName TEXT NOT NULL UNIQUE,
@@ -32,7 +33,9 @@ class FoldersTable {
 
   static FolderModel fromMap(Map<String, dynamic> map) {
     return FolderModel(
-      id: map[colId]?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      id:
+          map[colId]?.toString() ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
       name: map[colName]?.toString() ?? 'Folder',
       color: Color(map[colColorValue] is int ? map[colColorValue] : 0xFF635BFF),
       isLocked: map[colIsLocked] == 1,

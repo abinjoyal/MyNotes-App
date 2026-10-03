@@ -24,7 +24,9 @@ class _TrashItemCardState extends State<TrashItemCard> {
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
-    final hoverBg = colors.isDark ? const Color(0xFF25252D) : const Color(0xFFF5F5F9);
+    final hoverBg = colors.isDark
+        ? const Color(0xFF25252D)
+        : const Color(0xFFF5F5F9);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -35,7 +37,9 @@ class _TrashItemCardState extends State<TrashItemCard> {
           color: _isHovered ? hoverBg : colors.cardBg,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: _isHovered ? widget.item.note.indicatorColor.withOpacity(0.5) : colors.borderColor,
+            color: _isHovered
+                ? widget.item.note.indicatorColor.withOpacity(0.5)
+                : colors.borderColor,
             width: 1,
           ),
           boxShadow: _isHovered
@@ -44,7 +48,7 @@ class _TrashItemCardState extends State<TrashItemCard> {
                     color: widget.item.note.indicatorColor.withOpacity(0.15),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
-                  )
+                  ),
                 ]
               : [],
         ),
@@ -112,7 +116,11 @@ class _TrashItemCardState extends State<TrashItemCard> {
                     Tooltip(
                       message: 'Restore Note',
                       child: IconButton(
-                        icon: const Icon(Icons.restore, color: Colors.green, size: 20),
+                        icon: const Icon(
+                          Icons.restore,
+                          color: Colors.green,
+                          size: 20,
+                        ),
                         onPressed: widget.onRestore,
                         splashRadius: 20,
                       ),
@@ -120,13 +128,17 @@ class _TrashItemCardState extends State<TrashItemCard> {
                     Tooltip(
                       message: 'Delete Permanently',
                       child: IconButton(
-                        icon: const Icon(Icons.delete_forever, color: Colors.red, size: 20),
+                        icon: const Icon(
+                          Icons.delete_forever,
+                          color: Colors.red,
+                          size: 20,
+                        ),
                         onPressed: widget.onDelete,
                         splashRadius: 20,
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ],

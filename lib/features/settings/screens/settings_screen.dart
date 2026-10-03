@@ -82,7 +82,10 @@ class SettingsScreen extends StatelessWidget {
 
             // Main Settings Content
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 20.0,
+              ),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   // 1. Appearance Section
@@ -122,7 +125,10 @@ class SettingsScreen extends StatelessWidget {
                         dropdownBg: colors.dropdownBg,
                         onChanged: (val) {
                           controller.updateLayout(val);
-                          _showSnackBar(context, 'Default note view updated to $val');
+                          _showSnackBar(
+                            context,
+                            'Default note view updated to $val',
+                          );
                         },
                       ),
                       Divider(height: 1, color: colors.borderColor),
@@ -137,7 +143,10 @@ class SettingsScreen extends StatelessWidget {
                         dropdownBg: colors.dropdownBg,
                         onChanged: (val) {
                           controller.updateFontSize(val);
-                          _showSnackBar(context, 'Editor font size set to $val');
+                          _showSnackBar(
+                            context,
+                            'Editor font size set to $val',
+                          );
                         },
                       ),
                     ],
@@ -167,13 +176,19 @@ class SettingsScreen extends StatelessWidget {
                         secondaryTextColor: colors.secondaryTextColor,
                         onChanged: (val) async {
                           if (val) {
-                            final setupSuccess = await Navigator.of(context).push<bool>(
-                              MaterialPageRoute(
-                                builder: (_) => const PasscodeLockScreen(isSetupMode: true),
-                              ),
-                            );
+                            final setupSuccess = await Navigator.of(context)
+                                .push<bool>(
+                                  MaterialPageRoute(
+                                    builder: (_) => const PasscodeLockScreen(
+                                      isSetupMode: true,
+                                    ),
+                                  ),
+                                );
                             if (setupSuccess == true) {
-                              _showSnackBar(context, 'PIN Passcode set successfully!');
+                              _showSnackBar(
+                                context,
+                                'PIN Passcode set successfully!',
+                              );
                             }
                           } else {
                             controller.togglePinLock(false);
@@ -191,13 +206,19 @@ class SettingsScreen extends StatelessWidget {
                           textColor: colors.textColor,
                           secondaryTextColor: colors.secondaryTextColor,
                           onTap: () async {
-                            final setupSuccess = await Navigator.of(context).push<bool>(
-                              MaterialPageRoute(
-                                builder: (_) => const PasscodeLockScreen(isSetupMode: true),
-                              ),
-                            );
+                            final setupSuccess = await Navigator.of(context)
+                                .push<bool>(
+                                  MaterialPageRoute(
+                                    builder: (_) => const PasscodeLockScreen(
+                                      isSetupMode: true,
+                                    ),
+                                  ),
+                                );
                             if (setupSuccess == true) {
-                              _showSnackBar(context, 'Passcode updated successfully!');
+                              _showSnackBar(
+                                context,
+                                'Passcode updated successfully!',
+                              );
                             }
                           },
                         ),
@@ -212,10 +233,18 @@ class SettingsScreen extends StatelessWidget {
                         secondaryTextColor: colors.secondaryTextColor,
                         onChanged: (val) {
                           if (val && !controller.enablePinLock) {
-                            _showSnackBar(context, 'Please enable Passcode Lock first');
+                            _showSnackBar(
+                              context,
+                              'Please enable Passcode Lock first',
+                            );
                           } else {
                             controller.toggleBiometrics(val);
-                            _showSnackBar(context, val ? 'Biometric Authentication Enabled' : 'Biometric Auth Disabled');
+                            _showSnackBar(
+                              context,
+                              val
+                                  ? 'Biometric Authentication Enabled'
+                                  : 'Biometric Auth Disabled',
+                            );
                           }
                         },
                       ),
@@ -234,7 +263,8 @@ class SettingsScreen extends StatelessWidget {
                   FutureBuilder<Map<String, String>>(
                     future: _fetchStorageDetails(),
                     builder: (context, snapshot) {
-                      final path = snapshot.data?['path'] ?? 'Loading storage path...';
+                      final path =
+                          snapshot.data?['path'] ?? 'Loading storage path...';
                       final usage = snapshot.data?['usage'] ?? '0.0 MB';
 
                       return SettingCardContainer(
@@ -252,14 +282,22 @@ class SettingsScreen extends StatelessWidget {
                           ),
                           Divider(height: 1, color: colors.borderColor),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                             child: Row(
                               children: [
-                                Icon(Icons.pie_chart_outline_rounded, size: 20, color: colors.secondaryTextColor),
+                                Icon(
+                                  Icons.pie_chart_outline_rounded,
+                                  size: 20,
+                                  color: colors.secondaryTextColor,
+                                ),
                                 const SizedBox(width: 14),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Storage Usage',
@@ -281,10 +319,15 @@ class SettingsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: colors.isDark
-                                        ? AppColors.primaryPurple.withOpacity(0.2)
+                                        ? AppColors.primaryPurple.withOpacity(
+                                            0.2,
+                                          )
                                         : AppColors.lightLavender,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -303,20 +346,27 @@ class SettingsScreen extends StatelessWidget {
                           Divider(height: 1, color: colors.borderColor),
                           SettingSwitchTile(
                             title: 'Auto-Clean Trash',
-                            subtitle: 'Permanently remove notes deleted over 30 days ago',
+                            subtitle:
+                                'Permanently remove notes deleted over 30 days ago',
                             icon: Icons.auto_delete_outlined,
                             value: controller.autoCleanTrash,
                             textColor: colors.textColor,
                             secondaryTextColor: colors.secondaryTextColor,
                             onChanged: (val) {
                               controller.toggleAutoCleanTrash(val);
-                              _showSnackBar(context, val ? 'Auto-clean trash enabled' : 'Auto-clean trash disabled');
+                              _showSnackBar(
+                                context,
+                                val
+                                    ? 'Auto-clean trash enabled'
+                                    : 'Auto-clean trash disabled',
+                              );
                             },
                           ),
                           Divider(height: 1, color: colors.borderColor),
                           SettingActionTile(
                             title: 'Export Notes Data',
-                            subtitle: 'Compress and download all notes, tasks & folders as MyNotes_Backup.zip',
+                            subtitle:
+                                'Compress and download all notes, tasks & folders as MyNotes_Backup.zip',
                             icon: Icons.archive_rounded,
                             actionLabel: 'Export ZIP',
                             textColor: colors.textColor,
@@ -326,7 +376,8 @@ class SettingsScreen extends StatelessWidget {
                           Divider(height: 1, color: colors.borderColor),
                           SettingActionTile(
                             title: 'Clear Trash Bin',
-                            subtitle: 'Permanently remove all items in trash right now',
+                            subtitle:
+                                'Permanently remove all items in trash right now',
                             icon: Icons.delete_forever_outlined,
                             actionLabel: 'Empty Trash',
                             isDestructive: true,
@@ -365,7 +416,8 @@ class SettingsScreen extends StatelessWidget {
 
   static Future<Map<String, String>> _fetchStorageDetails() async {
     final path = await StorageLocationService.instance.getStoragePath();
-    final usage = await StorageLocationService.instance.getFormattedStorageUsage(path);
+    final usage = await StorageLocationService.instance
+        .getFormattedStorageUsage(path);
     return {'path': path, 'usage': usage};
   }
 
@@ -380,7 +432,10 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  static Future<void> _onChangeStorageClick(BuildContext context, String currentPath) async {
+  static Future<void> _onChangeStorageClick(
+    BuildContext context,
+    String currentPath,
+  ) async {
     try {
       String? initialDir = currentPath;
       if (initialDir.isNotEmpty && !Directory(initialDir).existsSync()) {
@@ -393,7 +448,9 @@ class SettingsScreen extends StatelessWidget {
         initialDirectory: initialDir,
       );
 
-      if (selectedDirectory == null || selectedDirectory.isEmpty || selectedDirectory == currentPath) {
+      if (selectedDirectory == null ||
+          selectedDirectory.isEmpty ||
+          selectedDirectory == currentPath) {
         return;
       }
 
@@ -404,7 +461,11 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 
-  static void _showMigrationDialog(BuildContext context, String currentPath, String newPath) {
+  static void _showMigrationDialog(
+    BuildContext context,
+    String currentPath,
+    String newPath,
+  ) {
     StorageMigrationOption selectedOption = StorageMigrationOption.move;
 
     showDialog(
@@ -413,12 +474,20 @@ class SettingsScreen extends StatelessWidget {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
               title: const Row(
                 children: [
-                  Icon(Icons.drive_file_move_rounded, color: AppColors.primaryPurple),
+                  Icon(
+                    Icons.drive_file_move_rounded,
+                    color: AppColors.primaryPurple,
+                  ),
                   SizedBox(width: 10),
-                  Text('Change Storage Location', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  Text(
+                    'Change Storage Location',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
                 ],
               ),
               content: Column(
@@ -431,36 +500,66 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   RadioListTile<StorageMigrationOption>(
-                    title: const Text('Move existing notes', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                    subtitle: const Text('Transfer files from old folder to new folder', style: TextStyle(fontSize: 11)),
+                    title: const Text(
+                      'Move existing notes',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: const Text(
+                      'Transfer files from old folder to new folder',
+                      style: TextStyle(fontSize: 11),
+                    ),
                     value: StorageMigrationOption.move,
                     groupValue: selectedOption,
                     activeColor: AppColors.primaryPurple,
                     contentPadding: EdgeInsets.zero,
                     onChanged: (val) {
-                      if (val != null) setDialogState(() => selectedOption = val);
+                      if (val != null)
+                        setDialogState(() => selectedOption = val);
                     },
                   ),
                   RadioListTile<StorageMigrationOption>(
-                    title: const Text('Copy existing notes', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                    subtitle: const Text('Duplicate files to new folder, keep old copy', style: TextStyle(fontSize: 11)),
+                    title: const Text(
+                      'Copy existing notes',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: const Text(
+                      'Duplicate files to new folder, keep old copy',
+                      style: TextStyle(fontSize: 11),
+                    ),
                     value: StorageMigrationOption.copy,
                     groupValue: selectedOption,
                     activeColor: AppColors.primaryPurple,
                     contentPadding: EdgeInsets.zero,
                     onChanged: (val) {
-                      if (val != null) setDialogState(() => selectedOption = val);
+                      if (val != null)
+                        setDialogState(() => selectedOption = val);
                     },
                   ),
                   RadioListTile<StorageMigrationOption>(
-                    title: const Text('Use new folder only', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                    subtitle: const Text('Switch active folder without touching old files', style: TextStyle(fontSize: 11)),
+                    title: const Text(
+                      'Use new folder only',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: const Text(
+                      'Switch active folder without touching old files',
+                      style: TextStyle(fontSize: 11),
+                    ),
                     value: StorageMigrationOption.switchOnly,
                     groupValue: selectedOption,
                     activeColor: AppColors.primaryPurple,
                     contentPadding: EdgeInsets.zero,
                     onChanged: (val) {
-                      if (val != null) setDialogState(() => selectedOption = val);
+                      if (val != null)
+                        setDialogState(() => selectedOption = val);
                     },
                   ),
                 ],
@@ -481,13 +580,18 @@ class SettingsScreen extends StatelessWidget {
                     );
                     if (context.mounted) {
                       (context as Element).markNeedsBuild();
-                      _showSnackBar(context, 'Storage folder changed successfully!');
+                      _showSnackBar(
+                        context,
+                        'Storage folder changed successfully!',
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryPurple,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                   child: const Text('Continue'),
                 ),
@@ -511,7 +615,8 @@ class SettingsScreen extends StatelessWidget {
       await Share.shareXFiles(
         [XFile(zipFile.path)],
         subject: 'MyNotes Backup Archive (.zip)',
-        text: 'Here is your complete MyNotes backup archive containing all notes, tasks, and folders.',
+        text:
+            'Here is your complete MyNotes backup archive containing all notes, tasks, and folders.',
       );
       _showSnackBar(context, 'MyNotes_Backup.zip export ready!');
     } catch (e) {

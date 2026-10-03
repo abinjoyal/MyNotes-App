@@ -16,11 +16,7 @@ class PinnedNoteModel extends PinnedNote {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'noteId': noteId,
-      'pinnedAt': pinnedAt.toIso8601String(),
-    };
+    return {'id': id, 'noteId': noteId, 'pinnedAt': pinnedAt.toIso8601String()};
   }
 
   factory PinnedNoteModel.fromEntity(PinnedNote entity) {

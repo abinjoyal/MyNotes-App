@@ -27,7 +27,9 @@ class AppTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final inputBg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF7F8FA);
-    final borderColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFEAEAEE);
+    final borderColor = isDark
+        ? const Color(0xFF2C2C2C)
+        : const Color(0xFFEAEAEE);
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
 
     return Container(
@@ -45,14 +47,14 @@ class AppTextField extends StatelessWidget {
         style: TextStyle(fontSize: 14, color: textColor),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: const TextStyle(
-            color: Color(0xFF8C98A9),
-            fontSize: 14,
-          ),
+          hintStyle: const TextStyle(color: Color(0xFF8C98A9), fontSize: 14),
           prefixIcon: prefixIcon,
           suffixIcon: suffixIcon,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 12,
+          ),
           isDense: true,
         ),
       ),

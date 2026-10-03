@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/note_version.dart';
 
 class VersionHistoryService {
-  static final VersionHistoryService instance = VersionHistoryService._internal();
+  static final VersionHistoryService instance =
+      VersionHistoryService._internal();
   factory VersionHistoryService() => instance;
   VersionHistoryService._internal() {
     _loadFromDisk();
@@ -32,7 +33,11 @@ class VersionHistoryService {
             decoded.forEach((noteId, versions) {
               if (versions is List) {
                 _historyMap[noteId] = versions
-                    .map((map) => NoteVersionSnapshot.fromMap(Map<String, dynamic>.from(map)))
+                    .map(
+                      (map) => NoteVersionSnapshot.fromMap(
+                        Map<String, dynamic>.from(map),
+                      ),
+                    )
                     .toList();
               }
             });
@@ -52,8 +57,12 @@ class VersionHistoryService {
   }) async {
     await _loadFromDisk();
 
-    final effectiveTitle = title.trim().isEmpty ? 'Untitled Note' : title.trim();
-    final words = content.trim().isEmpty ? 0 : content.trim().split(RegExp(r'\s+')).length;
+    final effectiveTitle = title.trim().isEmpty
+        ? 'Untitled Note'
+        : title.trim();
+    final words = content.trim().isEmpty
+        ? 0
+        : content.trim().split(RegExp(r'\s+')).length;
     final chars = content.length;
     final now = DateTime.now();
     final timeStr = _formatTimestamp(now);
@@ -115,7 +124,20 @@ class VersionHistoryService {
     final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
     final minute = dt.minute.toString().padLeft(2, '0');
     final ampm = dt.hour >= 12 ? 'PM' : 'AM';
-    final monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    final monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     final month = monthNames[dt.month - 1];
     return '${dt.day} $month at $hour:$minute $ampm';
   }

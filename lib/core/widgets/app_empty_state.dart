@@ -36,11 +36,7 @@ class AppEmptyState extends StatelessWidget {
                 color: AppColors.primaryPurple.withOpacity(0.12),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: 40,
-                color: AppColors.primaryPurple,
-              ),
+              child: Icon(icon, size: 40, color: AppColors.primaryPurple),
             ),
             const SizedBox(height: 20),
             Text(
@@ -57,10 +53,7 @@ class AppEmptyState extends StatelessWidget {
               Text(
                 subtitle!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF6C757D),
-                ),
+                style: const TextStyle(fontSize: 13, color: Color(0xFF6C757D)),
               ),
             ],
             if (actionLabel != null && onActionTap != null) ...[

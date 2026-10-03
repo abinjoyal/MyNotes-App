@@ -4,10 +4,7 @@ import '../../../notes/domain/entities/note.dart';
 class CalendarEventMarker extends StatelessWidget {
   final List<Note> events;
 
-  const CalendarEventMarker({
-    super.key,
-    required this.events,
-  });
+  const CalendarEventMarker({super.key, required this.events});
 
   @override
   Widget build(BuildContext context) {

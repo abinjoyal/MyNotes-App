@@ -94,13 +94,15 @@ class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
             tags: ['#task'],
             updatedAt: 'Just now',
           );
-          ref.read(notesProvider).saveNote(
-            id: newNote.id,
-            title: newNote.title,
-            content: newNote.content,
-            indicatorColor: newNote.indicatorColor,
-            tags: newNote.tags,
-          );
+          ref
+              .read(notesProvider)
+              .saveNote(
+                id: newNote.id,
+                title: newNote.title,
+                content: newNote.content,
+                indicatorColor: newNote.indicatorColor,
+                tags: newNote.tags,
+              );
           setState(() {
             _selectedNoteId = newNote.id;
             _isWorkspaceHidden = false;
@@ -153,14 +155,16 @@ class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
       task.isCompleted,
     );
 
-    ref.read(notesProvider).saveNote(
-      id: note.id,
-      title: note.title,
-      content: updatedContent,
-      indicatorColor: note.indicatorColor,
-      tags: note.tags,
-      isPinned: note.isPinned,
-    );
+    ref
+        .read(notesProvider)
+        .saveNote(
+          id: note.id,
+          title: note.title,
+          content: updatedContent,
+          indicatorColor: note.indicatorColor,
+          tags: note.tags,
+          isPinned: note.isPinned,
+        );
   }
 
   void _addNewTask(Note note) {
@@ -172,14 +176,16 @@ class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
       text,
     );
 
-    ref.read(notesProvider).saveNote(
-      id: note.id,
-      title: note.title,
-      content: updatedContent,
-      indicatorColor: note.indicatorColor,
-      tags: note.tags,
-      isPinned: note.isPinned,
-    );
+    ref
+        .read(notesProvider)
+        .saveNote(
+          id: note.id,
+          title: note.title,
+          content: updatedContent,
+          indicatorColor: note.indicatorColor,
+          tags: note.tags,
+          isPinned: note.isPinned,
+        );
 
     _newTaskController.clear();
   }
@@ -190,14 +196,16 @@ class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
       task.index,
     );
 
-    ref.read(notesProvider).saveNote(
-      id: note.id,
-      title: note.title,
-      content: updatedContent,
-      indicatorColor: note.indicatorColor,
-      tags: note.tags,
-      isPinned: note.isPinned,
-    );
+    ref
+        .read(notesProvider)
+        .saveNote(
+          id: note.id,
+          title: note.title,
+          content: updatedContent,
+          indicatorColor: note.indicatorColor,
+          tags: note.tags,
+          isPinned: note.isPinned,
+        );
   }
 
   @override
@@ -234,7 +242,8 @@ class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
             timerTotalSeconds: timerController.totalSeconds,
             timerRemainingSeconds: timerController.remainingSeconds,
             isTimerRunning: timerController.isRunning,
-            onStartTimer: () => timerController.startTimer(_showTimerCompletedDialog),
+            onStartTimer: () =>
+                timerController.startTimer(_showTimerCompletedDialog),
             onPauseTimer: timerController.pauseTimer,
             onResetTimer: timerController.resetTimer,
             onCloseCard: timerController.hideCard,
@@ -260,7 +269,8 @@ class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
                           _isWorkspaceHidden = false;
                         }),
                         onCreateChecklist: _createNewChecklistDialog,
-                        parseTasksFromContent: TaskMarkdownUtils.parseTasksFromContent,
+                        parseTasksFromContent:
+                            TaskMarkdownUtils.parseTasksFromContent,
                         getCategoryIcon: TaskMarkdownUtils.getCategoryIcon,
                       ),
                     )
@@ -276,7 +286,8 @@ class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
                           _isWorkspaceHidden = false;
                         }),
                         onCreateChecklist: _createNewChecklistDialog,
-                        parseTasksFromContent: TaskMarkdownUtils.parseTasksFromContent,
+                        parseTasksFromContent:
+                            TaskMarkdownUtils.parseTasksFromContent,
                         getCategoryIcon: TaskMarkdownUtils.getCategoryIcon,
                       ),
                     ),
@@ -290,7 +301,8 @@ class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
                     activeNote: activeNote,
                     activeTasks: activeTasks,
                     newTaskController: _newTaskController,
-                    onCloseWorkspace: () => setState(() => _isWorkspaceHidden = true),
+                    onCloseWorkspace: () =>
+                        setState(() => _isWorkspaceHidden = true),
                     onNoteEditSelect: widget.onNoteSelect,
                     onToggleTaskCompletion: _toggleTaskCompletion,
                     onDeleteTaskItem: _deleteTaskItem,

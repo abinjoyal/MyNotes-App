@@ -29,7 +29,7 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
 
   late AnimationController _shakeController;
   late Animation<double> _shakeAnimation;
-  
+
   final LocalAuthentication _auth = LocalAuthentication();
   bool _canCheckBiometrics = false;
 
@@ -54,7 +54,8 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
 
   Future<void> _checkBiometricsSupport() async {
     try {
-      final canCheck = await _auth.canCheckBiometrics || await _auth.isDeviceSupported();
+      final canCheck =
+          await _auth.canCheckBiometrics || await _auth.isDeviceSupported();
       if (mounted) {
         setState(() {
           _canCheckBiometrics = canCheck;
@@ -272,7 +273,9 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
                             final isFilled = index < _enteredPin.length;
                             return AnimatedContainer(
                               duration: const Duration(milliseconds: 150),
-                              margin: const EdgeInsets.symmetric(horizontal: 10),
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
                               width: 18,
                               height: 18,
                               decoration: BoxDecoration(
@@ -284,8 +287,8 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
                                   color: isFilled
                                       ? AppColors.primaryPurple
                                       : (isDark
-                                          ? AppColors.darkBorder
-                                          : const Color(0xFFC4C4C4)),
+                                            ? AppColors.darkBorder
+                                            : const Color(0xFFC4C4C4)),
                                   width: 2,
                                 ),
                               ),
@@ -337,7 +340,6 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
                               )
                             else
                               const SizedBox(width: 68), // Spacer
-
                             // Number 0
                             _buildKeypadButton('0', textColor, isDark),
                             // Backspace button
@@ -365,7 +367,9 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
   Widget _buildKeypadRow(List<String> keys, Color textColor, bool isDark) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: keys.map((key) => _buildKeypadButton(key, textColor, isDark)).toList(),
+      children: keys
+          .map((key) => _buildKeypadButton(key, textColor, isDark))
+          .toList(),
     );
   }
 
@@ -416,23 +420,14 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
     return Container(
       width: 68,
       height: 68,
-      decoration: BoxDecoration(
-        color: btnBg,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: btnBg, shape: BoxShape.circle),
       child: Material(
         color: Colors.transparent,
         shape: const CircleBorder(),
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: onTap,
-          child: Center(
-            child: Icon(
-              icon,
-              size: 24,
-              color: textColor,
-            ),
-          ),
+          child: Center(child: Icon(icon, size: 24, color: textColor)),
         ),
       ),
     );

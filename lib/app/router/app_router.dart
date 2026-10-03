@@ -25,46 +25,30 @@ class AppRouter {
 
       case RouteNames.createNote:
       case RouteNames.noteEditor:
-        return MaterialPageRoute(
-          builder: (_) => const NoteEditorScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const NoteEditorScreen());
 
       case RouteNames.search:
-        return MaterialPageRoute(
-          builder: (_) => const SearchScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const SearchScreen());
 
       case RouteNames.trash:
-        return MaterialPageRoute(
-          builder: (_) => const TrashScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const TrashScreen());
 
       case RouteNames.tasks:
-        return MaterialPageRoute(
-          builder: (_) => const TasksScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const TasksScreen());
 
       case RouteNames.pinned:
-        return MaterialPageRoute(
-          builder: (_) => const PinnedNotesScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const PinnedNotesScreen());
 
       case RouteNames.folders:
-        return MaterialPageRoute(
-          builder: (_) => const FoldersScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const FoldersScreen());
 
       case RouteNames.settings:
-        return MaterialPageRoute(
-          builder: (_) => const SettingsScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const SettingsScreen());
 
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
-            body: Center(
-              child: Text('No route defined for ${settings.name}'),
-            ),
+            body: Center(child: Text('No route defined for ${settings.name}')),
           ),
         );
     }

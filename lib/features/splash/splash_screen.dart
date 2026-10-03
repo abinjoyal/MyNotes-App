@@ -77,26 +77,21 @@ class _SplashScreenState extends State<SplashScreen>
                   pageBuilder: (context, animation, secondaryAnimation) {
                     return const ResponsiveLayout(
                       mobile: Scaffold(
-                        body: Center(
-                          child: Text('MyNotes Mobile View'),
-                        ),
+                        body: Center(child: Text('MyNotes Mobile View')),
                       ),
                       desktop: DesktopLayout(),
                     );
                   },
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                        return FadeTransition(opacity: animation, child: child);
+                      },
                 ),
               );
             },
           )
         : const ResponsiveLayout(
-            mobile: Scaffold(
-              body: Center(
-                child: Text('MyNotes Mobile View'),
-              ),
-            ),
+            mobile: Scaffold(body: Center(child: Text('MyNotes Mobile View'))),
             desktop: DesktopLayout(),
           );
 
@@ -105,10 +100,7 @@ class _SplashScreenState extends State<SplashScreen>
         transitionDuration: const Duration(milliseconds: 600),
         pageBuilder: (context, animation, secondaryAnimation) => targetScreen,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
+          return FadeTransition(opacity: animation, child: child);
         },
       ),
     );
@@ -144,10 +136,7 @@ class _SplashScreenState extends State<SplashScreen>
                       height: 100,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [
-                            AppColors.primaryPurple,
-                            Color(0xFF8B85FF),
-                          ],
+                          colors: [AppColors.primaryPurple, Color(0xFF8B85FF)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),

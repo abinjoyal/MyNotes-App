@@ -48,10 +48,7 @@ class SettingSelectionTile extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: secondaryTextColor,
-                  ),
+                  style: TextStyle(fontSize: 12, color: secondaryTextColor),
                 ),
               ],
             ),
@@ -72,12 +69,12 @@ class SettingSelectionTile extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: AppColors.primaryPurple,
                 ),
-                icon: const Icon(Icons.arrow_drop_down, color: AppColors.primaryPurple),
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: AppColors.primaryPurple,
+                ),
                 items: options.map((opt) {
-                  return DropdownMenuItem(
-                    value: opt,
-                    child: Text(opt),
-                  );
+                  return DropdownMenuItem(value: opt, child: Text(opt));
                 }).toList(),
                 onChanged: (val) {
                   if (val != null) onChanged(val);

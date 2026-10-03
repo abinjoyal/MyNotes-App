@@ -15,7 +15,8 @@ class NotesTable {
   static const String colFolderName = 'folder_name';
   static const String colIsTrashed = 'is_trashed';
 
-  static const String createTableSql = '''
+  static const String createTableSql =
+      '''
     CREATE TABLE IF NOT EXISTS $tableName (
       $colId TEXT PRIMARY KEY,
       $colTitle TEXT NOT NULL,
@@ -54,10 +55,14 @@ class NotesTable {
     }
 
     return Note(
-      id: map[colId]?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      id:
+          map[colId]?.toString() ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
       title: map[colTitle]?.toString() ?? 'Untitled Note',
       content: map[colContent]?.toString() ?? '',
-      indicatorColor: Color(map[colColorValue] is int ? map[colColorValue] : 0xFF635BFF),
+      indicatorColor: Color(
+        map[colColorValue] is int ? map[colColorValue] : 0xFF635BFF,
+      ),
       tags: parsedTags,
       updatedAt: map[colUpdatedAt]?.toString() ?? 'Just now',
       isPinned: map[colIsPinned] == 1 || map[colIsPinned] == true,

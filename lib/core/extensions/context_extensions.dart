@@ -21,9 +21,9 @@ extension BuildContextExtensions on BuildContext {
   }
 
   Future<T?> push<T>(Widget screen) {
-    return Navigator.of(this).push<T>(
-      MaterialPageRoute(builder: (_) => screen),
-    );
+    return Navigator.of(
+      this,
+    ).push<T>(MaterialPageRoute(builder: (_) => screen));
   }
 
   void pop<T>([T? result]) {

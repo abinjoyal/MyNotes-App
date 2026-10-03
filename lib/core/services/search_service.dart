@@ -14,7 +14,8 @@ class SearchService {
     final lowerQuery = query.toLowerCase().trim();
 
     return notes.where((note) {
-      final matchesQuery = lowerQuery.isEmpty ||
+      final matchesQuery =
+          lowerQuery.isEmpty ||
           note.title.toLowerCase().contains(lowerQuery) ||
           note.content.toLowerCase().contains(lowerQuery) ||
           note.tags.any((tag) => tag.toLowerCase().contains(lowerQuery));
@@ -31,7 +32,9 @@ class SearchService {
 
     switch (sortOption) {
       case 'Title':
-        sortedList.sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+        sortedList.sort(
+          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+        );
         break;
       case 'Date created':
         sortedList.sort((a, b) => b.id.compareTo(a.id));

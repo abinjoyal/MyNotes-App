@@ -11,30 +11,22 @@ class NoteEditorScreen extends StatelessWidget {
     Color color,
     List<String> tags,
     bool isPinned,
-  )? onSave;
+  )?
+  onSave;
   final VoidCallback? onClose;
 
-  const NoteEditorScreen({
-    super.key,
-    this.note,
-    this.onSave,
-    this.onClose,
-  });
+  const NoteEditorScreen({super.key, this.note, this.onSave, this.onClose});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: NoteEditor(
-          initialNote: note,
-          onSave: onSave,
-          onClose: onClose,
-        ).animate()
-         .fade(duration: 250.ms)
-         .slideY(begin: 0.03, duration: 250.ms, curve: Curves.easeOut),
+        child: NoteEditor(initialNote: note, onSave: onSave, onClose: onClose)
+            .animate()
+            .fade(duration: 250.ms)
+            .slideY(begin: 0.03, duration: 250.ms, curve: Curves.easeOut),
       ),
     );
   }
 }
-

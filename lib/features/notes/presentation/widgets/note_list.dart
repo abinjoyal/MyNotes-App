@@ -166,34 +166,35 @@ class NoteList extends StatelessWidget {
         itemBuilder: (context, index) {
           final note = notes[index];
           return NoteCard(
-            note: note,
-            isTrash: isTrashRoute,
-            onTap: isTrashRoute
-                ? null
-                : () {
-                    if (onNoteSelect != null) {
-                      onNoteSelect!(note);
-                    }
-                  },
-            onPinToggle: isTrashRoute
-                ? null
-                : () {
-                    NotesController.instance.togglePin(note.id);
-                  },
-            onDelete: isTrashRoute
-                ? null
-                : () {
-                    NotesController.instance.deleteNote(note.id);
-                  },
-            onRestore: () {
-              NotesController.instance.restoreFromTrash(note.id);
-            },
-            onPermanentDelete: () {
-              NotesController.instance.permanentlyDeleteFromTrash(note.id);
-            },
-          ).animate()
-           .fade(duration: 300.ms, delay: (index * 30).ms)
-           .slideY(begin: 0.05, duration: 300.ms, curve: Curves.easeOutQuad);
+                note: note,
+                isTrash: isTrashRoute,
+                onTap: isTrashRoute
+                    ? null
+                    : () {
+                        if (onNoteSelect != null) {
+                          onNoteSelect!(note);
+                        }
+                      },
+                onPinToggle: isTrashRoute
+                    ? null
+                    : () {
+                        NotesController.instance.togglePin(note.id);
+                      },
+                onDelete: isTrashRoute
+                    ? null
+                    : () {
+                        NotesController.instance.deleteNote(note.id);
+                      },
+                onRestore: () {
+                  NotesController.instance.restoreFromTrash(note.id);
+                },
+                onPermanentDelete: () {
+                  NotesController.instance.permanentlyDeleteFromTrash(note.id);
+                },
+              )
+              .animate()
+              .fade(duration: 300.ms, delay: (index * 30).ms)
+              .slideY(begin: 0.05, duration: 300.ms, curve: Curves.easeOutQuad);
         },
       );
     }
@@ -204,34 +205,35 @@ class NoteList extends StatelessWidget {
       itemBuilder: (context, index) {
         final note = notes[index];
         return NoteCard(
-          note: note,
-          isTrash: isTrashRoute,
-          onTap: isTrashRoute
-              ? null
-              : () {
-                  if (onNoteSelect != null) {
-                    onNoteSelect!(note);
-                  }
-                },
-          onPinToggle: isTrashRoute
-              ? null
-              : () {
-                  NotesController.instance.togglePin(note.id);
-                },
-          onDelete: isTrashRoute
-              ? null
-              : () {
-                  NotesController.instance.deleteNote(note.id);
-                },
-          onRestore: () {
-            NotesController.instance.restoreFromTrash(note.id);
-          },
-          onPermanentDelete: () {
-            NotesController.instance.permanentlyDeleteFromTrash(note.id);
-          },
-        ).animate()
-         .fade(duration: 300.ms, delay: (index * 30).ms)
-         .slideX(begin: 0.05, duration: 300.ms, curve: Curves.easeOutQuad);
+              note: note,
+              isTrash: isTrashRoute,
+              onTap: isTrashRoute
+                  ? null
+                  : () {
+                      if (onNoteSelect != null) {
+                        onNoteSelect!(note);
+                      }
+                    },
+              onPinToggle: isTrashRoute
+                  ? null
+                  : () {
+                      NotesController.instance.togglePin(note.id);
+                    },
+              onDelete: isTrashRoute
+                  ? null
+                  : () {
+                      NotesController.instance.deleteNote(note.id);
+                    },
+              onRestore: () {
+                NotesController.instance.restoreFromTrash(note.id);
+              },
+              onPermanentDelete: () {
+                NotesController.instance.permanentlyDeleteFromTrash(note.id);
+              },
+            )
+            .animate()
+            .fade(duration: 300.ms, delay: (index * 30).ms)
+            .slideX(begin: 0.05, duration: 300.ms, curve: Curves.easeOutQuad);
       },
     );
   }

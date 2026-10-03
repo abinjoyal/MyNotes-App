@@ -33,14 +33,17 @@ abstract class AppStrings {
 
   // Empty States
   static const String noNotesYet = 'No notes yet';
-  static const String noNotesSubtitle = 'Tap the + button to create your first note';
+  static const String noNotesSubtitle =
+      'Tap the + button to create your first note';
   static const String noMatchingNotes = 'No matching notes found';
   static const String trashEmpty = 'Trash is empty';
   static const String archiveEmpty = 'Archive is empty';
 
   // Dialog Prompts & Messages
-  static const String deleteConfirmation = 'Are you sure you want to delete this note?';
-  static const String emptyTrashConfirmation = 'Are you sure you want to permanently delete all items in trash?';
+  static const String deleteConfirmation =
+      'Are you sure you want to delete this note?';
+  static const String emptyTrashConfirmation =
+      'Are you sure you want to permanently delete all items in trash?';
   static const String noteDeletedMessage = 'Note moved to trash';
   static const String noteRestoredMessage = 'Note restored';
   static const String noteSavedMessage = 'Note saved successfully';

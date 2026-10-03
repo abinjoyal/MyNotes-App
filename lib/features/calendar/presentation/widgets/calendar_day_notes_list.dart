@@ -24,7 +24,9 @@ class CalendarDayNotesList extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
-    final subtextColor = isDark ? const Color(0xFF8C98A9) : const Color(0xFF6C757D);
+    final subtextColor = isDark
+        ? const Color(0xFF8C98A9)
+        : const Color(0xFF6C757D);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,10 +45,18 @@ class CalendarDayNotesList extends StatelessWidget {
             if (onAddNoteForDate != null)
               TextButton.icon(
                 onPressed: onAddNoteForDate,
-                icon: const Icon(Icons.add_rounded, size: 16, color: AppColors.primaryPurple),
+                icon: const Icon(
+                  Icons.add_rounded,
+                  size: 16,
+                  color: AppColors.primaryPurple,
+                ),
                 label: const Text(
                   'Add Note',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primaryPurple),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryPurple,
+                  ),
                 ),
               ),
           ],

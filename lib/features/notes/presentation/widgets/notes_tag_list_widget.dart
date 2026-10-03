@@ -21,7 +21,9 @@ class NotesTagListWidget extends StatelessWidget {
 
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
     final inputBg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF7F8FA);
-    final borderColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFEAEAEE);
+    final borderColor = isDark
+        ? const Color(0xFF2C2C2C)
+        : const Color(0xFFEAEAEE);
 
     return Column(
       children: [
@@ -34,12 +36,18 @@ class NotesTagListWidget extends StatelessWidget {
               GestureDetector(
                 onTap: () => onTagSelect(null),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   margin: const EdgeInsets.only(right: 8),
                   decoration: BoxDecoration(
                     gradient: selectedTag == null
                         ? const LinearGradient(
-                            colors: [AppColors.primaryPurple, AppColors.primaryPink],
+                            colors: [
+                              AppColors.primaryPurple,
+                              AppColors.primaryPink,
+                            ],
                           )
                         : null,
                     color: selectedTag == null
@@ -57,7 +65,7 @@ class NotesTagListWidget extends StatelessWidget {
                               color: AppColors.primaryPink.withOpacity(0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
-                            )
+                            ),
                           ]
                         : null,
                   ),
@@ -76,12 +84,18 @@ class NotesTagListWidget extends StatelessWidget {
                 return GestureDetector(
                   onTap: () => onTagSelect(isSelected ? null : tag),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     margin: const EdgeInsets.only(right: 8),
                     decoration: BoxDecoration(
                       gradient: isSelected
                           ? const LinearGradient(
-                              colors: [AppColors.primaryPurple, AppColors.primaryPink],
+                              colors: [
+                                AppColors.primaryPurple,
+                                AppColors.primaryPink,
+                              ],
                             )
                           : null,
                       color: isSelected
@@ -99,7 +113,7 @@ class NotesTagListWidget extends StatelessWidget {
                                 color: AppColors.primaryPink.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
-                              )
+                              ),
                             ]
                           : null,
                     ),

@@ -105,6 +105,7 @@ class FocusTimerController extends ChangeNotifier {
   }
 }
 
-final focusTimerProvider = ChangeNotifierProvider.autoDispose<FocusTimerController>((ref) {
-  return FocusTimerController();
-});
+final focusTimerProvider =
+    ChangeNotifierProvider.autoDispose<FocusTimerController>((ref) {
+      return FocusTimerController();
+    });

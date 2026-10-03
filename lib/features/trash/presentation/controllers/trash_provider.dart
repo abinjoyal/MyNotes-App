@@ -9,7 +9,7 @@ import 'trash_controller.dart';
 
 final trashProvider = ChangeNotifierProvider<TrashController>((ref) {
   final repository = TrashRepositoryImpl(AppDatabase.instance);
-  
+
   return TrashController(
     getTrashItemsUseCase: GetTrashItemsUseCase(repository),
     restoreNoteUseCase: RestoreNoteUseCase(repository),

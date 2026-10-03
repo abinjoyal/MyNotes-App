@@ -13,7 +13,10 @@ class TaskModel extends TaskItem {
   factory TaskModel.fromMarkdownLine(String line, int index, {String? noteId}) {
     final trimmed = line.trim();
     final isDone = trimmed.startsWith('- [x] ') || trimmed.startsWith('- [X] ');
-    String rawText = (trimmed.startsWith('- [ ] ') || trimmed.startsWith('- [x] ') || trimmed.startsWith('- [X] '))
+    String rawText =
+        (trimmed.startsWith('- [ ] ') ||
+            trimmed.startsWith('- [x] ') ||
+            trimmed.startsWith('- [X] '))
         ? trimmed.substring(6).trim()
         : trimmed;
 

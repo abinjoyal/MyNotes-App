@@ -29,7 +29,9 @@ class NoteCard extends StatelessWidget {
     final borderColor = isDark ? AppColors.darkBorder : const Color(0xFFEAEAEE);
     final titleColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
     final snippetColor = isDark ? AppColors.lightText : const Color(0xFF6C757D);
-    final timeColor = isDark ? AppColors.lightText.withOpacity(0.7) : const Color(0xFF98A2B3);
+    final timeColor = isDark
+        ? AppColors.lightText.withOpacity(0.7)
+        : const Color(0xFF98A2B3);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -110,7 +112,9 @@ class NoteCard extends StatelessWidget {
                             icon: Icon(
                               Icons.more_vert_rounded,
                               size: 18,
-                              color: isDark ? AppColors.lightText : const Color(0xFF8C98A9),
+                              color: isDark
+                                  ? AppColors.lightText
+                                  : const Color(0xFF8C98A9),
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -181,7 +185,9 @@ class NoteCard extends StatelessWidget {
                                           ),
                                           const SizedBox(width: 10),
                                           Text(
-                                            note.isPinned ? 'Unpin Note' : 'Pin Note',
+                                            note.isPinned
+                                                ? 'Unpin Note'
+                                                : 'Pin Note',
                                             style: TextStyle(color: titleColor),
                                           ),
                                         ],
@@ -197,7 +203,10 @@ class NoteCard extends StatelessWidget {
                                             color: titleColor,
                                           ),
                                           const SizedBox(width: 10),
-                                          Text('Edit Note', style: TextStyle(color: titleColor)),
+                                          Text(
+                                            'Edit Note',
+                                            style: TextStyle(color: titleColor),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -281,14 +290,20 @@ class _TagChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    Color bg = isDark ? AppColors.primaryPurple.withOpacity(0.2) : AppColors.lightLavender;
+    Color bg = isDark
+        ? AppColors.primaryPurple.withOpacity(0.2)
+        : AppColors.lightLavender;
     Color text = AppColors.primaryPurple;
 
     if (tag.toLowerCase() == '#project') {
-      bg = isDark ? const Color(0xFF00C853).withOpacity(0.2) : const Color(0xFFE8F8EE);
+      bg = isDark
+          ? const Color(0xFF00C853).withOpacity(0.2)
+          : const Color(0xFFE8F8EE);
       text = const Color(0xFF00C853);
     } else if (tag.toLowerCase() == '#daily') {
-      bg = isDark ? const Color(0xFFFF9800).withOpacity(0.2) : const Color(0xFFFFF4E5);
+      bg = isDark
+          ? const Color(0xFFFF9800).withOpacity(0.2)
+          : const Color(0xFFFFF4E5);
       text = const Color(0xFFFF9800);
     }
 

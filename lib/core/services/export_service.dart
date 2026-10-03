@@ -11,13 +11,19 @@ class ExportService {
   static final instance = ExportService._();
 
   /// Share the note as plain text
-  Future<void> shareAsText({required String title, required String content}) async {
+  Future<void> shareAsText({
+    required String title,
+    required String content,
+  }) async {
     final String shareText = "$title\n\n$content";
     await Share.share(shareText, subject: title);
   }
 
   /// Generate a PDF from the note and share it
-  Future<void> shareAsPdf({required String title, required String content}) async {
+  Future<void> shareAsPdf({
+    required String title,
+    required String content,
+  }) async {
     final pdf = pw.Document();
 
     // Load fonts that support unicode (including Tamil and Emojis)
@@ -44,16 +50,18 @@ class ExportService {
               ),
             ),
             pw.SizedBox(height: 16),
-            ...lines.map((line) => pw.Paragraph(
-                  margin: const pw.EdgeInsets.only(bottom: 6),
-                  text: line,
-                  style: pw.TextStyle(
-                    font: font,
-                    fontFallback: [tamilFont, fallback],
-                    fontSize: 14,
-                    lineSpacing: 1.5,
-                  ),
-                )),
+            ...lines.map(
+              (line) => pw.Paragraph(
+                margin: const pw.EdgeInsets.only(bottom: 6),
+                text: line,
+                style: pw.TextStyle(
+                  font: font,
+                  fontFallback: [tamilFont, fallback],
+                  fontSize: 14,
+                  lineSpacing: 1.5,
+                ),
+              ),
+            ),
           ];
         },
       ),
@@ -70,7 +78,10 @@ class ExportService {
   }
 
   /// Share a captured screenshot image of the note
-  Future<void> shareAsImage({required Uint8List imageBytes, required String title}) async {
+  Future<void> shareAsImage({
+    required Uint8List imageBytes,
+    required String title,
+  }) async {
     final tempDir = await getTemporaryDirectory();
     final file = File('${tempDir.path}/note_export.png');
     await file.writeAsBytes(imageBytes);

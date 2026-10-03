@@ -15,11 +15,7 @@ class DesktopLayout extends StatefulWidget {
   final Widget? notesListWidget;
   final Widget? editorWidget;
 
-  const DesktopLayout({
-    super.key,
-    this.notesListWidget,
-    this.editorWidget,
-  });
+  const DesktopLayout({super.key, this.notesListWidget, this.editorWidget});
 
   @override
   State<DesktopLayout> createState() => _DesktopLayoutState();
@@ -155,14 +151,17 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                     if (route.startsWith('new_note')) {
                       if (route.contains(':')) {
                         final template = route.split(':')[1];
-                        _selectedNote = NotesController.instance.createTemplateNote(template);
+                        _selectedNote = NotesController.instance
+                            .createTemplateNote(template);
                       } else {
                         _selectedNote = null;
                       }
                       _activeRoute = 'new_note';
                     } else if (route.startsWith('open_note:')) {
                       final noteId = route.split(':')[1];
-                      _selectedNote = NotesController.instance.getNoteById(noteId);
+                      _selectedNote = NotesController.instance.getNoteById(
+                        noteId,
+                      );
                       _activeRoute = 'edit_note';
                     } else {
                       _activeRoute = route;
@@ -180,20 +179,14 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                     ? Row(
                         children: [
                           // Middle Pane (Notes List)
-                          Expanded(
-                            flex: 2,
-                            child: _buildMiddlePane(),
-                          ),
+                          Expanded(flex: 2, child: _buildMiddlePane()),
                           VerticalDivider(
                             width: 1,
                             thickness: 1,
                             color: dividerColor,
                           ),
                           // Right Pane (Note Editor)
-                          Expanded(
-                            flex: 3,
-                            child: widget.editorWidget!,
-                          ),
+                          Expanded(flex: 3, child: widget.editorWidget!),
                         ],
                       )
                     : _buildMiddlePane(),
@@ -205,4 +198,3 @@ class _DesktopLayoutState extends State<DesktopLayout> {
     );
   }
 }
-

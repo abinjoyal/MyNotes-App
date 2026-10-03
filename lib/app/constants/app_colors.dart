@@ -34,7 +34,6 @@ abstract class AppColors {
   static const Color darkBorder = Color(0xFF2C2C2C);
   static const Color darkTextPrimary = Color(0xFFE0E0E0);
 
-
   // Note Card Colors (Pastels suitable for note tiles)
   static const Color noteYellow = Color(0xFFFFF3C4);
   static const Color noteGreen = Color(0xFFD1E7DD);
@@ -61,4 +60,3 @@ abstract class AppColors {
     noteTeal,
   ];
 }
-

@@ -15,7 +15,10 @@ class CalendarRepositoryImpl implements CalendarRepository {
   }
 
   @override
-  Future<List<CalendarEvent>> getEventsForRange(DateTime start, DateTime end) async {
+  Future<List<CalendarEvent>> getEventsForRange(
+    DateTime start,
+    DateTime end,
+  ) async {
     return await localDataSource.getEventsForRange(start, end);
   }
 

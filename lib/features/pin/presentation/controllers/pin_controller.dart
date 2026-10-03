@@ -26,7 +26,7 @@ class PinController extends ChangeNotifier {
     notifyListeners();
 
     _pinnedNotes = await getPinnedNotesUseCase();
-    
+
     _isLoading = false;
     notifyListeners();
   }

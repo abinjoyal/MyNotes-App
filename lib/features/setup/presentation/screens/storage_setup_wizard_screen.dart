@@ -13,7 +13,8 @@ class StorageSetupWizardScreen extends StatefulWidget {
   const StorageSetupWizardScreen({super.key});
 
   @override
-  State<StorageSetupWizardScreen> createState() => _StorageSetupWizardScreenState();
+  State<StorageSetupWizardScreen> createState() =>
+      _StorageSetupWizardScreenState();
 }
 
 class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
@@ -28,7 +29,8 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
   }
 
   Future<void> _initPaths() async {
-    final defaultDir = await StorageLocationService.instance.getDefaultStoragePath();
+    final defaultDir = await StorageLocationService.instance
+        .getDefaultStoragePath();
     if (!mounted) return;
     setState(() {
       _defaultPath = defaultDir;
@@ -52,7 +54,8 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
 
       if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
         setState(() {
-          _selectedPath = StorageLocationService.instance.ensureMyNotesSubfolder(selectedDirectory);
+          _selectedPath = StorageLocationService.instance
+              .ensureMyNotesSubfolder(selectedDirectory);
         });
       }
     } catch (e) {
@@ -101,9 +104,7 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
             },
           )
         : const ResponsiveLayout(
-            mobile: Scaffold(
-              body: Center(child: Text('MyNotes Mobile View')),
-            ),
+            mobile: Scaffold(body: Center(child: Text('MyNotes Mobile View'))),
             desktop: DesktopLayout(),
           );
 
@@ -149,10 +150,7 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [
-                            AppColors.primaryPurple,
-                            Color(0xFF8B85FF),
-                          ],
+                          colors: [AppColors.primaryPurple, Color(0xFF8B85FF)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -211,9 +209,7 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                             : AppColors.softGray,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: isDark
-                              ? Colors.white12
-                              : AppColors.border,
+                          color: isDark ? Colors.white12 : AppColors.border,
                         ),
                       ),
                       child: Column(
@@ -283,12 +279,17 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                         Expanded(
                           child: OutlinedButton.icon(
                             onPressed: _pickCustomFolder,
-                            icon: const Icon(Icons.create_new_folder_outlined, size: 18),
+                            icon: const Icon(
+                              Icons.create_new_folder_outlined,
+                              size: 18,
+                            ),
                             label: const Text('Choose Folder'),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               foregroundColor: AppColors.primaryPurple,
-                              side: const BorderSide(color: AppColors.primaryPurple),
+                              side: const BorderSide(
+                                color: AppColors.primaryPurple,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -299,7 +300,10 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                         Expanded(
                           child: TextButton.icon(
                             onPressed: _useDefaultFolder,
-                            icon: const Icon(Icons.settings_suggest_rounded, size: 18),
+                            icon: const Icon(
+                              Icons.settings_suggest_rounded,
+                              size: 18,
+                            ),
                             label: const Text('Use Default'),
                             style: TextButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
@@ -337,7 +341,9 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
                                 ),
                               )
                             : const Row(

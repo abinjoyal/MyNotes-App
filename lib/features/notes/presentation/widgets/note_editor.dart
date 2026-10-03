@@ -1221,7 +1221,6 @@ class _NoteEditorState extends State<NoteEditor> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryPurple,
               foregroundColor: Colors.white,
-              
             ),
             onPressed: () {
               Navigator.pop(ctx);
@@ -1858,9 +1857,14 @@ class _NoteEditorState extends State<NoteEditor> {
                       final title = _titleController.text.trim();
                       final content = _contentController.text.trim();
                       try {
-                        await ExportService.instance.shareAsText(title: title, content: content);
+                        await ExportService.instance.shareAsText(
+                          title: title,
+                          content: content,
+                        );
                       } catch (e) {
-                        messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+                        messenger.showSnackBar(
+                          SnackBar(content: Text('Error: $e')),
+                        );
                       }
                     },
                     icon: Icon(
@@ -2156,95 +2160,95 @@ class _NoteEditorState extends State<NoteEditor> {
                 color: isDark ? AppColors.darkScaffoldBackground : Colors.white,
                 child: Column(
                   children: [
-                Expanded(
-                  child: TextField(
-                    controller: _contentController,
-                    onTap: _onTextFieldTap,
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
-                    style: TextStyle(
-                      fontSize: 16,
-                      height: 1.7,
-                      color: textColor,
+                    Expanded(
+                      child: TextField(
+                        controller: _contentController,
+                        onTap: _onTextFieldTap,
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                        style: TextStyle(
+                          fontSize: 16,
+                          height: 1.7,
+                          color: textColor,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Start writing your note here...',
+                          hintStyle: TextStyle(color: hintColor, fontSize: 16),
+                          border: InputBorder.none,
+                        ),
+                      ),
                     ),
-                    decoration: InputDecoration(
-                      hintText: 'Start writing your note here...',
-                      hintStyle: TextStyle(color: hintColor, fontSize: 16),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
 
-                // Editor Bottom Status Bar with Stats Pills
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(
-                        color: isDark
-                            ? AppColors.darkBorder
-                            : const Color(0xFFF0F0F3),
+                    // Editor Bottom Status Bar with Stats Pills
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: isDark
+                                ? AppColors.darkBorder
+                                : const Color(0xFFF0F0F3),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _buildStatBadge(
-                            '📊 $_wordCount words',
-                            isDark,
-                            subtextColor,
-                          ),
-                          const SizedBox(width: 8),
-                          _buildStatBadge(
-                            '🔤 $_charCount chars',
-                            isDark,
-                            subtextColor,
-                          ),
-                          const SizedBox(width: 8),
-                          _buildStatBadge(
-                            '⏱️ $_readingTimeMinutes min read',
-                            isDark,
-                            subtextColor,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Tooltip(
-                            message: 'Typography',
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
+                          Row(
+                            children: [
+                              _buildStatBadge(
+                                '📊 $_wordCount words',
+                                isDark,
+                                subtextColor,
                               ),
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? const Color(0xFF1E1E2A)
-                                    : const Color(0xFFF3F4F6),
-                                borderRadius: BorderRadius.circular(6),
+                              const SizedBox(width: 8),
+                              _buildStatBadge(
+                                '🔤 $_charCount chars',
+                                isDark,
+                                subtextColor,
                               ),
-                              child: Text(
-                                'Aa',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: subtextColor,
+                              const SizedBox(width: 8),
+                              _buildStatBadge(
+                                '⏱️ $_readingTimeMinutes min read',
+                                isDark,
+                                subtextColor,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Tooltip(
+                                message: 'Typography',
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? const Color(0xFF1E1E2A)
+                                        : const Color(0xFFF3F4F6),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    'Aa',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: subtextColor,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-          ),
           ),
         ],
       ),

@@ -9,9 +9,6 @@ class TasksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TasksChecklistView(
-      onNoteSelect: onNoteSelect,
-    );
+    return TasksChecklistView(onNoteSelect: onNoteSelect);
   }
 }
-

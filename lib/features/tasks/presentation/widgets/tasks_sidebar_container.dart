@@ -102,18 +102,24 @@ class TasksSidebarContainer extends ConsumerWidget {
                 : (isGridView
                       ? GridView.builder(
                           physics: const BouncingScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: isWorkspaceHidden ? 260 : 250,
-                            mainAxisExtent: 88,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                          ),
+                          gridDelegate:
+                              SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: isWorkspaceHidden
+                                    ? 260
+                                    : 250,
+                                mainAxisExtent: 88,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                              ),
                           itemCount: checklistNotes.length,
                           itemBuilder: (context, index) {
                             final note = checklistNotes[index];
-                            final isSelected = !isWorkspaceHidden && activeNote?.id == note.id;
+                            final isSelected =
+                                !isWorkspaceHidden && activeNote?.id == note.id;
                             final tasks = parseTasksFromContent(note.content);
-                            final done = tasks.where((t) => t.isCompleted).length;
+                            final done = tasks
+                                .where((t) => t.isCompleted)
+                                .length;
 
                             return InkWell(
                               onTap: () => onSelectNote(note.id),
@@ -123,8 +129,10 @@ class TasksSidebarContainer extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? (isDark
-                                            ? AppColors.primaryPurple.withOpacity(0.2)
-                                            : AppColors.lightLavender.withOpacity(0.7))
+                                            ? AppColors.primaryPurple
+                                                  .withOpacity(0.2)
+                                            : AppColors.lightLavender
+                                                  .withOpacity(0.7))
                                       : (isDark
                                             ? const Color(0xFF1E1E26)
                                             : const Color(0xFFF9FAFC)),
@@ -156,8 +164,10 @@ class TasksSidebarContainer extends ConsumerWidget {
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             note.title,
@@ -183,12 +193,17 @@ class TasksSidebarContainer extends ConsumerWidget {
                                       ),
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.delete_outline_rounded, size: 16),
+                                      icon: const Icon(
+                                        Icons.delete_outline_rounded,
+                                        size: 16,
+                                      ),
                                       color: subtextColor.withOpacity(0.5),
                                       padding: EdgeInsets.zero,
                                       constraints: const BoxConstraints(),
                                       onPressed: () {
-                                        ref.read(notesProvider).deleteNote(note.id);
+                                        ref
+                                            .read(notesProvider)
+                                            .deleteNote(note.id);
                                       },
                                     ),
                                   ],
@@ -202,9 +217,12 @@ class TasksSidebarContainer extends ConsumerWidget {
                           itemCount: checklistNotes.length,
                           itemBuilder: (context, index) {
                             final note = checklistNotes[index];
-                            final isSelected = !isWorkspaceHidden && activeNote?.id == note.id;
+                            final isSelected =
+                                !isWorkspaceHidden && activeNote?.id == note.id;
                             final tasks = parseTasksFromContent(note.content);
-                            final done = tasks.where((t) => t.isCompleted).length;
+                            final done = tasks
+                                .where((t) => t.isCompleted)
+                                .length;
 
                             return Container(
                               margin: const EdgeInsets.only(bottom: 8),
@@ -212,8 +230,12 @@ class TasksSidebarContainer extends ConsumerWidget {
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? (isDark
-                                          ? AppColors.primaryPurple.withOpacity(0.2)
-                                          : AppColors.lightLavender.withOpacity(0.7))
+                                          ? AppColors.primaryPurple.withOpacity(
+                                              0.2,
+                                            )
+                                          : AppColors.lightLavender.withOpacity(
+                                              0.7,
+                                            ))
                                     : Colors.transparent,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
@@ -266,12 +288,17 @@ class TasksSidebarContainer extends ConsumerWidget {
                                     ),
                                   ),
                                   trailing: IconButton(
-                                    icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                                    icon: const Icon(
+                                      Icons.delete_outline_rounded,
+                                      size: 18,
+                                    ),
                                     color: subtextColor.withOpacity(0.5),
                                     padding: EdgeInsets.zero,
                                     constraints: const BoxConstraints(),
                                     onPressed: () {
-                                      ref.read(notesProvider).deleteNote(note.id);
+                                      ref
+                                          .read(notesProvider)
+                                          .deleteNote(note.id);
                                     },
                                   ),
                                   onTap: () => onSelectNote(note.id),

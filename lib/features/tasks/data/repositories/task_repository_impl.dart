@@ -7,7 +7,9 @@ class TaskRepositoryImpl implements TaskRepository {
   final TaskLocalDataSource localDataSource;
 
   TaskRepositoryImpl([AppDatabase? db])
-      : localDataSource = TaskLocalDataSourceImpl(database: db ?? AppDatabase.instance);
+    : localDataSource = TaskLocalDataSourceImpl(
+        database: db ?? AppDatabase.instance,
+      );
 
   TaskRepositoryImpl.withDataSource(this.localDataSource);
 

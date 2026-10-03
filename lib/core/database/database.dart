@@ -30,23 +30,21 @@ class AppDatabase {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
     }
-    
+
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    final db = await openDatabase(
-      path,
-      version: 1,
-      onCreate: _createDB,
-    );
-    
+    final db = await openDatabase(path, version: 1, onCreate: _createDB);
+
     // Migration for is_locked column
     try {
-      await db.execute('ALTER TABLE folders ADD COLUMN is_locked INTEGER NOT NULL DEFAULT 0');
+      await db.execute(
+        'ALTER TABLE folders ADD COLUMN is_locked INTEGER NOT NULL DEFAULT 0',
+      );
     } catch (e) {
       // Column might already exist, ignore error
     }
-    
+
     return db;
   }
 
@@ -103,7 +101,7 @@ class AppDatabase {
     final db = await instance.database;
     final map = NotesTable.toMap(note);
     map[NotesTable.colIsTrashed] = 0;
-    
+
     await db.insert(
       NotesTable.tableName,
       map,
@@ -158,7 +156,7 @@ class AppDatabase {
     final db = await instance.database;
     final map = FoldersTable.toMap(folder);
     map[FoldersTable.colIsTrashed] = 0;
-    
+
     await db.insert(
       FoldersTable.tableName,
       map,
@@ -198,7 +196,7 @@ class AppDatabase {
 
   Future<void> permanentlyDeleteFolderFromTrash(String name) async {
     final db = await instance.database;
-    
+
     // Set notes in this folder to have null folderName
     await db.update(
       NotesTable.tableName,

@@ -34,19 +34,12 @@ class AppIconButton extends StatelessWidget {
           color: backgroundColor ?? Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(
-          icon,
-          size: iconSize,
-          color: color ?? defaultIconColor,
-        ),
+        child: Icon(icon, size: iconSize, color: color ?? defaultIconColor),
       ),
     );
 
     if (tooltip != null && tooltip!.isNotEmpty) {
-      return Tooltip(
-        message: tooltip!,
-        child: buttonWidget,
-      );
+      return Tooltip(message: tooltip!, child: buttonWidget);
     }
 
     return buttonWidget;

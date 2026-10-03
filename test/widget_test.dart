@@ -1,29 +1,39 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mynotes/app/app.dart';
+import 'package:mynotes/features/tasks/utils/task_markdown_utils.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyNotesApp());
+  group('TaskMarkdownUtils Tests', () {
+    test('parseTasksFromContent correctly parses Markdown check items', () {
+      const content = '- [ ] Buy groceries #personal\n- [x] Complete report';
+      final tasks = TaskMarkdownUtils.parseTasksFromContent(content);
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+      expect(tasks.length, equals(2));
+      expect(tasks[0].text, equals('Buy groceries'));
+      expect(tasks[0].isCompleted, isFalse);
+      expect(tasks[0].tag, equals('personal'));
+      expect(tasks[1].text, equals('Complete report'));
+      expect(tasks[1].isCompleted, isTrue);
+    });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    test('toggleTaskInContent toggles checkbox state', () {
+      const content = '- [ ] Task 1';
+      final updated = TaskMarkdownUtils.toggleTaskInContent(content, 0, false);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      expect(updated, equals('- [x] Task 1'));
+    });
+
+    test('addNewTaskToContent appends new task item', () {
+      const content = '- [ ] Task 1';
+      final updated = TaskMarkdownUtils.addNewTaskToContent(content, 'Task 2');
+
+      expect(updated, equals('- [ ] Task 1\n- [ ] Task 2'));
+    });
+
+    test('deleteTaskFromContent removes specified task item', () {
+      const content = '- [ ] Task 1\n- [ ] Task 2';
+      final updated = TaskMarkdownUtils.deleteTaskFromContent(content, 0);
+
+      expect(updated, equals('- [ ] Task 2'));
+    });
   });
 }

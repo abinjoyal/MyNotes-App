@@ -4,22 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../../notes/domain/entities/note.dart';
 import '../../../notes/presentation/controllers/notes_provider.dart';
-
-class TaskItem {
-  final int index;
-  final String text;
-  final bool isCompleted;
-  final String? tag;
-  final String time;
-
-  TaskItem({
-    required this.index,
-    required this.text,
-    required this.isCompleted,
-    this.tag,
-    required this.time,
-  });
-}
+import '../../domain/entities/task.dart';
 
 class TasksChecklistView extends ConsumerStatefulWidget {
   final Function(Note)? onNoteSelect;
@@ -645,8 +630,8 @@ class _TasksChecklistViewState extends ConsumerState<TasksChecklistView> {
 
 
   List<Note> get _allChecklistNotes {
-    final _controller = ref.watch(notesProvider);
-    final all = _controller.notes;
+    final controller = ref.watch(notesProvider);
+    final all = controller.notes;
     final checklists = all.where((n) {
       final text = n.content;
       final matchesQuery =

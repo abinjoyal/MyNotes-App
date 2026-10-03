@@ -81,14 +81,14 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _controller = ref.watch(notesProvider);
-    final _foldersController = ref.watch(foldersProvider);
+    final controller = ref.watch(notesProvider);
+    final foldersController = ref.watch(foldersProvider);
     final headerInfo = _getHeaderInfo();
     final allNotes = widget.activeRoute == 'pinned'
-        ? _controller.pinnedNotes
+        ? controller.pinnedNotes
         : (widget.activeRoute == 'trash'
-            ? _controller.trashedNotes
-            : _controller.regularNotes);
+            ? controller.trashedNotes
+            : controller.regularNotes);
 
     final filteredNotes = allNotes.where((note) {
       final query = _searchQuery.toLowerCase();
@@ -100,7 +100,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
       return matchesQuery && matchesTag;
     }).toList();
 
-    final availableTags = _controller.allTags;
+    final availableTags = controller.allTags;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
 
@@ -161,7 +161,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           child: FloatingActionButton(
             onPressed: () {
               if (widget.onNoteSelect != null) {
-                Note templateNote = _controller.createTemplateNote(
+                Note templateNote = controller.createTemplateNote(
                   widget.activeRoute == 'tasks' ? 'checklist' : 'blank',
                 );
                 widget.onNoteSelect!(templateNote);
@@ -186,8 +186,8 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 textColor: textColor,
                 activeRoute: widget.activeRoute,
                 onEmptyTrash: () {
-                  _controller.emptyTrash();
-                  _foldersController.emptyTrash();
+                  controller.emptyTrash();
+                  foldersController.emptyTrash();
                 },
               ),
               const SizedBox(height: 16),
@@ -237,7 +237,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
               const SizedBox(height: 16),
 
               // 3. Notes List View / Contextual Empty State
-              if (widget.activeRoute == 'trash' && _foldersController.trashedFolders.isNotEmpty) ...[
+              if (widget.activeRoute == 'trash' && foldersController.trashedFolders.isNotEmpty) ...[
                 Row(
                   children: [
                     Icon(Icons.folder_delete_outlined, color: textColor, size: 20),
@@ -258,20 +258,20 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                   height: 140, // Increased height to prevent overflow
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: _foldersController.trashedFolders.length,
+                    itemCount: foldersController.trashedFolders.length,
                     itemBuilder: (context, index) {
-                      final folder = _foldersController.trashedFolders[index];
+                      final folder = foldersController.trashedFolders[index];
                       return Container(
                         width: 240,
                         margin: const EdgeInsets.only(right: 16),
                         child: FolderTile(
                           folder: folder,
-                          count: _controller.getFolderNotesCount(folder.name),
+                          count: controller.getFolderNotesCount(folder.name),
                           isTrashed: true,
                           onTap: () {},
                           onAddNote: () {},
-                          onDelete: () => _foldersController.permanentlyDeleteFolderFromTrash(folder.name),
-                          onRestore: () => _foldersController.restoreFolderFromTrash(folder.name),
+                          onDelete: () => foldersController.permanentlyDeleteFolderFromTrash(folder.name),
+                          onRestore: () => foldersController.restoreFolderFromTrash(folder.name),
                         ),
                       );
                     },
@@ -305,7 +305,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                   onNoteSelect: widget.onNoteSelect,
                   onActionTap: () {
                     if (widget.onNoteSelect != null) {
-                      Note templateNote = _controller.createTemplateNote(
+                      Note templateNote = controller.createTemplateNote(
                         widget.activeRoute == 'tasks' ? 'checklist' : 'blank',
                       );
                       widget.onNoteSelect!(templateNote);

@@ -1,37 +1,33 @@
-import 'package:mynotes/core/database/database.dart';
-import 'package:mynotes/features/trash/domain/entities/trash_item.dart';
-import 'package:mynotes/features/trash/domain/repositories/trash_repository.dart';
+import '../../domain/entities/trash_item.dart';
+import '../../domain/repositories/trash_repository.dart';
+import '../datasources/trash_local_datasource.dart';
+import '../../../../core/database/database.dart';
 
 class TrashRepositoryImpl implements TrashRepository {
-  final AppDatabase _database;
+  final TrashLocalDataSource localDataSource;
 
-  TrashRepositoryImpl(this._database);
+  TrashRepositoryImpl([AppDatabase? db])
+      : localDataSource = TrashLocalDataSourceImpl(database: db ?? AppDatabase.instance);
+
+  TrashRepositoryImpl.withDataSource(this.localDataSource);
 
   @override
   Future<List<TrashItem>> getTrashItems() async {
-    final notes = await _database.getTrashedNotes();
-    
-    return notes.map((note) {
-      return TrashItem(
-        note: note,
-        // Since DB doesn't have a deletedAt field, we fallback to updatedAt
-        deletedAt: note.updatedAt, 
-      );
-    }).toList();
+    return await localDataSource.getTrashedNotes();
   }
 
   @override
   Future<void> restoreNote(String id) async {
-    await _database.restoreFromTrash(id);
+    await localDataSource.restoreNote(id);
   }
 
   @override
   Future<void> deleteNotePermanently(String id) async {
-    await _database.permanentlyDeleteFromTrash(id);
+    await localDataSource.deleteNotePermanently(id);
   }
 
   @override
   Future<void> emptyTrash() async {
-    await _database.emptyTrash();
+    await localDataSource.emptyTrash();
   }
 }

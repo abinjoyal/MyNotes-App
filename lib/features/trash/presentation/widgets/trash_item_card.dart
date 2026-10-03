@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../app/theme/app_theme_colors.dart';
 import '../../domain/entities/trash_item.dart';
 
 class TrashItemCard extends StatefulWidget {
@@ -22,12 +23,8 @@ class _TrashItemCardState extends State<TrashItemCard> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF1E1E24) : Colors.white;
-    final hoverBg = isDark ? const Color(0xFF25252D) : const Color(0xFFF5F5F9);
-    final titleColor = isDark ? Colors.white : const Color(0xFF1F2937);
-    final subtitleColor = isDark ? Colors.grey[400] : const Color(0xFF6B7280);
-    final borderColor = isDark ? const Color(0xFF333333) : const Color(0xFFE5E7EB);
+    final colors = context.appColors;
+    final hoverBg = colors.isDark ? const Color(0xFF25252D) : const Color(0xFFF5F5F9);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -35,10 +32,10 @@ class _TrashItemCardState extends State<TrashItemCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: _isHovered ? hoverBg : cardBg,
+          color: _isHovered ? hoverBg : colors.cardBg,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: _isHovered ? widget.item.note.indicatorColor.withOpacity(0.5) : borderColor,
+            color: _isHovered ? widget.item.note.indicatorColor.withOpacity(0.5) : colors.borderColor,
             width: 1,
           ),
           boxShadow: _isHovered
@@ -70,7 +67,7 @@ class _TrashItemCardState extends State<TrashItemCard> {
                   child: Text(
                     widget.item.note.title,
                     style: TextStyle(
-                      color: titleColor,
+                      color: colors.textColor,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -85,7 +82,7 @@ class _TrashItemCardState extends State<TrashItemCard> {
               child: Text(
                 widget.item.note.content,
                 style: TextStyle(
-                  color: subtitleColor,
+                  color: colors.secondaryTextColor,
                   fontSize: 14,
                   height: 1.5,
                 ),
@@ -103,7 +100,7 @@ class _TrashItemCardState extends State<TrashItemCard> {
                   child: Text(
                     'Deleted: ${widget.item.deletedAt}',
                     style: TextStyle(
-                      color: subtitleColor,
+                      color: colors.secondaryTextColor,
                       fontSize: 12,
                     ),
                     maxLines: 1,

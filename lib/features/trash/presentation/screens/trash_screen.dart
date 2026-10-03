@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mynotes/app/theme/app_theme_colors.dart';
 import 'package:mynotes/features/trash/presentation/controllers/trash_provider.dart';
 import 'package:mynotes/features/trash/presentation/widgets/trash_item_card.dart';
 
@@ -9,12 +10,10 @@ class TrashScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final trashController = ref.watch(trashProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF121212) : const Color(0xFFF9FAFC);
-    final textColor = isDark ? Colors.white : const Color(0xFF1F2937);
+    final colors = context.appColors;
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: colors.scaffoldBg,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -32,7 +31,7 @@ class TrashScreen extends ConsumerWidget {
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w700,
-                        color: textColor,
+                        color: colors.textColor,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -40,7 +39,7 @@ class TrashScreen extends ConsumerWidget {
                       '${trashController.items.length} items in trash',
                       style: TextStyle(
                         fontSize: 16,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        color: colors.secondaryTextColor,
                       ),
                     ),
                   ],
@@ -76,7 +75,7 @@ class TrashScreen extends ConsumerWidget {
                             Icon(
                               Icons.delete_outline,
                               size: 80,
-                              color: isDark ? Colors.grey[800] : Colors.grey[300],
+                              color: colors.secondaryTextColor.withOpacity(0.4),
                             ),
                             const SizedBox(height: 16),
                             Text(
@@ -84,7 +83,7 @@ class TrashScreen extends ConsumerWidget {
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600,
-                                color: isDark ? Colors.grey[600] : Colors.grey[400],
+                                color: colors.secondaryTextColor,
                               ),
                             ),
                           ],

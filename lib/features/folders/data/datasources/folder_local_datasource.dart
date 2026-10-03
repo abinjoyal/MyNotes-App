@@ -36,6 +36,7 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
     await database.deleteFolderToTrash(name);
   }
 
+  @override
   Future<void> restoreFolderFromTrash(String name) async {
     await database.restoreFolderFromTrash(name);
   }

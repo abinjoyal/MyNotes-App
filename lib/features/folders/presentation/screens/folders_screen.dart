@@ -132,7 +132,6 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
     final foldersController = ref.watch(foldersProvider);
     final folders = foldersController.folders;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF18181C) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.darkText;
    
 
@@ -291,7 +290,6 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
     final folderNotes = notesController.getNotesByFolder(folderName);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF18181C) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.darkText;
     final buttonBg = isDark ? const Color(0xFF232329) : const Color(0xFFF7F8FA);
     final borderColor = isDark

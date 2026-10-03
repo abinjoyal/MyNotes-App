@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mynotes/features/backup/data/services/backup_service.dart';
 
 
 class SettingsController extends ChangeNotifier {
@@ -26,9 +25,6 @@ class SettingsController extends ChangeNotifier {
   bool _enableCloudSync = true;
   String _backupFrequency = 'Daily';
   bool _autoCleanTrash = true;
-  String _lastBackupTime = 'Never';
-  String _lastBackupSize = '0 B';
-  String _latestBackupJson = '';
 
   // Getters
   ThemeMode get themeMode => _themeMode;
@@ -56,9 +52,6 @@ class SettingsController extends ChangeNotifier {
   bool get enableCloudSync => _enableCloudSync;
   String get backupFrequency => _backupFrequency;
   bool get autoCleanTrash => _autoCleanTrash;
-  String get lastBackupTime => _lastBackupTime;
-  String get lastBackupSize => _lastBackupSize;
-  String get latestBackupJson => _latestBackupJson;
 
   // Actions
   void updateTheme(String theme) {
@@ -124,28 +117,5 @@ class SettingsController extends ChangeNotifier {
   void toggleAutoCleanTrash(bool value) {
     _autoCleanTrash = value;
     notifyListeners();
-  }
-
-  void updateLastBackupTime(String timestamp, String formattedSize) {
-    _lastBackupTime = timestamp;
-    _lastBackupSize = formattedSize;
-    notifyListeners();
-  }
-
-  BackupResult performBackup() {
-    final result = BackupService.instance.createBackupPayload();
-    _lastBackupTime = result.timestamp;
-    _lastBackupSize = result.formattedSize;
-    _latestBackupJson = result.jsonContent;
-    notifyListeners();
-    return result;
-  }
-
-  bool restoreBackup(String jsonStr) {
-    final success = BackupService.instance.restoreFromBackupPayload(jsonStr);
-    if (success) {
-      notifyListeners();
-    }
-    return success;
   }
 }

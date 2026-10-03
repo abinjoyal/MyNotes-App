@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../app/constants/app_colors.dart';
 import '../controllers/settings_controller.dart';
 import '../../pin/presentation/screens/passcode_lock_screen.dart';
-import '../../backup/data/services/backup_service.dart';
-import '../../backup/data/services/google_drive_service.dart';
+
 import '../../notes/presentation/controllers/notes_controller.dart';
+import '../../../core/database/database.dart';
+import '../../../core/database/tables/notes_table.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -15,26 +18,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final SettingsController _controller = SettingsController.instance;
-  final GoogleDriveService _driveService = GoogleDriveService.instance;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.addListener(_onSettingsChanged);
-    _driveService.addListener(_onSettingsChanged);
-  }
-
-  @override
-  void dispose() {
-    _controller.removeListener(_onSettingsChanged);
-    _driveService.removeListener(_onSettingsChanged);
-    super.dispose();
-  }
-
-  void _onSettingsChanged() {
-    if (mounted) setState(() {});
-  }
-
+ 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -235,65 +219,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _buildSectionHeader('Backup & Cloud Sync', Icons.cloud_outlined, textColor),
                   const SizedBox(height: 12),
                   _buildCardContainer(cardBg, borderColor, [
-                    _buildActionTile(
-                      title: 'Google Drive Account',
-                      subtitle: _driveService.isConnected
-                          ? 'Connected: ${_driveService.currentUserEmail ?? 'Google Account'}'
-                          : 'Connect your Google account for automated cloud backups',
-                      icon: Icons.add_to_drive_rounded,
-                      actionLabel: _driveService.isConnected ? 'Disconnect' : 'Connect',
-                      textColor: textColor,
-                      secondaryTextColor: secondaryTextColor,
-                      onTap: () async {
-                        if (_driveService.isConnected) {
-                          await _driveService.disconnectAccount();
-                          _showSnackBar('Google Drive disconnected');
-                        } else {
-                          final success = await _driveService.connectAccount();
-                          if (success) {
-                            _showSnackBar('Google Drive connected: ${_driveService.currentUserEmail}');
-                          } else {
-                            _showSnackBar('Connecting Google Drive... (Setup Google OAuth Client ID in Cloud Console for live auth)');
-                          }
-                        }
-                      },
-                    ),
-                    Divider(height: 1, color: borderColor),
-                    _buildActionTile(
-                      title: 'Sync Backup to Google Drive',
-                      subtitle: 'Upload latest notes & settings snapshot to Google Drive',
-                      icon: Icons.cloud_upload_outlined,
-                      actionLabel: _driveService.isSyncing ? 'Syncing...' : 'Sync Drive',
-                      textColor: textColor,
-                      secondaryTextColor: secondaryTextColor,
-                      onTap: () async {
-                        final success = await _driveService.uploadBackupToDrive();
-                        if (success) {
-                          _showSnackBar('Backup successfully synced to Google Drive!');
-                        } else {
-                          _showSnackBar('Backup saved locally (Configure OAuth Client ID for live Drive upload)');
-                          _handleBackupNow();
-                        }
-                      },
-                    ),
-                    Divider(height: 1, color: borderColor),
-                    _buildActionTile(
-                      title: 'Restore from Google Drive',
-                      subtitle: 'Fetch latest backup from Google Drive and restore notes',
-                      icon: Icons.cloud_download_outlined,
-                      actionLabel: 'Fetch Drive',
-                      textColor: textColor,
-                      secondaryTextColor: secondaryTextColor,
-                      onTap: () async {
-                        final success = await _driveService.restoreBackupFromDrive();
-                        if (success) {
-                          _showSnackBar('Notes successfully restored from Google Drive!');
-                        } else {
-                          _showSnackBar('No Drive backup found. Use local file restore.');
-                          _showRestoreDialog();
-                        }
-                      },
-                    ),
                     Divider(height: 1, color: borderColor),
                     _buildSwitchTile(
                       title: 'Cloud Auto-Sync',
@@ -321,18 +246,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         _controller.updateBackupFrequency(val);
                         _showSnackBar('Backup frequency set to $val');
                       },
-                    ),
-                    Divider(height: 1, color: borderColor),
-                    _buildActionTile(
-                      title: 'Local Backup Now',
-                      subtitle: _controller.lastBackupTime == 'Never'
-                          ? 'Create a fresh backup file immediately'
-                          : 'Last Backup: ${_controller.lastBackupTime} (${_controller.lastBackupSize})',
-                      icon: Icons.sd_storage_outlined,
-                      actionLabel: 'Export JSON',
-                      textColor: textColor,
-                      secondaryTextColor: secondaryTextColor,
-                      onTap: _handleBackupNow,
                     ),
                     Divider(height: 1, color: borderColor),
                     _buildActionTile(
@@ -740,97 +653,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ElevatedButton(
             onPressed: () async {
               Navigator.of(ctx).pop();
-              final filePath = await BackupService.instance.exportBackupToFile();
-              if (filePath != null) {
-                _showSnackBar('Backup file exported to: $filePath');
-              } else {
-                _showSnackBar('Failed to export backup file.');
-              }
+              final notes = NotesController.instance.notes;
+              final listMap = notes.map((n) => NotesTable.toMap(n)).toList();
+              final jsonStr = const JsonEncoder.withIndent('  ').convert({
+                'app': 'MyNotes',
+                'version': 1,
+                'timestamp': DateTime.now().toIso8601String(),
+                'notes': listMap,
+              });
+              await Share.share(jsonStr, subject: 'MyNotes Backup JSON');
+              _showSnackBar('Exported notes as JSON backup payload');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryPurple,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Download .json File'),
+            child: const Text('Export JSON'),
           ),
         ],
       ),
     );
   }
-  void _handleBackupNow() {
-    final res = _controller.performBackup();
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
-          children: [
-            Icon(Icons.check_circle_rounded, color: Color(0xFF00C853)),
-            SizedBox(width: 10),
-            Text('Backup Created!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Backup Size: ${res.formattedSize}'),
-            const SizedBox(height: 4),
-            Text('Timestamp: ${res.timestamp}'),
-            const SizedBox(height: 4),
-            Text('Total Notes: ${res.totalNotes}'),
-            const SizedBox(height: 12),
-            Container(
-              height: 120,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E1E1E),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: SingleChildScrollView(
-                child: Text(
-                  res.jsonContent,
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 11,
-                    color: Color(0xFF00E676),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              _showSnackBar('Backup JSON copied!');
-            },
-            child: const Text('Copy JSON'),
-          ),
-          ElevatedButton.icon(
-            onPressed: () async {
-              final filePath = await BackupService.instance.exportBackupToFile();
-              if (ctx.mounted && mounted) {
-                Navigator.of(ctx).pop();
-                if (filePath != null) {
-                  _showSnackBar('Backup file saved to: $filePath');
-                } else {
-                  _showSnackBar('Failed to save backup file.');
-                }
-              }
-            },
-            icon: const Icon(Icons.download_rounded, size: 16),
-            label: const Text('Download .json File'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryPurple,
-              foregroundColor: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+ 
 
   void _showRestoreDialog() {
     final controller = TextEditingController();
@@ -870,15 +714,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               final jsonInput = controller.text.trim();
               if (jsonInput.isEmpty) return;
-              final success = _controller.restoreBackup(jsonInput);
-              Navigator.of(ctx).pop();
-              if (success) {
-                _showSnackBar('Notes & Folders restored successfully!');
-              } else {
-                _showSnackBar('Invalid backup JSON payload. Restore failed.');
+              try {
+                final decoded = jsonDecode(jsonInput);
+                List<dynamic> rawNotes = [];
+                if (decoded is Map && decoded['notes'] is List) {
+                  rawNotes = decoded['notes'];
+                } else if (decoded is List) {
+                  rawNotes = decoded;
+                }
+                if (rawNotes.isNotEmpty) {
+                  for (final item in rawNotes) {
+                    if (item is Map<String, dynamic>) {
+                      final note = NotesTable.fromMap(item);
+                      await AppDatabase.instance.saveNote(note);
+                    }
+                  }
+                  await NotesController.instance.loadFromDatabase();
+                  if (ctx.mounted) Navigator.of(ctx).pop();
+                  _showSnackBar('Notes restored successfully!');
+                } else {
+                  _showSnackBar('No valid notes found in JSON payload.');
+                }
+              } catch (e) {
+                _showSnackBar('Invalid JSON payload. Restore failed.');
               }
             },
             style: ElevatedButton.styleFrom(

@@ -44,3 +44,27 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Agent & Knowledge Graph Outputs
+.agents/
+graphify-out/
+
+# Database & Local Data Storage
+database/
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Secrets, Keys & Credentials
+.env
+.env.*
+*.pem
+*.keystore
+*.jks
+*.p12
+*.crt
+key.properties
+google-services.json
+GoogleService-Info.plist
+

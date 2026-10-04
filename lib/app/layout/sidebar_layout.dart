@@ -36,11 +36,11 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
     final foldersController = ref.watch(foldersProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final sidebarBg = isDark
-        ? const Color(0xFF18181C)
-        : const Color(0xFFF9FAFC);
-    final cardBg = isDark ? AppColors.darkSurface : Colors.white;
+        ? AppColors.darkSidebarBackground
+        : AppColors.sidebarBackground;
+    final cardBg = isDark ? AppColors.darkSurface : AppColors.cardBackground;
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
-    final borderColor = isDark ? AppColors.darkBorder : const Color(0xFFEAEAEE);
+    final borderColor = isDark ? AppColors.darkBorder : AppColors.border;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
@@ -66,20 +66,6 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 1. Window Control Dots (macOS Style)
-                  if (!_isCollapsed)
-                    const Row(
-                      children: [
-                        _WindowDot(color: Color(0xFFFF5F56)),
-                        SizedBox(width: 6),
-                        _WindowDot(color: Color(0xFFFFBD2E)),
-                        SizedBox(width: 6),
-                        _WindowDot(color: Color(0xFF27C93F)),
-                      ],
-                    ),
-
-                  if (!_isCollapsed) const SizedBox(height: 16),
-
                   // 2. App Logo & Brand Name & Menu Icon
                   Row(
                     mainAxisAlignment: _isCollapsed
@@ -96,7 +82,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                           ),
                           child: const Center(
                             child: Text(
-                              'M',
+                              'N',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -108,7 +94,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            'MyNotes',
+                            'Notes App',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -642,20 +628,6 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
 }
 
 // Helper Widgets
-class _WindowDot extends StatelessWidget {
-  final Color color;
-  const _WindowDot({required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 10,
-      height: 10,
-      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-    );
-  }
-}
-
 class _NavItem extends StatelessWidget {
   final IconData icon;
   final String title;

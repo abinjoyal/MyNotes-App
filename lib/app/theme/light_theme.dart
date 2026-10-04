@@ -10,13 +10,13 @@ ThemeData get lightThemeData => ThemeData(
   scaffoldBackgroundColor: AppColors.softGray,
   colorScheme: const ColorScheme.light(
     primary: AppColors.primaryPurple,
-    secondary: AppColors.lightLavender,
-    surface: AppColors.white,
+    secondary: AppColors.primaryPink,
+    surface: AppColors.cardBackground,
     onSurface: AppColors.darkText,
     error: AppColors.error,
   ),
   appBarTheme: const AppBarTheme(
-    backgroundColor: AppColors.white,
+    backgroundColor: AppColors.softGray,
     elevation: 0,
     scrolledUnderElevation: 1,
     iconTheme: IconThemeData(color: AppColors.darkText),

@@ -114,7 +114,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
             end: Alignment.bottomRight,
             colors: isDark
                 ? [const Color(0xFF1A1A24), const Color(0xFF121212)]
-                : [const Color(0xFFF8F9FF), const Color(0xFFF1F3F6)],
+                : [AppColors.softGray, AppColors.cardBackground],
           ),
         ),
         child: Scaffold(
@@ -139,7 +139,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           end: Alignment.bottomRight,
           colors: isDark
               ? [const Color(0xFF1A1A24), const Color(0xFF121212)]
-              : [const Color(0xFFF8F9FF), const Color(0xFFF1F3F6)],
+              : [AppColors.softGray, AppColors.cardBackground],
         ),
       ),
       child: Scaffold(

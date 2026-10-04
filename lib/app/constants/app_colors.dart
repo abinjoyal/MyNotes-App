@@ -1,36 +1,38 @@
 import 'package:flutter/material.dart';
 
 abstract class AppColors {
-  // Main Brand Colors
-  /// Primary Purple - #635BFF
-  static const Color primaryPurple = Color(0xFF635BFF);
+  // Main Brand Colors (Warm Terracotta Theme)
+  /// Primary - #8B5E3C
+  static const Color primaryPurple = Color(0xFF8B5E3C);
 
-  /// Vibrant Pink - #FF5B94
-  static const Color primaryPink = Color(0xFFFF5B94);
+  /// Accent - #C08457
+  static const Color primaryPink = Color(0xFFC08457);
 
-  /// Light Lavender - #EEECFF
-  static const Color lightLavender = Color(0xFFEEECFF);
+  /// Selected / Soft Highlight - #E9D8C3
+  static const Color lightLavender = Color(0xFFE9D8C3);
 
-  /// Soft Gray - #F1F3F6
-  static const Color softGray = Color(0xFFF1F3F6);
+  /// Background - #FAF7F2
+  static const Color softGray = Color(0xFFFAF7F2);
 
-  /// Dark Text - #17191C
-  static const Color darkText = Color(0xFF17191C);
+  /// Dark Text - #29231E
+  static const Color darkText = Color(0xFF29231E);
 
   // Text Colors
-  static const Color secondaryText = Color(0xFF6C757D);
-  static const Color lightText = Color(0xFF98A2B3);
+  static const Color secondaryText = Color(0xFF81766B);
+  static const Color lightText = Color(0xFF81766B);
 
   // Surface & Layout Colors
   static const Color white = Color(0xFFFFFFFF);
-  static const Color cardBackground = Color(0xFFFFFFFF);
-  static const Color sidebarBackground = Color(0xFFF8F9FA);
-  static const Color divider = Color(0xFFE9ECEF);
-  static const Color border = Color(0xFFE0E0E0);
+  static const Color cardBackground = Color(0xFFF1EADF);
+  static const Color sidebarBackground = Color(0xFFF1EADF);
+  static const Color selectedBackground = Color(0xFFE9D8C3);
+  static const Color divider = Color(0xFFE4D9CB);
+  static const Color border = Color(0xFFE4D9CB);
 
   // Dark Theme Surface Colors
   static const Color darkScaffoldBackground = Color(0xFF121212);
   static const Color darkSurface = Color(0xFF1E1E1E);
+  static const Color darkSidebarBackground = Color(0xFF241B16);
   static const Color darkBorder = Color(0xFF2C2C2C);
   static const Color darkTextPrimary = Color(0xFFE0E0E0);
 

@@ -26,14 +26,14 @@ class AppThemeColors {
       isDark: isDark,
       scaffoldBg: isDark
           ? AppColors.darkScaffoldBackground
-          : const Color(0xFFF9FAFC),
-      cardBg: isDark ? AppColors.darkSurface : Colors.white,
+          : AppColors.softGray,
+      cardBg: isDark ? AppColors.darkSurface : AppColors.cardBackground,
       textColor: isDark ? AppColors.darkTextPrimary : AppColors.darkText,
-      borderColor: isDark ? AppColors.darkBorder : const Color(0xFFEAEAEE),
+      borderColor: isDark ? AppColors.darkBorder : AppColors.border,
       secondaryTextColor: isDark
           ? const Color(0xFF98A2B3)
           : AppColors.secondaryText,
-      dropdownBg: isDark ? const Color(0xFF2A2A30) : const Color(0xFFF1F3F6),
+      dropdownBg: isDark ? const Color(0xFF2A2A30) : AppColors.selectedBackground,
     );
   }
 }

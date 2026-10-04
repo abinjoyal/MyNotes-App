@@ -403,7 +403,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                             vertical: 10,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           elevation: 0,
                         ),

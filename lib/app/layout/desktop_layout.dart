@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'sidebar_layout.dart';
 import '../constants/app_colors.dart';
+import '../theme/app_theme_colors.dart';
 import '../../features/folders/presentation/screens/folders_screen.dart';
 import '../../features/notes/domain/entities/note.dart';
 import '../../features/notes/presentation/controllers/notes_controller.dart';
@@ -25,7 +26,8 @@ class _DesktopLayoutState extends State<DesktopLayout> {
   String _activeRoute = 'all_notes';
   Note? _selectedNote;
 
-  Widget _buildMiddlePane() {
+  Widget _buildMiddlePane(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     if (widget.notesListWidget != null) {
       return widget.notesListWidget!;
     }
@@ -106,14 +108,14 @@ class _DesktopLayoutState extends State<DesktopLayout> {
       );
     }
     return Container(
-      color: Colors.white,
+      color: context.appColors.scaffoldBg,
       child: Center(
         child: Text(
           'Active Section: ${_activeRoute.toUpperCase()}',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: AppColors.darkText,
+            color: isDark ? AppColors.darkTextPrimary : AppColors.darkText,
           ),
         ),
       ),
@@ -170,16 +172,13 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                 },
               ),
 
-              // Divider
-              VerticalDivider(width: 1, thickness: 1, color: dividerColor),
-
               // Main View (Full Width Notes Screen or Split View with Editor)
               Expanded(
                 child: widget.editorWidget != null
                     ? Row(
                         children: [
                           // Middle Pane (Notes List)
-                          Expanded(flex: 2, child: _buildMiddlePane()),
+                          Expanded(flex: 2, child: _buildMiddlePane(context)),
                           VerticalDivider(
                             width: 1,
                             thickness: 1,
@@ -189,7 +188,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                           Expanded(flex: 3, child: widget.editorWidget!),
                         ],
                       )
-                    : _buildMiddlePane(),
+                    : _buildMiddlePane(context),
               ),
             ],
           ),

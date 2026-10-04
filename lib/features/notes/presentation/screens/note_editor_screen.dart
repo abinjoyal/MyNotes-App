@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mynotes/app/theme/app_theme_colors.dart';
+
 import '../../domain/entities/note.dart';
 import '../widgets/note_editor.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -20,7 +22,7 @@ class NoteEditorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.appColors.scaffoldBg,
       body: SafeArea(
         child: NoteEditor(initialNote: note, onSave: onSave, onClose: onClose)
             .animate()

@@ -1731,150 +1731,65 @@ class _NoteEditorState extends State<NoteEditor> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top Header Bar with Back Button & Auto-Save Status
+          // Top Header Bar with Back Button, Section Title, Pin, Save & 3-Dots Menu
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              InkWell(
-                onTap: widget.onClose,
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: widget.onClose,
+                    icon: Icon(Icons.arrow_back_rounded, color: textColor),
+                    tooltip: 'Back to Notes',
                   ),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? const Color(0xFF1E1E2A)
-                        : const Color(0xFFF3F4F6),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isDark
-                          ? const Color(0xFF323246)
-                          : const Color(0xFFE5E7EB),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Notes',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.arrow_back_rounded,
-                        size: 16,
-                        color: textColor,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'All Notes',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: textColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                ],
               ),
               Row(
                 children: [
-                  // History Button
-                  OutlinedButton.icon(
-                    onPressed: _showVersionHistoryDialog,
-                    icon: const Icon(
-                      Icons.history_rounded,
-                      size: 16,
-                      color: AppColors.primaryPurple,
-                    ),
-                    label: const Text(
-                      'History',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primaryPurple,
-                      ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                        color: isDark
-                            ? const Color(0xFF323246)
-                            : const Color(0xFFE5E7EB),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-
-                  // Auto-Save Status Indicator Badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF14532D).withOpacity(0.3)
-                          : const Color(0xFFF0FDF4),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isDark
-                            ? const Color(0xFF16A34A).withOpacity(0.4)
-                            : const Color(0xFFDCFCE7),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF16A34A),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        const Text(
-                          'Saved',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF16A34A),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-
-                  // Share Button
+                  // Pin Icon Toggle Button
                   IconButton(
-                    onPressed: () async {
-                      final messenger = ScaffoldMessenger.of(context);
-                      final title = _titleController.text.trim();
-                      final content = _contentController.text.trim();
-                      try {
-                        await ExportService.instance.shareAsText(
-                          title: title,
-                          content: content,
-                        );
-                      } catch (e) {
-                        messenger.showSnackBar(
-                          SnackBar(content: Text('Error: $e')),
-                        );
-                      }
-                    },
-                    icon: Icon(
-                      Icons.share_rounded,
-                      size: 20,
-                      color: isDark ? Colors.white70 : Colors.black87,
+                    tooltip: _isPinned ? 'Unpin Note' : 'Pin Note',
+                    icon: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: _isPinned
+                            ? AppColors.primaryPurple.withOpacity(0.18)
+                            : (isDark
+                                  ? const Color(0xFF1E1E2A)
+                                  : const Color(0xFFF3F4F6)),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: _isPinned
+                              ? AppColors.primaryPurple.withOpacity(0.4)
+                              : Colors.transparent,
+                        ),
+                      ),
+                      child: Icon(
+                        _isPinned
+                            ? Icons.push_pin_rounded
+                            : Icons.push_pin_outlined,
+                        color: _isPinned ? AppColors.primaryPurple : hintColor,
+                        size: 18,
+                      ),
                     ),
-                    tooltip: 'Share Note',
+                    onPressed: () {
+                      setState(() {
+                        _isPinned = !_isPinned;
+                      });
+                    },
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
+
+                  // Save Button
                   ElevatedButton.icon(
                     onPressed: () {
                       if (widget.onSave != null) {
@@ -1887,175 +1802,91 @@ class _NoteEditorState extends State<NoteEditor> {
                         );
                       }
                     },
-                    icon: const Icon(
-                      Icons.check_rounded,
-                      size: 16,
-                      color: Colors.white,
-                    ),
                     label: const Text(
                       'Save',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 13,
+                        fontSize: 14,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryPurple,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
+                        horizontal: 18,
                         vertical: 10,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       elevation: 0,
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+                  const SizedBox(width: 4),
 
-          // Category Colors & Tags Selector
-          Row(
-            children: [
-              Text(
-                'Color: ',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: isDark ? AppColors.lightText : AppColors.secondaryText,
-                ),
-              ),
-              Row(
-                children: _categoryColors.map((color) {
-                  final isSelected = _selectedColor == color;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedColor = color;
-                      });
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      width: 22,
-                      height: 22,
-                      decoration: BoxDecoration(
-                        color: color,
-                        shape: BoxShape.circle,
-                        border: isSelected
-                            ? Border.all(
-                                color: isDark
-                                    ? Colors.white
-                                    : AppColors.darkText,
-                                width: 2.5,
-                              )
-                            : null,
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: color.withOpacity(0.6),
-                                  blurRadius: 8,
-                                  spreadRadius: 1,
-                                ),
-                              ]
-                            : null,
-                      ),
+                  // 3-Dots Action Menu Button (History & Share)
+                  PopupMenuButton<String>(
+                    icon: Icon(Icons.more_vert_rounded, color: textColor),
+                    tooltip: 'More options',
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(width: 20),
-              Text(
-                'Tags: ',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: isDark ? AppColors.lightText : AppColors.secondaryText,
-                ),
-              ),
-              Wrap(
-                spacing: 6,
-                runSpacing: 4,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  ..._tags.map((tag) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? AppColors.primaryPurple.withOpacity(0.25)
-                            : AppColors.lightLavender,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: AppColors.primaryPurple.withOpacity(0.3),
+                    color: isDark ? const Color(0xFF1E1E2A) : Colors.white,
+                    onSelected: (value) async {
+                      if (value == 'history') {
+                        _showVersionHistoryDialog();
+                      } else if (value == 'share') {
+                        final messenger = ScaffoldMessenger.of(context);
+                        final title = _titleController.text.trim();
+                        final content = _contentController.text.trim();
+                        try {
+                          await ExportService.instance.shareAsText(
+                            title: title,
+                            content: content,
+                          );
+                        } catch (e) {
+                          messenger.showSnackBar(
+                            SnackBar(content: Text('Error: $e')),
+                          );
+                        }
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem<String>(
+                        value: 'history',
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.history_rounded,
+                              size: 18,
+                              color: AppColors.primaryPurple,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'Version History',
+                              style: TextStyle(fontSize: 13, color: textColor),
+                            ),
+                          ],
                         ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            tag,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primaryPurple,
+                      PopupMenuItem<String>(
+                        value: 'share',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.share_rounded,
+                              size: 18,
+                              color: textColor,
                             ),
-                          ),
-                          const SizedBox(width: 4),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _tags.remove(tag);
-                              });
-                            },
-                            child: const Icon(
-                              Icons.close_rounded,
-                              size: 12,
-                              color: AppColors.primaryPurple,
+                            const SizedBox(width: 10),
+                            Text(
+                              'Share Note',
+                              style: TextStyle(fontSize: 13, color: textColor),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    );
-                  }),
-                  InkWell(
-                    onTap: _showAddTagDialog,
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF262636)
-                            : const Color(0xFFE5E7EB),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.add_rounded,
-                            size: 14,
-                            color: isDark ? Colors.white70 : Colors.black87,
-                          ),
-                          const SizedBox(width: 2),
-                          Text(
-                            'Tag',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white70 : Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
@@ -2063,34 +1894,199 @@ class _NoteEditorState extends State<NoteEditor> {
           ),
           const SizedBox(height: 16),
 
-          // Rich Text Toolbar
-          EditorToolbar(
-            activeHeading: _activeHeading,
-            isBold: _isBold,
-            isItalic: _isItalic,
-            isUnderline: _isUnderline,
-            isStrikethrough: _isStrikethrough,
-            isCode: _isCode,
-            isBulletList: _isBulletList,
-            isNumberedList: _isNumberedList,
-            isChecklist: _isChecklist,
-            onH1Tap: () => _applyHeading(1),
-            onH2Tap: () => _applyHeading(2),
-            onH3Tap: () => _applyHeading(3),
-            onBulletListTap: _toggleBulletList,
-            onNumberedListTap: _toggleNumberedList,
-            onCheckboxTap: _toggleChecklist,
-            onBoldTap: _toggleBold,
-            onItalicTap: _toggleItalic,
-            onUnderlineTap: _toggleUnderline,
-            onStrikethroughTap: _toggleStrikethrough,
-            onCodeTap: _toggleCode,
-            onLinkTap: _insertLink,
-            onImageTap: _insertImage,
-            onTableTap: _insertTable,
-            onBlockquoteTap: _insertBlockquote,
-            onDividerTap: _insertDivider,
-            onClearFormattingTap: _clearFormatting,
+          // Combined Formatting & Metadata Toolbar Row
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                EditorToolbar(
+                  activeHeading: _activeHeading,
+                  isBold: _isBold,
+                  isItalic: _isItalic,
+                  isUnderline: _isUnderline,
+                  isStrikethrough: _isStrikethrough,
+                  isCode: _isCode,
+                  isBulletList: _isBulletList,
+                  isNumberedList: _isNumberedList,
+                  isChecklist: _isChecklist,
+                  onH1Tap: () => _applyHeading(1),
+                  onH2Tap: () => _applyHeading(2),
+                  onH3Tap: () => _applyHeading(3),
+                  onBulletListTap: _toggleBulletList,
+                  onNumberedListTap: _toggleNumberedList,
+                  onCheckboxTap: _toggleChecklist,
+                  onBoldTap: _toggleBold,
+                  onItalicTap: _toggleItalic,
+                  onUnderlineTap: _toggleUnderline,
+                  onStrikethroughTap: _toggleStrikethrough,
+                  onCodeTap: _toggleCode,
+                  onLinkTap: _insertLink,
+                  onImageTap: _insertImage,
+                  onTableTap: _insertTable,
+                  onBlockquoteTap: _insertBlockquote,
+                  onDividerTap: _insertDivider,
+                  onClearFormattingTap: _clearFormatting,
+                ),
+                const SizedBox(width: 16),
+                Container(
+                  height: 24,
+                  width: 1,
+                  color: isDark
+                      ? const Color(0xFF323246)
+                      : const Color(0xFFE5E7EB),
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  'Color: ',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark
+                        ? AppColors.lightText
+                        : AppColors.secondaryText,
+                  ),
+                ),
+                Row(
+                  children: _categoryColors.map((color) {
+                    final isSelected = _selectedColor == color;
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedColor = color;
+                        });
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          border: isSelected
+                              ? Border.all(
+                                  color: isDark
+                                      ? Colors.white
+                                      : AppColors.darkText,
+                                  width: 2.5,
+                                )
+                              : null,
+                          boxShadow: isSelected
+                              ? [
+                                  BoxShadow(
+                                    color: color.withOpacity(0.6),
+                                    blurRadius: 8,
+                                    spreadRadius: 1,
+                                  ),
+                                ]
+                              : null,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(width: 16),
+                Container(
+                  height: 24,
+                  width: 1,
+                  color: isDark
+                      ? const Color(0xFF323246)
+                      : const Color(0xFFE5E7EB),
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  'Tags: ',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark
+                        ? AppColors.lightText
+                        : AppColors.secondaryText,
+                  ),
+                ),
+                Row(
+                  children: [
+                    ..._tags.map((tag) {
+                      return Container(
+                        margin: const EdgeInsets.only(right: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? AppColors.primaryPurple.withOpacity(0.25)
+                              : AppColors.lightLavender,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: AppColors.primaryPurple.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              tag,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primaryPurple,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _tags.remove(tag);
+                                });
+                              },
+                              child: const Icon(
+                                Icons.close_rounded,
+                                size: 12,
+                                color: AppColors.primaryPurple,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                    InkWell(
+                      onTap: _showAddTagDialog,
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF262636)
+                              : const Color(0xFFE5E7EB),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.add_rounded,
+                              size: 14,
+                              color: isDark ? Colors.white70 : Colors.black87,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              'Tag',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white70 : Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
 
@@ -2116,37 +2112,6 @@ class _NoteEditorState extends State<NoteEditor> {
                     border: InputBorder.none,
                   ),
                 ),
-              ),
-              IconButton(
-                tooltip: _isPinned ? 'Unpin Note' : 'Pin Note',
-                icon: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: _isPinned
-                        ? AppColors.primaryPurple.withOpacity(0.18)
-                        : (isDark
-                              ? const Color(0xFF1E1E2A)
-                              : const Color(0xFFF3F4F6)),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: _isPinned
-                          ? AppColors.primaryPurple.withOpacity(0.4)
-                          : Colors.transparent,
-                    ),
-                  ),
-                  child: Icon(
-                    _isPinned
-                        ? Icons.push_pin_rounded
-                        : Icons.push_pin_outlined,
-                    color: _isPinned ? AppColors.primaryPurple : hintColor,
-                    size: 20,
-                  ),
-                ),
-                onPressed: () {
-                  setState(() {
-                    _isPinned = !_isPinned;
-                  });
-                },
               ),
             ],
           ),
@@ -2197,19 +2162,19 @@ class _NoteEditorState extends State<NoteEditor> {
                           Row(
                             children: [
                               _buildStatBadge(
-                                '📊 $_wordCount words',
+                                '$_wordCount words',
                                 isDark,
                                 subtextColor,
                               ),
                               const SizedBox(width: 8),
                               _buildStatBadge(
-                                '🔤 $_charCount chars',
+                                '$_charCount chars',
                                 isDark,
                                 subtextColor,
                               ),
                               const SizedBox(width: 8),
                               _buildStatBadge(
-                                '⏱️ $_readingTimeMinutes min read',
+                                '$_readingTimeMinutes min read',
                                 isDark,
                                 subtextColor,
                               ),

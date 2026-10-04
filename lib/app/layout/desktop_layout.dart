@@ -26,6 +26,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
   String _activeRoute = 'all_notes';
   String _previousRoute = 'all_notes';
   Note? _selectedNote;
+  bool _isOpenedFromRecent = false;
 
   void _returnFromEditor() {
     setState(() {
@@ -33,7 +34,8 @@ class _DesktopLayoutState extends State<DesktopLayout> {
       _selectedNote = null;
       if (folder != null && folder.isNotEmpty) {
         _activeRoute = 'folder:$folder';
-      } else if (_previousRoute.startsWith('folder') || _previousRoute == 'folders') {
+      } else if (_previousRoute.startsWith('folder') ||
+          _previousRoute == 'folders') {
         _activeRoute = _previousRoute;
       } else {
         _activeRoute = _previousRoute.isNotEmpty ? _previousRoute : 'all_notes';
@@ -49,7 +51,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
     if (_activeRoute == 'new_note' || _activeRoute == 'edit_note') {
       return NoteEditorScreen(
         note: _selectedNote,
-        onClose: _returnFromEditor,
+        onClose: _isOpenedFromRecent ? null : _returnFromEditor,
         onSave: (title, content, color, tags, isPinned) {
           NotesController.instance.saveNote(
             id: _selectedNote?.id,
@@ -171,6 +173,14 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                         _selectedNote = null;
                       }
                       _activeRoute = 'new_note';
+                    } else if (route.startsWith('open_note_recent:')) {
+                      _previousRoute = _activeRoute;
+                      final noteId = route.split(':')[1];
+                      _selectedNote = NotesController.instance.getNoteById(
+                        noteId,
+                      );
+                      _activeRoute = 'edit_note';
+                      _isOpenedFromRecent = true;
                     } else if (route.startsWith('open_note:')) {
                       _previousRoute = _activeRoute;
                       final noteId = route.split(':')[1];
@@ -178,8 +188,10 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                         noteId,
                       );
                       _activeRoute = 'edit_note';
+                      _isOpenedFromRecent = false;
                     } else {
                       _activeRoute = route;
+                      _isOpenedFromRecent = false;
                     }
                   });
                 },

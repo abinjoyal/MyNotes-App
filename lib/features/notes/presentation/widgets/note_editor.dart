@@ -1737,16 +1737,18 @@ class _NoteEditorState extends State<NoteEditor> {
             children: [
               Row(
                 children: [
-                  IconButton(
-                    onPressed: widget.onClose,
-                    icon: Icon(Icons.arrow_back_rounded, color: textColor),
-                    tooltip:
-                        widget.initialNote?.folderName != null &&
-                            widget.initialNote!.folderName!.isNotEmpty
-                        ? 'Back to ${widget.initialNote!.folderName}'
-                        : 'Back to Notes',
-                  ),
-                  const SizedBox(width: 8),
+                  if (widget.onClose != null) ...[
+                    IconButton(
+                      onPressed: widget.onClose,
+                      icon: Icon(Icons.arrow_back_rounded, color: textColor),
+                      tooltip:
+                          widget.initialNote?.folderName != null &&
+                              widget.initialNote!.folderName!.isNotEmpty
+                          ? 'Back to ${widget.initialNote!.folderName}'
+                          : 'Back to Notes',
+                    ),
+                    const SizedBox(width: 8),
+                  ],
                   Text(
                     widget.initialNote?.folderName != null &&
                             widget.initialNote!.folderName!.isNotEmpty

@@ -409,7 +409,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                                       title: note.title,
                                       time: formatRelativeTime(note.updatedAt),
                                       onTap: () =>
-                                          _select('open_note:${note.id}'),
+                                          _select('open_note_recent:${note.id}'),
                                     ),
                                   ),
                             const SizedBox(height: 20),
@@ -525,14 +525,16 @@ class _NavItem extends StatelessWidget {
                     color: itemColor,
                   ),
                 ),
-                trailing: Text(
-                  '$badgeCount',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: itemColor,
-                  ),
-                ),
+                trailing: badgeCount > 0
+                    ? Text(
+                        '$badgeCount',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: itemColor,
+                        ),
+                      )
+                    : null,
               ),
       ),
     );

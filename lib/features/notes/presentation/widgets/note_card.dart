@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../app/constants/app_colors.dart';
+import '../../../../core/extensions/date_extensions.dart';
 import '../../domain/entities/note.dart';
 
 class NoteCard extends StatelessWidget {
@@ -265,7 +266,7 @@ class NoteCard extends StatelessWidget {
                           .toList(),
                     ),
                     Text(
-                      note.updatedAt,
+                      formatRelativeTime(note.updatedAt),
                       style: TextStyle(
                         fontSize: 12,
                         color: timeColor,

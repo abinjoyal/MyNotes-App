@@ -242,9 +242,6 @@ class NotesController extends ChangeNotifier {
   }
 
   String _formatTimestamp(DateTime dt) {
-    final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
-    final minute = dt.minute.toString().padLeft(2, '0');
-    final ampm = dt.hour >= 12 ? 'PM' : 'AM';
-    return 'Just now at $hour:$minute $ampm';
+    return dt.toIso8601String();
   }
 }

@@ -190,90 +190,105 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Folders Grid
+              // Folders Grid (4 Columns per Row on Desktop)
               Expanded(
-                child: GridView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 280,
-                    mainAxisExtent: 140,
-                    crossAxisSpacing: 14,
-                    mainAxisSpacing: 14,
-                  ),
-                  itemCount: folders.length,
-                  itemBuilder: (context, index) {
-                    final folder = folders[index];
-                    final count = notesController.getFolderNotesCount(
-                      folder.name,
-                    );
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    int crossAxisCount = 4;
+                    if (constraints.maxWidth < 600) {
+                      crossAxisCount = 2;
+                    } else if (constraints.maxWidth < 900) {
+                      crossAxisCount = 3;
+                    } else {
+                      crossAxisCount = 4;
+                    }
 
-                    return FolderTile(
-                          folder: folder,
-                          count: count,
-                          onToggleLock: () async {
-                            if (folder.isLocked) {
-                              // Unlock
-                              final success = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      PasscodeLockScreen(isSetupMode: false),
-                                ),
-                              );
-                              if (success == true) {
-                                foldersController.toggleFolderLock(
-                                  folder.name,
-                                  false,
-                                );
-                              }
-                            } else {
-                              // Lock
-                              if (SettingsController.instance.hasPinCode) {
-                                foldersController.toggleFolderLock(
-                                  folder.name,
-                                  true,
-                                );
-                              } else {
-                                // Prompt to set up PIN
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Please set up a Passcode in Settings first.',
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                          onTap: () async {
-                            if (folder.isLocked) {
-                              final success = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      PasscodeLockScreen(isSetupMode: false),
-                                ),
-                              );
-                              if (success != true) return;
-                            }
-                            setState(() {
-                              _currentFolder = folder.name;
-                            });
-                          },
-                          onAddNote: () => _createNoteInFolder(folder.name),
-                          onDelete: () => _confirmDeleteFolder(
-                            folder.name,
-                            foldersController,
-                            notesController,
-                          ),
-                        )
-                        .animate()
-                        .fade(duration: 300.ms, delay: (index * 40).ms)
-                        .scaleXY(
-                          begin: 0.95,
-                          duration: 300.ms,
-                          curve: Curves.easeOutBack,
+                    return GridView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        mainAxisExtent: 135,
+                        crossAxisSpacing: 14,
+                        mainAxisSpacing: 14,
+                      ),
+                      itemCount: folders.length,
+                      itemBuilder: (context, index) {
+                        final folder = folders[index];
+                        final count = notesController.getFolderNotesCount(
+                          folder.name,
                         );
+
+                        return FolderTile(
+                              folder: folder,
+                              count: count,
+                              onToggleLock: () async {
+                                if (folder.isLocked) {
+                                  // Unlock
+                                  final success = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => PasscodeLockScreen(
+                                        isSetupMode: false,
+                                      ),
+                                    ),
+                                  );
+                                  if (success == true) {
+                                    foldersController.toggleFolderLock(
+                                      folder.name,
+                                      false,
+                                    );
+                                  }
+                                } else {
+                                  // Lock
+                                  if (SettingsController.instance.hasPinCode) {
+                                    foldersController.toggleFolderLock(
+                                      folder.name,
+                                      true,
+                                    );
+                                  } else {
+                                    // Prompt to set up PIN
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Please set up a Passcode in Settings first.',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              onTap: () async {
+                                if (folder.isLocked) {
+                                  final success = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => PasscodeLockScreen(
+                                        isSetupMode: false,
+                                      ),
+                                    ),
+                                  );
+                                  if (success != true) return;
+                                }
+                                setState(() {
+                                  _currentFolder = folder.name;
+                                });
+                              },
+                              onAddNote: () => _createNoteInFolder(folder.name),
+                              onDelete: () => _confirmDeleteFolder(
+                                folder.name,
+                                foldersController,
+                                notesController,
+                              ),
+                            )
+                            .animate()
+                            .fade(duration: 300.ms, delay: (index * 40).ms)
+                            .scaleXY(
+                              begin: 0.95,
+                              duration: 300.ms,
+                              curve: Curves.easeOutBack,
+                            );
+                      },
+                    );
                   },
                 ),
               ),

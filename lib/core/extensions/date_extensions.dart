@@ -6,13 +6,16 @@ extension DateTimeExtensions on DateTime {
     if (difference.inSeconds < 60) {
       return 'Just now';
     } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}m ago';
+      final mins = difference.inMinutes;
+      return '$mins min ago';
     } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
+      final hrs = difference.inHours;
+      return '$hrs ${hrs == 1 ? "hour" : "hours"} ago';
     } else if (difference.inDays == 1) {
       return 'Yesterday';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays}d ago';
+    } else if (difference.inDays < 30) {
+      final days = difference.inDays;
+      return '$days ${days == 1 ? "day" : "days"} ago';
     } else {
       return formattedDate;
     }
@@ -43,4 +46,26 @@ extension DateTimeExtensions on DateTime {
     final month = months[this.month - 1];
     return '$month $day, $year';
   }
+}
+
+String formatRelativeTime(String rawDate) {
+  if (rawDate.isEmpty || rawDate == 'Draft') return 'Draft';
+
+  DateTime? parsed = DateTime.tryParse(rawDate);
+
+  if (parsed == null && RegExp(r'^\d+$').hasMatch(rawDate)) {
+    final ms = int.tryParse(rawDate);
+    if (ms != null) {
+      parsed = DateTime.fromMillisecondsSinceEpoch(ms);
+    }
+  }
+
+  if (parsed == null) {
+    if (rawDate.toLowerCase().contains('just now')) {
+      return 'Just now';
+    }
+    return rawDate;
+  }
+
+  return parsed.timeAgo;
 }

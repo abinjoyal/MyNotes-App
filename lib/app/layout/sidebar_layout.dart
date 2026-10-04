@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_icons.dart';
 import '../constants/app_sizes.dart';
+import '../../core/extensions/date_extensions.dart';
 import '../../features/notes/presentation/controllers/notes_provider.dart';
 import '../../features/folders/presentation/controllers/folders_controller.dart';
 
@@ -328,43 +329,51 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                             isCollapsed: _isCollapsed,
                             onTap: () => _select('calendar'),
                           ),
+                          _NavItem(
+                            icon: AppIcons.folder,
+                            title: 'Folders',
+                            badgeCount: foldersController.folders.length,
+                            isSelected: _selectedRoute == 'folders',
+                            isCollapsed: _isCollapsed,
+                            onTap: () => _select('folders'),
+                          ),
                           const SizedBox(height: 20),
 
                           // FOLDERS Section
                           if (!_isCollapsed) ...[
-                            _SectionHeader(
-                              title: 'FOLDERS',
-                              onAddTap: () => _showCreateFolderDialog(context),
-                              onHeaderTap: () => _select('folders'),
-                            ),
-                            const SizedBox(height: 6),
-                            if (foldersController.folders.isEmpty)
-                              const Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                child: Text(
-                                  'No folders created yet',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF8C98A9),
-                                  ),
-                                ),
-                              )
-                            else
-                              ...foldersController.folders.map(
-                                (folder) => _FolderItem(
-                                  title: folder.name,
-                                  count: notesController.getFolderNotesCount(
-                                    folder.name,
-                                  ),
-                                  folderColor: folder.color,
-                                  isCollapsed: _isCollapsed,
-                                  onTap: () => _select('folder:${folder.name}'),
-                                ),
-                              ),
-                            const SizedBox(height: 20),
+                            // _SectionHeader(
+                            //   title: 'FOLDERS',
+                            //   onAddTap: () => _showCreateFolderDialog(context),
+                            //   onHeaderTap: () => _select('folders'),
+                            // ),
+                            // const SizedBox(height: 6),
+                            // if (foldersController.folders.isEmpty)
+                            //   const Padding(
+                            //     padding: EdgeInsets.symmetric(
+                            //       horizontal: 8,
+                            //       vertical: 4,
+                            //     ),
+                            //     child: Text(
+                            //       'No folders created yet',
+                            //       style: TextStyle(
+                            //         fontSize: 12,
+                            //         color: Color(0xFF8C98A9),
+                            //       ),
+                            //     ),
+                            //   )
+                            // else
+                            //   ...foldersController.folders.map(
+                            //     (folder) => _FolderItem(
+                            //       title: folder.name,
+                            //       count: notesController.getFolderNotesCount(
+                            //         folder.name,
+                            //       ),
+                            //       folderColor: folder.color,
+                            //       isCollapsed: _isCollapsed,
+                            //       onTap: () => _select('folder:${folder.name}'),
+                            //     ),
+                            //   ),
+                            // const SizedBox(height: 20),
 
                             // RECENT NOTES Section
                             const Text(
@@ -398,7 +407,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                                     (note) => _RecentNoteItem(
                                       color: note.indicatorColor,
                                       title: note.title,
-                                      time: note.updatedAt,
+                                      time: formatRelativeTime(note.updatedAt),
                                       onTap: () =>
                                           _select('open_note:${note.id}'),
                                     ),
@@ -476,12 +485,10 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
     ];
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF1E1E24) : Colors.white;
-    final textColor = isDark ? Colors.white : AppColors.darkText;
-    final inputBg = isDark ? const Color(0xFF2A2A35) : const Color(0xFFF7F8FA);
-    final borderColor = isDark
-        ? const Color(0xFF333333)
-        : const Color(0xFFEAEAEE);
+    final bgColor = isDark ? AppColors.darkSurface : Colors.white;
+    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
+    final inputBg = isDark ? const Color(0xFF262626) : const Color(0xFFF7F8FA);
+    final borderColor = isDark ? AppColors.darkBorder : const Color(0xFFEAEAEE);
 
     showDialog(
       context: context,

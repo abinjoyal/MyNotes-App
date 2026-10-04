@@ -45,12 +45,6 @@ class TasksHeaderBar extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Icon(
-              Icons.check_circle_rounded,
-              color: Color(0xFF00C853),
-              size: 24,
-            ),
-            const SizedBox(width: 8),
             Text(
               'Tasks Checklist',
               style: TextStyle(
@@ -59,25 +53,10 @@ class TasksHeaderBar extends StatelessWidget {
                 color: textColor,
               ),
             ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: AppColors.lightLavender,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                '$totalChecklistsCount',
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryPurple,
-                ),
-              ),
-            ),
           ],
         ),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Search Input
             Container(
@@ -93,7 +72,7 @@ class TasksHeaderBar extends StatelessWidget {
                 onChanged: onSearchChanged,
                 style: TextStyle(fontSize: 13, color: textColor),
                 decoration: const InputDecoration(
-                  hintText: 'Search checklists or tasks...',
+                  hintText: 'Search checklists ...',
                   hintStyle: TextStyle(fontSize: 12, color: Color(0xFF8C98A9)),
                   prefixIcon: Icon(
                     Icons.search_rounded,
@@ -102,7 +81,7 @@ class TasksHeaderBar extends StatelessWidget {
                   ),
                   border: InputBorder.none,
                   isDense: true,
-                  contentPadding: EdgeInsets.symmetric(vertical: 8),
+                  contentPadding: EdgeInsets.symmetric(vertical: 9),
                 ),
               ),
             ),
@@ -110,10 +89,11 @@ class TasksHeaderBar extends StatelessWidget {
 
             // List / Grid View Toggle
             Container(
+              height: 38,
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 color: inputBg,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: borderColor),
               ),
               child: Row(
@@ -121,14 +101,16 @@ class TasksHeaderBar extends StatelessWidget {
                   GestureDetector(
                     onTap: () => onToggleViewMode(false),
                     child: Container(
-                      padding: const EdgeInsets.all(5),
+                      width: 30,
+                      height: 30,
+                      alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: !isGridView
                             ? (isDark
                                   ? AppColors.primaryPurple.withOpacity(0.3)
                                   : AppColors.lightLavender)
                             : Colors.transparent,
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(7),
                       ),
                       child: Icon(
                         Icons.format_list_bulleted_rounded,
@@ -139,18 +121,20 @@ class TasksHeaderBar extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: 3),
                   GestureDetector(
                     onTap: () => onToggleViewMode(true),
                     child: Container(
-                      padding: const EdgeInsets.all(5),
+                      width: 30,
+                      height: 30,
+                      alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: isGridView
                             ? (isDark
                                   ? AppColors.primaryPurple.withOpacity(0.3)
                                   : AppColors.lightLavender)
                             : Colors.transparent,
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(7),
                       ),
                       child: Icon(
                         Icons.grid_view_rounded,
@@ -165,69 +149,73 @@ class TasksHeaderBar extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            ElevatedButton.icon(
-              onPressed: onToggleFocusTimer,
-              icon: Icon(
-                isTimerRunning
-                    ? Icons.timer_rounded
-                    : (showFocusTimerCard
-                          ? Icons.timer_rounded
-                          : Icons.timer_outlined),
-                size: 18,
-                color: Colors.white,
-              ),
-              label: Text(
-                isTimerRunning
-                    ? '⏱️ ${formatTimerTime(timerRemainingSeconds)}'
-                    : 'Focus Timer',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
+
+            // Focus Timer Button
+            SizedBox(
+              height: 38,
+              child: ElevatedButton.icon(
+                onPressed: onToggleFocusTimer,
+                icon: Icon(
+                  isTimerRunning
+                      ? Icons.timer_rounded
+                      : (showFocusTimerCard
+                            ? Icons.timer_rounded
+                            : Icons.timer_outlined),
+                  size: 18,
                   color: Colors.white,
                 ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isTimerRunning
-                    ? const Color(0xFFFFB020)
-                    : (showFocusTimerCard
-                          ? const Color(0xFF635BFF)
-                          : const Color(0xFF2C2C38)),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 10,
+                label: Text(
+                  isTimerRunning
+                      ? '⏱️ ${formatTimerTime(timerRemainingSeconds)}'
+                      : 'Focus Timer',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: Colors.white,
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isTimerRunning
+                      ? const Color(0xFFFFB020)
+                      : (showFocusTimerCard
+                            ? const Color(0xFF635BFF)
+                            : const Color(0xFF2C2C38)),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 0,
                 ),
-                elevation: 0,
               ),
             ),
             const SizedBox(width: 8),
-            ElevatedButton.icon(
-              onPressed: onCreateChecklist,
-              icon: const Icon(
-                Icons.add_rounded,
-                size: 18,
-                color: Colors.white,
-              ),
-              label: const Text(
-                'Create Task Checklist',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
+
+            // Create Task Checklist Button
+            SizedBox(
+              height: 38,
+              child: ElevatedButton.icon(
+                onPressed: onCreateChecklist,
+                icon: const Icon(
+                  Icons.add_rounded,
+                  size: 18,
                   color: Colors.white,
                 ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryPurple,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 10,
+                label: const Text(
+                  'Create Task Checklist',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: Colors.white,
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryPurple,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 0,
                 ),
-                elevation: 0,
               ),
             ),
           ],

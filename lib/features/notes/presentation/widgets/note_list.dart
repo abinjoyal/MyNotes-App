@@ -36,7 +36,7 @@ class NoteList extends StatelessWidget {
       iconColor = const Color(0xFF635BFF);
       bgColor = const Color(0xFFEEECFF);
       title = 'No Pinned Notes Yet';
-      subtitle = 'Pin your important notes to keep them at your fingertips.';
+      subtitle = 'Pin your important notes to keep them at \nyour fingertips.';
       buttonText = null;
     } else if (activeRoute == 'tasks') {
       iconData = Icons.check_box_rounded;
@@ -64,17 +64,12 @@ class NoteList extends StatelessWidget {
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final borderColor = isDark
-        ? const Color(0xFF2C2C2C)
-        : const Color(0xFFF0F0F3);
     final titleColor = isDark
         ? const Color(0xFFE0E0E0)
         : const Color(0xFF1D2939);
     final subtitleColor = isDark
         ? const Color(0xFF98A2B3)
         : const Color(0xFF667085);
-    final iconCircleBg = isDark ? iconColor.withOpacity(0.2) : bgColor;
 
     if (activeRoute == 'trash') {
       return Align(
@@ -134,38 +129,17 @@ class NoteList extends StatelessWidget {
     }
 
     return Center(
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 420),
+      child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-        decoration: BoxDecoration(
-          color: cardBg,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.02),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: iconCircleBg,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(iconData, size: 38, color: iconColor),
-            ),
-            const SizedBox(height: 20),
             Text(
               title,
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 32,
                 fontWeight: FontWeight.bold,
                 color: titleColor,
               ),
@@ -174,10 +148,10 @@ class NoteList extends StatelessWidget {
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, height: 1.4, color: subtitleColor),
+              style: TextStyle(fontSize: 14, height: 1.4, color: subtitleColor),
             ),
             if (buttonText != null && onActionTap != null) ...[
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               ElevatedButton.icon(
                 onPressed: onActionTap,
                 icon: const Icon(Icons.add_rounded, size: 18),

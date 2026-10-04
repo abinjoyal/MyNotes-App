@@ -27,7 +27,7 @@ class CalendarHeaderWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '📅 Calendar',
+              'Calendar',
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
@@ -48,46 +48,54 @@ class CalendarHeaderWidget extends StatelessWidget {
           ],
         ),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Today Quick Jump Chip
-            OutlinedButton.icon(
-              onPressed: onTodayTap,
-              icon: const Icon(
-                Icons.today_rounded,
-                size: 14,
-                color: AppColors.primaryPurple,
-              ),
-              label: const Text(
-                'Today',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+            // Today Quick Jump Button (Height: 38, Radius: 10)
+            SizedBox(
+              height: 38,
+              child: OutlinedButton.icon(
+                onPressed: onTodayTap,
+                icon: const Icon(
+                  Icons.today_rounded,
+                  size: 16,
                   color: AppColors.primaryPurple,
                 ),
-              ),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(
-                  color: AppColors.primaryPurple.withOpacity(0.4),
+                label: const Text(
+                  'Today',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryPurple,
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(
+                    color: AppColors.primaryPurple.withOpacity(0.5),
+                    width: 1.2,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
                 ),
               ),
             ),
             const SizedBox(width: 8),
 
-            // Month / Week Format Toggle Pill
+            // Month / Week Format Toggle Pill (Height: 38, Radius: 10)
             Container(
+              height: 38,
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 color: isDark
                     ? const Color(0xFF262634)
                     : const Color(0xFFEAEAEE),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: isDark
+                      ? const Color(0xFF363646)
+                      : const Color(0xFFD8D8E0),
+                ),
               ),
               child: Row(
                 children: [
@@ -106,17 +114,29 @@ class CalendarHeaderWidget extends StatelessWidget {
     final isSelected = calendarFormat == format;
     return GestureDetector(
       onTap: () => onFormatChanged(format),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        height: 30,
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primaryPurple : Colors.transparent,
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(7),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.primaryPurple.withOpacity(0.3),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 11,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
             color: isSelected
                 ? Colors.white
                 : (isDark ? Colors.white70 : Colors.black87),

@@ -62,74 +62,51 @@ class EditorToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final containerBg = isDark
-        ? const Color(0xFF1E1E2A)
-        : const Color(0xFFF8FAFC);
-    final borderColor = isDark
-        ? const Color(0xFF323246)
-        : const Color(0xFFE2E8F0);
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          // Headings
+          _TextButton(
+            text: 'H1',
+            tooltip: 'Heading 1',
+            isActive: activeHeading == 1,
+            onTap: onH1Tap,
+          ),
+          _TextButton(
+            text: 'H2',
+            tooltip: 'Heading 2',
+            isActive: activeHeading == 2,
+            onTap: onH2Tap,
+          ),
+          _TextButton(
+            text: 'H3',
+            tooltip: 'Heading 3',
+            isActive: activeHeading == 3,
+            onTap: onH3Tap,
+          ),
+          const _Divider(),
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: containerBg,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: borderColor, width: 1.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.25 : 0.05),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
+          // Lists & Checkbox
+          _IconButton(
+            icon: Icons.format_list_bulleted_rounded,
+            tooltip: 'Bulleted List',
+            isActive: isBulletList,
+            onTap: onBulletListTap,
+          ),
+          _IconButton(
+            icon: Icons.format_list_numbered_rounded,
+            tooltip: 'Numbered List',
+            isActive: isNumberedList,
+            onTap: onNumberedListTap,
+          ),
+          _IconButton(
+            icon: Icons.check_box_outlined,
+            tooltip: 'Checklist',
+            isActive: isChecklist,
+            onTap: onCheckboxTap,
           ),
         ],
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            // Headings
-            _TextButton(
-              text: 'H1',
-              tooltip: 'Heading 1',
-              isActive: activeHeading == 1,
-              onTap: onH1Tap,
-            ),
-            _TextButton(
-              text: 'H2',
-              tooltip: 'Heading 2',
-              isActive: activeHeading == 2,
-              onTap: onH2Tap,
-            ),
-            _TextButton(
-              text: 'H3',
-              tooltip: 'Heading 3',
-              isActive: activeHeading == 3,
-              onTap: onH3Tap,
-            ),
-            const _Divider(),
-
-            // Lists & Checkbox
-            _IconButton(
-              icon: Icons.format_list_bulleted_rounded,
-              tooltip: 'Bulleted List',
-              isActive: isBulletList,
-              onTap: onBulletListTap,
-            ),
-            _IconButton(
-              icon: Icons.format_list_numbered_rounded,
-              tooltip: 'Numbered List',
-              isActive: isNumberedList,
-              onTap: onNumberedListTap,
-            ),
-            _IconButton(
-              icon: Icons.check_box_outlined,
-              tooltip: 'Checklist',
-              isActive: isChecklist,
-              onTap: onCheckboxTap,
-            ),
-          ],
-        ),
       ),
     );
   }

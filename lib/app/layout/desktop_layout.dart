@@ -24,7 +24,22 @@ class DesktopLayout extends StatefulWidget {
 
 class _DesktopLayoutState extends State<DesktopLayout> {
   String _activeRoute = 'all_notes';
+  String _previousRoute = 'all_notes';
   Note? _selectedNote;
+
+  void _returnFromEditor() {
+    setState(() {
+      final folder = _selectedNote?.folderName;
+      _selectedNote = null;
+      if (folder != null && folder.isNotEmpty) {
+        _activeRoute = 'folder:$folder';
+      } else if (_previousRoute.startsWith('folder') || _previousRoute == 'folders') {
+        _activeRoute = _previousRoute;
+      } else {
+        _activeRoute = _previousRoute.isNotEmpty ? _previousRoute : 'all_notes';
+      }
+    });
+  }
 
   Widget _buildMiddlePane(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -34,12 +49,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
     if (_activeRoute == 'new_note' || _activeRoute == 'edit_note') {
       return NoteEditorScreen(
         note: _selectedNote,
-        onClose: () {
-          setState(() {
-            _selectedNote = null;
-            _activeRoute = 'all_notes';
-          });
-        },
+        onClose: _returnFromEditor,
         onSave: (title, content, color, tags, isPinned) {
           NotesController.instance.saveNote(
             id: _selectedNote?.id,
@@ -50,10 +60,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
             isPinned: isPinned,
             folderName: _selectedNote?.folderName,
           );
-          setState(() {
-            _selectedNote = null;
-            _activeRoute = 'all_notes';
-          });
+          _returnFromEditor();
         },
       );
     }
@@ -62,6 +69,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
         onNoteSelect: (note) {
           setState(() {
             _selectedNote = note;
+            _previousRoute = _activeRoute;
             _activeRoute = 'edit_note';
           });
         },
@@ -76,6 +84,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
         onNoteSelect: (note) {
           setState(() {
             _selectedNote = note;
+            _previousRoute = _activeRoute;
             _activeRoute = 'edit_note';
           });
         },
@@ -89,6 +98,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
         onNoteSelect: (note) {
           setState(() {
             _selectedNote = note;
+            _previousRoute = _activeRoute;
             _activeRoute = 'edit_note';
           });
         },
@@ -102,6 +112,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
         onNoteSelect: (note) {
           setState(() {
             _selectedNote = note;
+            _previousRoute = _activeRoute;
             _activeRoute = 'edit_note';
           });
         },
@@ -151,6 +162,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                 onNavigate: (route) {
                   setState(() {
                     if (route.startsWith('new_note')) {
+                      _previousRoute = _activeRoute;
                       if (route.contains(':')) {
                         final template = route.split(':')[1];
                         _selectedNote = NotesController.instance
@@ -160,6 +172,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                       }
                       _activeRoute = 'new_note';
                     } else if (route.startsWith('open_note:')) {
+                      _previousRoute = _activeRoute;
                       final noteId = route.split(':')[1];
                       _selectedNote = NotesController.instance.getNoteById(
                         noteId,

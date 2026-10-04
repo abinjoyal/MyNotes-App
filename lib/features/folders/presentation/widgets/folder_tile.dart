@@ -38,15 +38,13 @@ class _FolderTileState extends State<FolderTile> {
 
     // Dynamic styles based on state
     final double scale = _isPressed ? 0.96 : (_isHovered ? 1.02 : 1.0);
-    final cardBg = isDark ? const Color(0xFF1E1E24) : Colors.white;
+    final cardBg = isDark ? AppColors.darkSurface : Colors.white;
     final hoverCardBg = isDark
-        ? const Color(0xFF25252E)
+        ? const Color(0xFF262626)
         : const Color(0xFFF4F6FA);
-    final textColor = isDark ? Colors.white : AppColors.darkText;
-    final borderColor = isDark
-        ? const Color(0xFF333333)
-        : const Color(0xFFEAEAEE);
-    final hoverBorderColor = widget.folder.color.withOpacity(0.5);
+    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
+    final borderColor = isDark ? AppColors.darkBorder : const Color(0xFFEAEAEE);
+    final hoverBorderColor = widget.folder.color.withOpacity(0.6);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -66,23 +64,23 @@ class _FolderTileState extends State<FolderTile> {
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             color: _isHovered ? hoverCardBg : cardBg,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: _isHovered ? hoverBorderColor : borderColor,
-              width: _isHovered ? 1.5 : 1.0,
+              width: 1.0,
             ),
             boxShadow: [
               BoxShadow(
-                color: widget.folder.color.withOpacity(_isHovered ? 0.15 : 0.0),
-                blurRadius: 15,
-                spreadRadius: _isHovered ? 2 : 0,
-                offset: const Offset(0, 4),
+                color: Colors.black.withOpacity(isDark ? 0.2 : 0.02),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-              if (!isDark)
+              if (_isHovered)
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
+                  color: widget.folder.color.withOpacity(0.15),
+                  blurRadius: 12,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 3),
                 ),
             ],
           ),

@@ -1740,11 +1740,18 @@ class _NoteEditorState extends State<NoteEditor> {
                   IconButton(
                     onPressed: widget.onClose,
                     icon: Icon(Icons.arrow_back_rounded, color: textColor),
-                    tooltip: 'Back to Notes',
+                    tooltip:
+                        widget.initialNote?.folderName != null &&
+                            widget.initialNote!.folderName!.isNotEmpty
+                        ? 'Back to ${widget.initialNote!.folderName}'
+                        : 'Back to Notes',
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Notes',
+                    widget.initialNote?.folderName != null &&
+                            widget.initialNote!.folderName!.isNotEmpty
+                        ? widget.initialNote!.folderName!
+                        : 'Notes',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

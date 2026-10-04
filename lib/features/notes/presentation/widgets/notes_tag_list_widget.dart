@@ -53,7 +53,7 @@ class NotesTagListWidget extends StatelessWidget {
                     color: selectedTag == null
                         ? null
                         : inputBg.withOpacity(isDark ? 0.6 : 0.4),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: selectedTag == null
                           ? Colors.transparent
@@ -101,7 +101,7 @@ class NotesTagListWidget extends StatelessWidget {
                       color: isSelected
                           ? null
                           : inputBg.withOpacity(isDark ? 0.6 : 0.4),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isSelected
                             ? Colors.transparent

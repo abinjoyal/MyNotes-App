@@ -38,9 +38,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
     final sidebarBg = isDark
         ? AppColors.darkSidebarBackground
         : AppColors.sidebarBackground;
-    final cardBg = isDark ? AppColors.darkSurface : AppColors.cardBackground;
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
-    final borderColor = isDark ? AppColors.darkBorder : AppColors.border;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
@@ -438,51 +436,14 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
 
                   const SizedBox(height: 12),
 
-                  // Bottom Settings Card
-                  Container(
-                    decoration: BoxDecoration(
-                      color: cardBg,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: borderColor),
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () => _select('settings'),
-                        borderRadius: BorderRadius.circular(12),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: _isCollapsed ? 0 : 14,
-                            vertical: 12,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: _isCollapsed
-                                ? MainAxisAlignment.center
-                                : MainAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.settings_outlined,
-                                color: textColor,
-                                size: 20,
-                              ),
-                              if (!_isCollapsed) ...[
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    'Settings',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: textColor,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                  // Bottom Settings Item
+                  _NavItem(
+                    icon: Icons.settings_outlined,
+                    title: 'Settings',
+                    badgeCount: 0,
+                    isSelected: _selectedRoute == 'settings',
+                    isCollapsed: _isCollapsed,
+                    onTap: () => _select('settings'),
                   ),
                 ],
               ),

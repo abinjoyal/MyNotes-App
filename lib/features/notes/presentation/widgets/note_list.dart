@@ -76,6 +76,38 @@ class NoteList extends StatelessWidget {
         : const Color(0xFF667085);
     final iconCircleBg = isDark ? iconColor.withOpacity(0.2) : bgColor;
 
+    if (activeRoute == 'trash') {
+      return Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 180, left: 24, right: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Your trash is empty',
+                style: TextStyle(
+                  fontSize: 42,
+                  fontWeight: FontWeight.bold,
+                  color: titleColor,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Deleted notes will appear here before being \npermanently removed.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  height: 1.4,
+                  color: subtitleColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 420),

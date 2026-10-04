@@ -108,6 +108,31 @@ class NoteList extends StatelessWidget {
       );
     }
 
+    if (activeRoute == 'folder') {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 38,
+                fontWeight: FontWeight.bold,
+                color: titleColor,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, height: 1.4, color: subtitleColor),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 420),

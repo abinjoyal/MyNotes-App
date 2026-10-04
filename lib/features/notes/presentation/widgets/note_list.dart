@@ -23,40 +23,30 @@ class NoteList extends StatelessWidget {
   static final List<Note> sampleNotes = [];
 
   Widget _buildEmptyState(BuildContext context) {
-    IconData iconData = Icons.note_add_rounded;
     Color iconColor = const Color(0xFF635BFF);
-    Color bgColor = const Color(0xFFEEECFF);
     String title = 'No Notes Found';
     String subtitle =
         'Click "+ New Note" in the sidebar to create your first note.';
     String? buttonText = 'Create New Note';
 
     if (activeRoute == 'pinned') {
-      iconData = Icons.push_pin_rounded;
       iconColor = const Color(0xFF635BFF);
-      bgColor = const Color(0xFFEEECFF);
       title = 'No Pinned Notes Yet';
       subtitle = 'Pin your important notes to keep them at \nyour fingertips.';
       buttonText = null;
     } else if (activeRoute == 'tasks') {
-      iconData = Icons.check_box_rounded;
       iconColor = const Color(0xFF00C853);
-      bgColor = const Color(0xFFE8F8EE);
       title = 'No Tasks Found';
       subtitle =
           'Add checklist items (- [ ]) inside your notes to track tasks here.';
       buttonText = 'Create Task Checklist';
     } else if (activeRoute == 'folder') {
-      iconData = Icons.folder_open_rounded;
       iconColor = const Color(0xFF635BFF);
-      bgColor = const Color(0xFFEEECFF);
       title = 'Folder is Empty';
       subtitle = 'Create a new note in this folder to get started.';
       buttonText = 'Create New Note';
     } else if (activeRoute == 'trash') {
-      iconData = Icons.delete_outline_rounded;
       iconColor = const Color(0xFFFF4B4B);
-      bgColor = const Color(0xFFFFEEEE);
       title = 'Trash is Empty';
       subtitle =
           'Deleted notes will appear here before being permanently removed.';

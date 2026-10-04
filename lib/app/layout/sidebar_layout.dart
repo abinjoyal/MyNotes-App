@@ -428,8 +428,6 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                             ),
                             const SizedBox(height: 20),
                           ],
-
-
                         ],
                       ),
                     ),
@@ -460,130 +458,6 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
     if (widget.onNavigate != null) {
       widget.onNavigate!(route);
     }
-  }
-
-  void _showCreateFolderDialog(BuildContext context) {
-    final controller = TextEditingController();
-    Color selectedColor = const Color(0xFF635BFF);
-    final colors = const [
-      Color(0xFF635BFF),
-      Color(0xFFA259FF),
-      Color(0xFF02569B),
-      Color(0xFF3B82F6),
-      Color(0xFF10B981),
-      Color(0xFFEC4899),
-      Color(0xFFFF9800),
-      Color(0xFF6B7280),
-    ];
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? AppColors.darkSurface : Colors.white;
-    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
-    final inputBg = isDark ? const Color(0xFF262626) : const Color(0xFFF7F8FA);
-    final borderColor = isDark ? AppColors.darkBorder : const Color(0xFFEAEAEE);
-
-    showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setDialogState) => AlertDialog(
-          backgroundColor: bgColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Text(
-            'Create New Folder',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: controller,
-                autofocus: true,
-                style: TextStyle(color: textColor),
-                decoration: InputDecoration(
-                  hintText: 'Folder name (e.g. Design System)',
-                  hintStyle: TextStyle(
-                    color: isDark
-                        ? const Color(0xFF8C98A9)
-                        : const Color(0xFF9CA3AF),
-                  ),
-                  filled: true,
-                  fillColor: inputBg,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: borderColor),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: borderColor),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Folder Color:',
-                style: TextStyle(fontSize: 13, color: Color(0xFF6C757D)),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: colors.map((c) {
-                  final isSelected = selectedColor == c;
-                  return GestureDetector(
-                    onTap: () {
-                      setDialogState(() {
-                        selectedColor = c;
-                      });
-                    },
-                    child: Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: c,
-                        shape: BoxShape.circle,
-                        border: isSelected
-                            ? Border.all(color: textColor, width: 2)
-                            : null,
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (controller.text.trim().isNotEmpty) {
-                  ref
-                      .read(foldersProvider)
-                      .addFolder(controller.text.trim(), selectedColor);
-                  Navigator.of(ctx).pop();
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryPurple,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text('Create Folder'),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
@@ -661,48 +535,6 @@ class _NavItem extends StatelessWidget {
                 ),
               ),
       ),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  final VoidCallback onAddTap;
-  final VoidCallback? onHeaderTap;
-
-  const _SectionHeader({
-    required this.title,
-    required this.onAddTap,
-    this.onHeaderTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        InkWell(
-          onTap: onHeaderTap,
-          borderRadius: BorderRadius.circular(4),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF8C98A9),
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-        ),
-        InkWell(
-          onTap: onAddTap,
-          borderRadius: BorderRadius.circular(4),
-          child: const Icon(Icons.add, size: 16, color: Color(0xFF8C98A9)),
-        ),
-      ],
     );
   }
 }

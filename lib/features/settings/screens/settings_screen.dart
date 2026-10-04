@@ -32,49 +32,26 @@ class SettingsScreen extends StatelessWidget {
           slivers: [
             // Top Header App Bar
             SliverToBoxAdapter(
-              child: Container(
-                padding: const EdgeInsets.all(24.0),
-                decoration: BoxDecoration(
-                  color: colors.cardBg,
-                  border: Border(bottom: BorderSide(color: colors.borderColor)),
-                ),
-                child: Row(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: colors.isDark
-                            ? AppColors.primaryPurple.withOpacity(0.2)
-                            : AppColors.lightLavender,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.settings_rounded,
-                        color: AppColors.primaryPurple,
-                        size: 24,
+                    Text(
+                      'Settings',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: colors.textColor,
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Settings',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: colors.textColor,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Manage app preferences, theme, security & storage',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: colors.secondaryTextColor,
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 4),
+                    Text(
+                      'Manage app preferences, theme, security & storage',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: colors.secondaryTextColor,
+                      ),
                     ),
                   ],
                 ),
@@ -378,7 +355,8 @@ class SettingsScreen extends StatelessWidget {
                           ListenableBuilder(
                             listenable: NotesController.instance,
                             builder: (context, _) {
-                              final count = NotesController.instance.trashedNotesCount;
+                              final count =
+                                  NotesController.instance.trashedNotesCount;
                               return Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -390,7 +368,8 @@ class SettingsScreen extends StatelessWidget {
                                     icon: Icons.delete_outline_rounded,
                                     actionLabel: 'View Trash',
                                     textColor: colors.textColor,
-                                    secondaryTextColor: colors.secondaryTextColor,
+                                    secondaryTextColor:
+                                        colors.secondaryTextColor,
                                     onTap: () {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
@@ -408,14 +387,60 @@ class SettingsScreen extends StatelessWidget {
                                     actionLabel: 'Empty Trash',
                                     isDestructive: true,
                                     textColor: colors.textColor,
-                                    secondaryTextColor: colors.secondaryTextColor,
-                                    onTap: () {
+                                    secondaryTextColor:
+                                        colors.secondaryTextColor,
+                                    onTap: () async {
                                       if (count == 0) {
-                                        _showSnackBar(context, 'Trash bin is already empty');
+                                        _showSnackBar(
+                                          context,
+                                          'Trash bin is already empty',
+                                        );
                                         return;
                                       }
-                                      NotesController.instance.emptyTrash();
-                                      _showSnackBar(context, 'Trash bin cleared!');
+                                      final confirmed = await showDialog<bool>(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              16,
+                                            ),
+                                          ),
+                                          title: const Text('Empty Trash Bin?'),
+                                          content: Text(
+                                            'Are you sure you want to permanently delete $count item${count == 1 ? '' : 's'} from the trash? This action cannot be undone.',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(ctx, false),
+                                              child: const Text('Cancel'),
+                                            ),
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.red,
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              onPressed: () =>
+                                                  Navigator.pop(ctx, true),
+                                              child: const Text('Empty Trash'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+
+                                      if (confirmed == true) {
+                                        NotesController.instance.emptyTrash();
+                                        if (context.mounted) {
+                                          _showSnackBar(
+                                            context,
+                                            'Trash bin cleared!',
+                                          );
+                                        }
+                                      }
                                     },
                                   ),
                                 ],

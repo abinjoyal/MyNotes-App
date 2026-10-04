@@ -429,15 +429,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                             const SizedBox(height: 20),
                           ],
 
-                          // Trash
-                          _NavItem(
-                            icon: AppIcons.trash,
-                            title: 'Trash',
-                            badgeCount: notesController.trashedNotesCount,
-                            isSelected: _selectedRoute == 'trash',
-                            isCollapsed: _isCollapsed,
-                            onTap: () => _select('trash'),
-                          ),
+
                         ],
                       ),
                     ),

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../../../app/theme/app_theme_colors.dart';
-import '../../domain/entities/trash_item.dart';
+import '../../../../core/extensions/date_extensions.dart';
+import '../../../notes/domain/entities/note.dart';
 
 class TrashItemCard extends StatefulWidget {
-  final TrashItem item;
+  final Note note;
   final VoidCallback onRestore;
   final VoidCallback onDelete;
 
   const TrashItemCard({
     super.key,
-    required this.item,
+    required this.note,
     required this.onRestore,
     required this.onDelete,
   });
@@ -38,14 +39,14 @@ class _TrashItemCardState extends State<TrashItemCard> {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _isHovered
-                ? widget.item.note.indicatorColor.withOpacity(0.5)
+                ? widget.note.indicatorColor.withOpacity(0.5)
                 : colors.borderColor,
             width: 1,
           ),
           boxShadow: _isHovered
               ? [
                   BoxShadow(
-                    color: widget.item.note.indicatorColor.withOpacity(0.15),
+                    color: widget.note.indicatorColor.withOpacity(0.15),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -62,14 +63,14 @@ class _TrashItemCardState extends State<TrashItemCard> {
                   width: 12,
                   height: 12,
                   decoration: BoxDecoration(
-                    color: widget.item.note.indicatorColor,
+                    color: widget.note.indicatorColor,
                     shape: BoxShape.circle,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    widget.item.note.title,
+                    widget.note.title.isEmpty ? 'Untitled Note' : widget.note.title,
                     style: TextStyle(
                       color: colors.textColor,
                       fontSize: 16,
@@ -84,7 +85,7 @@ class _TrashItemCardState extends State<TrashItemCard> {
             const SizedBox(height: 8),
             Expanded(
               child: Text(
-                widget.item.note.content,
+                widget.note.content.isEmpty ? 'No content' : widget.note.content,
                 style: TextStyle(
                   color: colors.secondaryTextColor,
                   fontSize: 14,
@@ -102,7 +103,7 @@ class _TrashItemCardState extends State<TrashItemCard> {
               children: [
                 Expanded(
                   child: Text(
-                    'Deleted: ${widget.item.deletedAt}',
+                    formatRelativeTime(widget.note.updatedAt),
                     style: TextStyle(
                       color: colors.secondaryTextColor,
                       fontSize: 12,

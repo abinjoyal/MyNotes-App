@@ -7,6 +7,7 @@ import '../../../app/theme/app_theme_colors.dart';
 import '../../../core/services/storage_location_service.dart';
 import '../../notes/presentation/controllers/notes_controller.dart';
 import '../../pin/presentation/screens/passcode_lock_screen.dart';
+import '../../trash/presentation/screens/trash_screen.dart';
 import '../controllers/settings_controller.dart';
 import '../widgets/app_info_card.dart';
 import '../widgets/setting_action_tile.dart';
@@ -374,18 +375,51 @@ class SettingsScreen extends StatelessWidget {
                             onTap: () => _onExportZipClick(context),
                           ),
                           Divider(height: 1, color: colors.borderColor),
-                          SettingActionTile(
-                            title: 'Clear Trash Bin',
-                            subtitle:
-                                'Permanently remove all items in trash right now',
-                            icon: Icons.delete_forever_outlined,
-                            actionLabel: 'Empty Trash',
-                            isDestructive: true,
-                            textColor: colors.textColor,
-                            secondaryTextColor: colors.secondaryTextColor,
-                            onTap: () {
-                              NotesController.instance.emptyTrash();
-                              _showSnackBar(context, 'Trash bin cleared!');
+                          ListenableBuilder(
+                            listenable: NotesController.instance,
+                            builder: (context, _) {
+                              final count = NotesController.instance.trashedNotesCount;
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SettingActionTile(
+                                    title: 'Trash Bin',
+                                    subtitle: count == 0
+                                        ? 'No items currently in trash'
+                                        : '$count deleted item${count == 1 ? '' : 's'} waiting for recovery',
+                                    icon: Icons.delete_outline_rounded,
+                                    actionLabel: 'View Trash',
+                                    textColor: colors.textColor,
+                                    secondaryTextColor: colors.secondaryTextColor,
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => const TrashScreen(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  Divider(height: 1, color: colors.borderColor),
+                                  SettingActionTile(
+                                    title: 'Clear Trash Bin',
+                                    subtitle:
+                                        'Permanently remove all items in trash right now',
+                                    icon: Icons.delete_forever_outlined,
+                                    actionLabel: 'Empty Trash',
+                                    isDestructive: true,
+                                    textColor: colors.textColor,
+                                    secondaryTextColor: colors.secondaryTextColor,
+                                    onTap: () {
+                                      if (count == 0) {
+                                        _showSnackBar(context, 'Trash bin is already empty');
+                                        return;
+                                      }
+                                      NotesController.instance.emptyTrash();
+                                      _showSnackBar(context, 'Trash bin cleared!');
+                                    },
+                                  ),
+                                ],
+                              );
                             },
                           ),
                         ],

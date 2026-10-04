@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mynotes/app/theme/app_theme_colors.dart';
-import 'package:mynotes/features/trash/presentation/controllers/trash_provider.dart';
+import 'package:mynotes/features/notes/presentation/controllers/notes_provider.dart';
 import 'package:mynotes/features/trash/presentation/widgets/trash_item_card.dart';
 
 class TrashScreen extends ConsumerWidget {
@@ -9,7 +9,8 @@ class TrashScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final trashController = ref.watch(trashProvider);
+    final notesController = ref.watch(notesProvider);
+    final trashedNotes = notesController.trashedNotes;
     final colors = context.appColors;
 
     return Scaffold(
@@ -23,31 +24,45 @@ class TrashScreen extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
                   children: [
-                    Text(
-                      'Trash',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w700,
-                        color: colors.textColor,
+                    if (Navigator.canPop(context)) ...[
+                      IconButton(
+                        icon: Icon(
+                          Icons.arrow_back_rounded,
+                          color: colors.textColor,
+                        ),
+                        onPressed: () => Navigator.pop(context),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '${trashController.items.length} items in trash',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: colors.secondaryTextColor,
-                      ),
+                      const SizedBox(width: 12),
+                    ],
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Trash',
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w700,
+                            color: colors.textColor,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '${trashedNotes.length} item${trashedNotes.length == 1 ? '' : 's'} in trash',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: colors.secondaryTextColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                if (trashController.items.isNotEmpty)
+                if (trashedNotes.isNotEmpty)
                   ElevatedButton.icon(
                     onPressed: () =>
-                        _confirmEmptyTrash(context, trashController),
+                        _confirmEmptyTrash(context, notesController),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent.withOpacity(0.1),
                       foregroundColor: Colors.redAccent,
@@ -69,9 +84,7 @@ class TrashScreen extends ConsumerWidget {
 
           // Content
           Expanded(
-            child: trashController.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : trashController.items.isEmpty
+            child: trashedNotes.isEmpty
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -105,18 +118,15 @@ class TrashScreen extends ConsumerWidget {
                           crossAxisSpacing: 24,
                           mainAxisSpacing: 24,
                         ),
-                    itemCount: trashController.items.length,
+                    itemCount: trashedNotes.length,
                     itemBuilder: (context, index) {
-                      final item = trashController.items[index];
+                      final note = trashedNotes[index];
                       return TrashItemCard(
-                        item: item,
+                        note: note,
                         onRestore: () =>
-                            trashController.restoreNote(item.note.id),
-                        onDelete: () => _confirmDelete(
-                          context,
-                          trashController,
-                          item.note.id,
-                        ),
+                            notesController.restoreFromTrash(note.id),
+                        onDelete: () =>
+                            _confirmDelete(context, notesController, note.id),
                       );
                     },
                   ),
@@ -128,7 +138,7 @@ class TrashScreen extends ConsumerWidget {
 
   Future<void> _confirmDelete(
     BuildContext context,
-    trashController,
+    notesController,
     String id,
   ) async {
     final confirmed = await showDialog<bool>(
@@ -151,11 +161,11 @@ class TrashScreen extends ConsumerWidget {
     );
 
     if (confirmed == true) {
-      trashController.deletePermanently(id);
+      notesController.permanentlyDeleteFromTrash(id);
     }
   }
 
-  Future<void> _confirmEmptyTrash(BuildContext context, trashController) async {
+  Future<void> _confirmEmptyTrash(BuildContext context, notesController) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -178,7 +188,7 @@ class TrashScreen extends ConsumerWidget {
     );
 
     if (confirmed == true) {
-      trashController.emptyTrash();
+      notesController.emptyTrash();
     }
   }
 }

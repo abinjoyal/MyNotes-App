@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/constants/app_colors.dart';
+import '../../../../app/theme/app_theme_colors.dart';
 import '../../domain/entities/note.dart';
 import '../controllers/notes_provider.dart';
 import '../widgets/note_list.dart';
@@ -107,43 +108,22 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
     final textColor = isDark ? AppColors.darkTextPrimary : AppColors.darkText;
 
     if (widget.activeRoute == 'tasks') {
-      return Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isDark
-                ? [const Color(0xFF1A1A24), const Color(0xFF121212)]
-                : [AppColors.softGray, AppColors.cardBackground],
-          ),
-        ),
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 16.0,
-              ),
-              child: TasksChecklistView(onNoteSelect: widget.onNoteSelect),
+      return Scaffold(
+        backgroundColor: context.appColors.scaffoldBg,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 16.0,
             ),
+            child: TasksChecklistView(onNoteSelect: widget.onNoteSelect),
           ),
         ),
       );
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [const Color(0xFF1A1A24), const Color(0xFF121212)]
-              : [AppColors.softGray, AppColors.cardBackground],
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
+    return Scaffold(
+      backgroundColor: context.appColors.scaffoldBg,
         floatingActionButton: widget.activeRoute != 'trash'
             ? Container(
                 decoration: BoxDecoration(
@@ -339,7 +319,6 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

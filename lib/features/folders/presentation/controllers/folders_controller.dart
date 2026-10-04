@@ -121,4 +121,12 @@ class FoldersController extends ChangeNotifier {
       await repository.toggleFolderLock(name, isLocked);
     }
   }
+
+  bool isFolderLocked(String folderName) {
+    final folder = _folders.firstWhere(
+      (f) => f.name.toLowerCase() == folderName.toLowerCase(),
+      orElse: () => const Folder(id: '', name: '', color: Colors.grey),
+    );
+    return folder.isLocked;
+  }
 }

@@ -3,6 +3,7 @@ import 'package:mynotes/features/notes/data/services/version_history_service.dar
 import '../../domain/entities/note.dart';
 import '../../../../core/database/database.dart';
 import '../../../../core/services/storage_location_service.dart';
+import '../../../folders/presentation/controllers/folders_controller.dart';
 
 class NotesController extends ChangeNotifier {
   static final NotesController instance = NotesController._internal();
@@ -55,10 +56,23 @@ class NotesController extends ChangeNotifier {
 
   List<Note> get pinnedNotes => _notes.where((note) => note.isPinned).toList();
 
+  List<Note> get lockedNotes {
+    return _notes.where((note) {
+      if (note.isLocked == true) return true;
+      if (note.folderName != null && note.folderName!.isNotEmpty) {
+        if (FoldersController.instance.isFolderLocked(note.folderName!)) {
+          return true;
+        }
+      }
+      return false;
+    }).toList();
+  }
+
   int get totalNotesCount => _notes.length;
   int get regularNotesCount => regularNotes.length;
   int get taskChecklistNotesCount => taskChecklistNotes.length;
   int get pinnedNotesCount => pinnedNotes.length;
+  int get lockedNotesCount => lockedNotes.length;
   int get trashedNotesCount => _trashedNotes.length;
 
   List<String> get allTags {
@@ -237,6 +251,16 @@ class NotesController extends ChangeNotifier {
     final index = _notes.indexWhere((note) => note.id == id);
     if (index != -1) {
       _notes[index] = _notes[index].copyWith(isPinned: !_notes[index].isPinned);
+      notifyListeners();
+    }
+  }
+
+  void toggleNoteLock(String id) {
+    final index = _notes.indexWhere((note) => note.id == id);
+    if (index != -1) {
+      final updated = _notes[index].copyWith(isLocked: !_notes[index].isLocked);
+      _notes[index] = updated;
+      AppDatabase.instance.saveNote(updated);
       notifyListeners();
     }
   }

@@ -36,10 +36,17 @@ class AppDatabase {
 
     final db = await openDatabase(path, version: 1, onCreate: _createDB);
 
-    // Migration for is_locked column
+    // Migration for is_locked columns
     try {
       await db.execute(
         'ALTER TABLE folders ADD COLUMN is_locked INTEGER NOT NULL DEFAULT 0',
+      );
+    } catch (e) {
+      // Column might already exist, ignore error
+    }
+    try {
+      await db.execute(
+        'ALTER TABLE notes ADD COLUMN is_locked INTEGER NOT NULL DEFAULT 0',
       );
     } catch (e) {
       // Column might already exist, ignore error

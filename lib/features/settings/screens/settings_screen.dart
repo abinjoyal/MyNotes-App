@@ -7,6 +7,7 @@ import '../../../app/theme/app_theme_colors.dart';
 import '../../../core/services/storage_location_service.dart';
 import '../../notes/presentation/controllers/notes_controller.dart';
 import '../../pin/presentation/screens/passcode_lock_screen.dart';
+import '../../setup/presentation/screens/locked_notes_screen.dart';
 import '../../trash/presentation/screens/trash_screen.dart';
 import '../controllers/settings_controller.dart';
 import '../widgets/app_info_card.dart';
@@ -224,6 +225,31 @@ class SettingsScreen extends StatelessWidget {
                                   : 'Biometric Auth Disabled',
                             );
                           }
+                        },
+                      ),
+                      Divider(height: 1, color: colors.borderColor),
+                      SettingActionTile(
+                        title: 'Locked Notes',
+                        subtitle: 'View and manage passcode-protected notes',
+                        icon: Icons.lock_outline_rounded,
+                        actionLabel: 'View Locked',
+                        textColor: colors.textColor,
+                        secondaryTextColor: colors.secondaryTextColor,
+                        onTap: () async {
+                          if (controller.enablePinLock) {
+                            final unlocked = await Navigator.of(context).push<bool>(
+                              MaterialPageRoute(
+                                builder: (_) => const PasscodeLockScreen(),
+                              ),
+                            );
+                            if (unlocked != true) return;
+                          }
+                          if (!context.mounted) return;
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const LockedNotesScreen(),
+                            ),
+                          );
                         },
                       ),
                     ],

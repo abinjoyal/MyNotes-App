@@ -8,6 +8,7 @@ class Note {
   final List<String> tags;
   final String updatedAt;
   final bool isPinned;
+  final bool isLocked;
   final String? folderName;
 
   const Note({
@@ -18,6 +19,7 @@ class Note {
     required this.tags,
     required this.updatedAt,
     this.isPinned = false,
+    this.isLocked = false,
     this.folderName,
   });
 
@@ -29,6 +31,7 @@ class Note {
     List<String>? tags,
     String? updatedAt,
     bool? isPinned,
+    bool? isLocked,
     String? folderName,
   }) {
     return Note(
@@ -39,6 +42,7 @@ class Note {
       tags: tags ?? this.tags,
       updatedAt: updatedAt ?? this.updatedAt,
       isPinned: isPinned ?? this.isPinned,
+      isLocked: isLocked ?? this.isLocked,
       folderName: folderName ?? this.folderName,
     );
   }

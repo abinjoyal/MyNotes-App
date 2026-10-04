@@ -12,6 +12,7 @@ class NotesTable {
   static const String colTags = 'tags';
   static const String colUpdatedAt = 'updated_at';
   static const String colIsPinned = 'is_pinned';
+  static const String colIsLocked = 'is_locked';
   static const String colFolderName = 'folder_name';
   static const String colIsTrashed = 'is_trashed';
 
@@ -25,6 +26,7 @@ class NotesTable {
       $colTags TEXT,
       $colUpdatedAt TEXT NOT NULL,
       $colIsPinned INTEGER NOT NULL DEFAULT 0,
+      $colIsLocked INTEGER NOT NULL DEFAULT 0,
       $colFolderName TEXT,
       $colIsTrashed INTEGER NOT NULL DEFAULT 0
     );
@@ -39,6 +41,7 @@ class NotesTable {
       colTags: jsonEncode(note.tags),
       colUpdatedAt: note.updatedAt,
       colIsPinned: note.isPinned ? 1 : 0,
+      colIsLocked: note.isLocked ? 1 : 0,
       colFolderName: note.folderName,
     };
   }
@@ -66,6 +69,7 @@ class NotesTable {
       tags: parsedTags,
       updatedAt: map[colUpdatedAt]?.toString() ?? 'Just now',
       isPinned: map[colIsPinned] == 1 || map[colIsPinned] == true,
+      isLocked: map[colIsLocked] == 1 || map[colIsLocked] == true,
       folderName: map[colFolderName]?.toString(),
     );
   }

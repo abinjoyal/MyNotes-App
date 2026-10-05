@@ -33,7 +33,9 @@ class AppThemeColors {
       secondaryTextColor: isDark
           ? const Color(0xFF98A2B3)
           : AppColors.secondaryText,
-      dropdownBg: isDark ? const Color(0xFF2A2A30) : AppColors.selectedBackground,
+      dropdownBg: isDark
+          ? const Color(0xFF2A2A30)
+          : AppColors.selectedBackground,
     );
   }
 }

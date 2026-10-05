@@ -237,11 +237,12 @@ class SettingsScreen extends StatelessWidget {
                         secondaryTextColor: colors.secondaryTextColor,
                         onTap: () async {
                           if (controller.enablePinLock) {
-                            final unlocked = await Navigator.of(context).push<bool>(
-                              MaterialPageRoute(
-                                builder: (_) => const PasscodeLockScreen(),
-                              ),
-                            );
+                            final unlocked = await Navigator.of(context)
+                                .push<bool>(
+                                  MaterialPageRoute(
+                                    builder: (_) => const PasscodeLockScreen(),
+                                  ),
+                                );
                             if (unlocked != true) return;
                           }
                           if (!context.mounted) return;
@@ -517,10 +518,15 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  static bool _isPickingFolder = false;
+
   static Future<void> _onChangeStorageClick(
     BuildContext context,
     String currentPath,
   ) async {
+    if (_isPickingFolder) return;
+    _isPickingFolder = true;
+
     try {
       String? initialDir = currentPath;
       if (initialDir.isNotEmpty && !Directory(initialDir).existsSync()) {
@@ -543,6 +549,8 @@ class SettingsScreen extends StatelessWidget {
       _showMigrationDialog(context, currentPath, selectedDirectory);
     } catch (e) {
       _showSnackBar(context, 'Could not open folder picker: $e');
+    } finally {
+      _isPickingFolder = false;
     }
   }
 

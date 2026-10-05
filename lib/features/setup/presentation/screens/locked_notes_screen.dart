@@ -167,10 +167,6 @@ class _LockedNotesScreenState extends State<LockedNotesScreen> {
     AppThemeColors colors,
     int index,
   ) {
-    final hoverBg = colors.isDark
-        ? const Color(0xFF22222E)
-        : const Color(0xFFF8F9FA);
-
     return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(

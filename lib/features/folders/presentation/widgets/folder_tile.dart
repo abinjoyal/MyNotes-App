@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../app/constants/app_colors.dart';
 import '../../../../app/theme/app_theme_colors.dart';
 import '../../../notes/domain/entities/note.dart';
 import '../../domain/entities/folder.dart';
@@ -79,7 +78,7 @@ class _FolderTileState extends State<FolderTile> {
           curve: Curves.easeOutCubic,
           transform: Matrix4.identity()..scale(scale),
           transformAlignment: Alignment.center,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             color: _isHovered ? hoverCardBg : cardBg,
             borderRadius: BorderRadius.circular(16),
@@ -112,7 +111,7 @@ class _FolderTileState extends State<FolderTile> {
                 children: [
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(9),
                     decoration: BoxDecoration(
                       color: widget.folder.color.withOpacity(
                         _isHovered ? 0.25 : 0.15,
@@ -130,10 +129,10 @@ class _FolderTileState extends State<FolderTile> {
                     child: Icon(
                       Icons.folder_rounded,
                       color: widget.folder.color,
-                      size: 26,
+                      size: 24,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +143,7 @@ class _FolderTileState extends State<FolderTile> {
                               child: Text(
                                 widget.folder.name,
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w700,
                                   color: textColor,
                                   letterSpacing: 0.2,
@@ -260,11 +259,11 @@ class _FolderTileState extends State<FolderTile> {
                     ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               // 2. Note Items Preview List
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isDark
                       ? Colors.black.withOpacity(0.22)
@@ -281,7 +280,7 @@ class _FolderTileState extends State<FolderTile> {
                     ...widget.previewNotes.take(2).map((note) {
                       final titleText = note.title.trim().isEmpty ? 'Untitled Note' : note.title;
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 6.0),
+                        padding: const EdgeInsets.only(bottom: 4.0),
                         child: InkWell(
                           onTap: () {
                             if (widget.onNoteSelect != null) {
@@ -295,15 +294,15 @@ class _FolderTileState extends State<FolderTile> {
                             children: [
                               Icon(
                                 Icons.description_outlined,
-                                size: 15,
+                                size: 14,
                                 color: subtitleColor,
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
                                   titleText,
                                   style: TextStyle(
-                                    fontSize: 13,
+                                    fontSize: 12,
                                     color: textColor.withOpacity(0.9),
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -325,14 +324,14 @@ class _FolderTileState extends State<FolderTile> {
                           children: [
                             Icon(
                               Icons.description_outlined,
-                              size: 15,
+                              size: 14,
                               color: subtitleColor.withOpacity(0.7),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 6),
                             Text(
                               'Add more notes...',
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: 12,
                                 color: subtitleColor.withOpacity(0.7),
                                 fontStyle: FontStyle.italic,
                               ),
@@ -344,7 +343,7 @@ class _FolderTileState extends State<FolderTile> {
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               // 3. Footer (Updated Time + Tag Pills)
               Row(
@@ -357,7 +356,7 @@ class _FolderTileState extends State<FolderTile> {
                         size: 13,
                         color: subtitleColor,
                       ),
-                      const SizedBox(width: 5),
+                      const SizedBox(width: 4),
                       Text(
                         'Updated recently',
                         style: TextStyle(
@@ -368,7 +367,7 @@ class _FolderTileState extends State<FolderTile> {
                     ],
                   ),
                   Wrap(
-                    spacing: 6,
+                    spacing: 4,
                     children: tags.take(2).map((tag) {
                       return Container(
                         padding: const EdgeInsets.symmetric(

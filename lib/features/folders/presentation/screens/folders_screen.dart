@@ -193,10 +193,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                       const SizedBox(height: 4),
                       Text(
                         'Organize and browse your notes by project folders.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: hintColor,
-                        ),
+                        style: TextStyle(fontSize: 13, color: hintColor),
                       ),
                     ],
                   ),
@@ -252,7 +249,9 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                             size: 20,
                           ),
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                          ),
                         ),
                       ),
                     ),
@@ -338,16 +337,14 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                             setState(() => _selectedSort = val);
                           }
                         },
-                        items: [
-                          'Recently Updated',
-                          'Name (A-Z)',
-                          'Note Count',
-                        ].map((sortOption) {
-                          return DropdownMenuItem<String>(
-                            value: sortOption,
-                            child: Text('Sort: $sortOption'),
-                          );
-                        }).toList(),
+                        items: ['Recently Updated', 'Name (A-Z)', 'Note Count']
+                            .map((sortOption) {
+                              return DropdownMenuItem<String>(
+                                value: sortOption,
+                                child: Text('Sort: $sortOption'),
+                              );
+                            })
+                            .toList(),
                       ),
                     ),
                   ),
@@ -368,13 +365,15 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                       )
                     : LayoutBuilder(
                         builder: (context, constraints) {
-                          int crossAxisCount = 3;
-                          if (constraints.maxWidth < 650) {
+                          int crossAxisCount = 4;
+                          if (constraints.maxWidth < 600) {
                             crossAxisCount = 1;
-                          } else if (constraints.maxWidth < 980) {
+                          } else if (constraints.maxWidth < 900) {
                             crossAxisCount = 2;
-                          } else {
+                          } else if (constraints.maxWidth < 1200) {
                             crossAxisCount = 3;
+                          } else {
+                            crossAxisCount = 4;
                           }
 
                           if (!_isGridView) {
@@ -383,7 +382,8 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                               itemCount: filteredFolders.length,
                               itemBuilder: (context, index) {
                                 final folder = filteredFolders[index];
-                                final folderNotes = notesController.getNotesByFolder(folder.name);
+                                final folderNotes = notesController
+                                    .getNotesByFolder(folder.name);
                                 return Container(
                                   margin: const EdgeInsets.only(bottom: 14),
                                   child: FolderTile(
@@ -391,9 +391,13 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                                     count: folderNotes.length,
                                     previewNotes: folderNotes,
                                     onNoteSelect: widget.onNoteSelect,
-                                    onToggleLock: () => _handleLockToggle(folder, foldersController),
+                                    onToggleLock: () => _handleLockToggle(
+                                      folder,
+                                      foldersController,
+                                    ),
                                     onTap: () => _openFolderDetail(folder),
-                                    onAddNote: () => _createNoteInFolder(folder.name),
+                                    onAddNote: () =>
+                                        _createNoteInFolder(folder.name),
                                     onDelete: () => _confirmDeleteFolder(
                                       folder.name,
                                       foldersController,
@@ -407,25 +411,31 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
 
                           return GridView.builder(
                             physics: const BouncingScrollPhysics(),
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: crossAxisCount,
-                              mainAxisExtent: 220,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
-                            ),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  mainAxisExtent: 235,
+                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 16,
+                                ),
                             itemCount: filteredFolders.length,
                             itemBuilder: (context, index) {
                               final folder = filteredFolders[index];
-                              final folderNotes = notesController.getNotesByFolder(folder.name);
+                              final folderNotes = notesController
+                                  .getNotesByFolder(folder.name);
 
                               return FolderTile(
                                     folder: folder,
                                     count: folderNotes.length,
                                     previewNotes: folderNotes,
                                     onNoteSelect: widget.onNoteSelect,
-                                    onToggleLock: () => _handleLockToggle(folder, foldersController),
+                                    onToggleLock: () => _handleLockToggle(
+                                      folder,
+                                      foldersController,
+                                    ),
                                     onTap: () => _openFolderDetail(folder),
-                                    onAddNote: () => _createNoteInFolder(folder.name),
+                                    onAddNote: () =>
+                                        _createNoteInFolder(folder.name),
                                     onDelete: () => _confirmDeleteFolder(
                                       folder.name,
                                       foldersController,
@@ -433,7 +443,10 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                                     ),
                                   )
                                   .animate()
-                                  .fade(duration: 300.ms, delay: (index * 40).ms)
+                                  .fade(
+                                    duration: 300.ms,
+                                    delay: (index * 40).ms,
+                                  )
                                   .scaleXY(
                                     begin: 0.95,
                                     duration: 300.ms,
@@ -451,34 +464,27 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
     );
   }
 
-  void _handleLockToggle(Folder folder, FoldersController foldersController) async {
+  void _handleLockToggle(
+    Folder folder,
+    FoldersController foldersController,
+  ) async {
     if (folder.isLocked) {
       final success = await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => const PasscodeLockScreen(
-            isSetupMode: false,
-          ),
+          builder: (_) => const PasscodeLockScreen(isSetupMode: false),
         ),
       );
       if (success == true) {
-        foldersController.toggleFolderLock(
-          folder.name,
-          false,
-        );
+        foldersController.toggleFolderLock(folder.name, false);
       }
     } else {
       if (SettingsController.instance.hasPinCode) {
-        foldersController.toggleFolderLock(
-          folder.name,
-          true,
-        );
+        foldersController.toggleFolderLock(folder.name, true);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-              'Please set up a Passcode in Settings first.',
-            ),
+            content: Text('Please set up a Passcode in Settings first.'),
           ),
         );
       }
@@ -490,9 +496,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
       final success = await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => const PasscodeLockScreen(
-            isSetupMode: false,
-          ),
+          builder: (_) => const PasscodeLockScreen(isSetupMode: false),
         ),
       );
       if (success != true) return;

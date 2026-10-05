@@ -240,7 +240,11 @@ class _FolderTileState extends State<FolderTile> {
                                 if (val == 'lock' && widget.onToggleLock != null) {
                                   widget.onToggleLock!();
                                 } else if (val == 'add') {
-                                  widget.onAddNote();
+                                  if (widget.folder.isLocked) {
+                                    widget.onTap();
+                                  } else {
+                                    widget.onAddNote();
+                                  }
                                 } else if (val == 'delete') {
                                   widget.onDelete();
                                 }
@@ -303,7 +307,13 @@ class _FolderTileState extends State<FolderTile> {
                         ),
                         child: widget.previewNotes.isEmpty
                             ? InkWell(
-                                onTap: widget.onAddNote,
+                                onTap: () {
+                                  if (widget.folder.isLocked) {
+                                    widget.onTap();
+                                  } else {
+                                    widget.onAddNote();
+                                  }
+                                },
                                 borderRadius: BorderRadius.circular(6),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 4.0),
@@ -343,7 +353,9 @@ class _FolderTileState extends State<FolderTile> {
                                         padding: const EdgeInsets.only(bottom: 4.0),
                                         child: InkWell(
                                           onTap: () {
-                                            if (widget.onNoteSelect != null) {
+                                            if (widget.folder.isLocked) {
+                                              widget.onTap();
+                                            } else if (widget.onNoteSelect != null) {
                                               widget.onNoteSelect!(note);
                                             } else {
                                               widget.onTap();
@@ -399,7 +411,13 @@ class _FolderTileState extends State<FolderTile> {
                                     );
                                   }),
                                   InkWell(
-                                    onTap: widget.onAddNote,
+                                    onTap: () {
+                                      if (widget.folder.isLocked) {
+                                        widget.onTap();
+                                      } else {
+                                        widget.onAddNote();
+                                      }
+                                    },
                                     borderRadius: BorderRadius.circular(6),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mynotes/features/notes/data/services/version_history_service.dart';
 import '../../../../app/constants/app_colors.dart';
@@ -449,6 +450,8 @@ class _NoteEditorState extends State<NoteEditor> {
   bool _isPinned = false;
   String _previousText = '';
   final ScreenshotController _screenshotController = ScreenshotController();
+  Timer? _autoSaveTimer;
+  String _saveStatus = '';
 
   // Active formatting state for toolbar highlights
   int _activeHeading = 0;
@@ -485,6 +488,8 @@ class _NoteEditorState extends State<NoteEditor> {
     );
     _previousText = _contentController.text;
     _contentController.addListener(_onContentChanged);
+    _titleController.addListener(_onTextChangedForAutoSave);
+    _contentController.addListener(_onTextChangedForAutoSave);
     _selectedColor =
         widget.initialNote?.indicatorColor ?? const Color(0xFF635BFF);
     _tags = List.from(widget.initialNote?.tags ?? ['#new']);
@@ -504,6 +509,10 @@ class _NoteEditorState extends State<NoteEditor> {
 
   @override
   void dispose() {
+    _autoSaveTimer?.cancel();
+    _performAutoSave(isDisposing: true);
+    _titleController.removeListener(_onTextChangedForAutoSave);
+    _contentController.removeListener(_onTextChangedForAutoSave);
     _contentController.removeListener(_onContentChanged);
     SettingsController.instance.removeListener(_onSettingsChanged);
     _titleController.dispose();
@@ -513,6 +522,62 @@ class _NoteEditorState extends State<NoteEditor> {
 
   void _onSettingsChanged() {
     if (mounted) setState(() {});
+  }
+
+  void _onTextChangedForAutoSave() {
+    _autoSaveTimer?.cancel();
+    if (_saveStatus != 'Saving...' && mounted) {
+      setState(() {
+        _saveStatus = 'Saving...';
+      });
+    }
+    _autoSaveTimer = Timer(const Duration(milliseconds: 700), _performAutoSave);
+  }
+
+  void _performAutoSave({bool isDisposing = false}) {
+    final title = _titleController.text.trim();
+    final content = _contentController.text.trim();
+
+    // Do NOT auto-save if both title & content are empty
+    if (title.isEmpty && content.isEmpty) {
+      if (mounted && !isDisposing) {
+        setState(() {
+          _saveStatus = '';
+        });
+      }
+      return;
+    }
+
+    if (widget.onSave != null) {
+      if (isDisposing || !mounted) {
+        final onSaveCallback = widget.onSave!;
+        final selectedColor = _selectedColor;
+        final tags = List<String>.from(_tags);
+        final isPinned = _isPinned;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          onSaveCallback(
+            title,
+            content,
+            selectedColor,
+            tags,
+            isPinned,
+          );
+        });
+      } else {
+        widget.onSave!(
+          title,
+          content,
+          _selectedColor,
+          _tags,
+          _isPinned,
+        );
+        if (mounted) {
+          setState(() {
+            _saveStatus = 'Saved';
+          });
+        }
+      }
+    }
   }
 
   void _onContentChanged() {
@@ -1737,15 +1802,21 @@ class _NoteEditorState extends State<NoteEditor> {
             children: [
               Row(
                 children: [
-                  if (widget.onClose != null) ...[
+                  if (widget.onClose != null || Navigator.canPop(context)) ...[
                     IconButton(
-                      onPressed: widget.onClose,
+                      onPressed: () {
+                        if (widget.onClose != null) {
+                          widget.onClose!();
+                        } else if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        }
+                      },
                       icon: Icon(Icons.arrow_back_rounded, color: textColor),
                       tooltip:
                           widget.initialNote?.folderName != null &&
                               widget.initialNote!.folderName!.isNotEmpty
                           ? 'Back to ${widget.initialNote!.folderName}'
-                          : 'Back to Notes',
+                          : 'Back',
                     ),
                     const SizedBox(width: 8),
                   ],
@@ -1796,7 +1867,40 @@ class _NoteEditorState extends State<NoteEditor> {
                       });
                     },
                   ),
-                  const SizedBox(width: 6),
+                  // Auto-Save Status Indicator
+                  if (_saveStatus.isNotEmpty) ...[
+                    Row(
+                      children: [
+                        if (_saveStatus == 'Saving...')
+                          const SizedBox(
+                            width: 12,
+                            height: 12,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.primaryPurple,
+                            ),
+                          )
+                        else
+                          const Icon(
+                            Icons.check_circle_outline_rounded,
+                            size: 14,
+                            color: Color(0xFF00C853),
+                          ),
+                        const SizedBox(width: 4),
+                        Text(
+                          _saveStatus,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: _saveStatus == 'Saving...'
+                                ? hintColor
+                                : const Color(0xFF00C853),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 10),
+                  ],
 
                   // Save Button
                   ElevatedButton.icon(

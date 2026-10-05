@@ -6,6 +6,7 @@ import 'package:mynotes/core/extensions/date_extensions.dart';
 import 'package:mynotes/features/folders/presentation/controllers/folders_controller.dart';
 import 'package:mynotes/features/notes/domain/entities/note.dart';
 import 'package:mynotes/features/notes/presentation/controllers/notes_controller.dart';
+import 'package:mynotes/features/notes/presentation/screens/note_editor_screen.dart';
 
 class LockedNotesScreen extends StatefulWidget {
   final Function(Note)? onNoteSelect;
@@ -18,6 +19,46 @@ class LockedNotesScreen extends StatefulWidget {
 
 class _LockedNotesScreenState extends State<LockedNotesScreen> {
   final NotesController _controller = NotesController.instance;
+
+  void _openNoteEditor(BuildContext context, Note note) {
+    if (widget.onNoteSelect != null) {
+      widget.onNoteSelect!(note);
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => NoteEditorScreen(
+            note: note,
+            onSave: (title, content, color, tags, isPinned) {
+              _controller.saveNote(
+                id: note.id,
+                title: title,
+                content: content,
+                indicatorColor: color,
+                tags: tags,
+                isPinned: isPinned,
+                isLocked: true,
+                folderName: note.folderName,
+              );
+            },
+          ),
+        ),
+      );
+    }
+  }
+
+  void _createLockedNote(BuildContext context) {
+    final newLockedNote = Note(
+      id: '',
+      title: '',
+      content: '',
+      indicatorColor: AppColors.primaryPurple,
+      tags: ['#locked'],
+      updatedAt: 'Just now',
+      isLocked: true,
+    );
+    _openNoteEditor(context, newLockedNote);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +120,23 @@ class _LockedNotesScreenState extends State<LockedNotesScreen> {
                       ],
                     ),
                   ),
+                  ElevatedButton.icon(
+                    onPressed: () => _createLockedNote(context),
+                    icon: const Icon(Icons.add_rounded, size: 18),
+                    label: const Text('New Locked Note'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryPurple,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      elevation: 0,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -129,6 +187,24 @@ class _LockedNotesScreenState extends State<LockedNotesScreen> {
                               color: colors.secondaryTextColor,
                             ),
                           ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            onPressed: () => _createLockedNote(context),
+                            icon: const Icon(Icons.add_rounded, size: 18),
+                            label: const Text('Create First Locked Note'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryPurple,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 0,
+                            ),
+                          ),
                         ],
                       ),
                     );
@@ -167,7 +243,12 @@ class _LockedNotesScreenState extends State<LockedNotesScreen> {
     AppThemeColors colors,
     int index,
   ) {
-    return Container(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openNoteEditor(context, note),
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: colors.cardBg,
@@ -281,7 +362,9 @@ class _LockedNotesScreenState extends State<LockedNotesScreen> {
               ),
             ],
           ),
-        )
+        ),
+      ),
+    )
         .animate()
         .fade(duration: 200.ms, delay: (index * 40).ms)
         .slideY(begin: 0.05);

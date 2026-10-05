@@ -30,32 +30,77 @@ class TasksFocusTimerCard extends StatelessWidget {
     BuildContext context,
     String label,
     int seconds,
-    bool isDark,
+    AppThemeColors colors,
   ) {
     final isSelected = timerTotalSeconds == seconds;
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: isTimerRunning
-          ? null
-          : (selected) {
-              if (selected) {
-                onResetTimer(seconds);
-              }
-            },
-      selectedColor: AppColors.primaryPurple,
-      backgroundColor: isDark
-          ? const Color(0xFF262632)
-          : const Color(0xFFEAEAEE),
-      labelStyle: TextStyle(
-        fontSize: 12,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        color: isSelected
-            ? Colors.white
-            : (isDark ? Colors.white70 : Colors.black87),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: isTimerRunning ? null : () => onResetTimer(seconds),
+        borderRadius: BorderRadius.circular(10),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppColors.primaryPurple
+                : (colors.isDark
+                      ? const Color(0xFF26262B)
+                      : const Color(0xFFF0F1F5)),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isSelected ? AppColors.primaryPurple : colors.borderColor,
+              width: 1.2,
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+              color: isSelected
+                  ? Colors.white
+                  : (colors.isDark ? Colors.white70 : Colors.black87),
+            ),
+          ),
+        ),
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      visualDensity: VisualDensity.compact,
+    );
+  }
+
+  Widget _buildCustomPill(BuildContext context, AppThemeColors colors) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: isTimerRunning ? null : onCustomTimerTap,
+        borderRadius: BorderRadius.circular(10),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: colors.isDark
+                ? const Color(0xFF26262B)
+                : const Color(0xFFF0F1F5),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: colors.borderColor, width: 1.2),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.add_rounded, size: 14, color: AppColors.primaryPurple),
+              SizedBox(width: 4),
+              Text(
+                'Custom',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryPurple,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -73,9 +118,9 @@ class TasksFocusTimerCard extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E28) : const Color(0xFFF3F4F8),
+        color: colors.cardBg,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isTimerRunning ? AppColors.primaryPurple : borderColor,
@@ -83,10 +128,17 @@ class TasksFocusTimerCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
+          if (isTimerRunning)
+            BoxShadow(
+              color: AppColors.primaryPurple.withOpacity(0.2),
+              blurRadius: 16,
+              spreadRadius: 1,
+              offset: const Offset(0, 4),
+            ),
         ],
       ),
       child: Column(
@@ -97,19 +149,32 @@ class TasksFocusTimerCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    padding: const EdgeInsets.all(9),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryPurple.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.primaryPurple.withOpacity(
+                        isTimerRunning ? 0.25 : 0.15,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        if (isTimerRunning)
+                          BoxShadow(
+                            color: AppColors.primaryPurple.withOpacity(0.4),
+                            blurRadius: 10,
+                            spreadRadius: -1,
+                          ),
+                      ],
                     ),
-                    child: const Icon(
-                      Icons.timer_outlined,
+                    child: Icon(
+                      isTimerRunning
+                          ? Icons.alarm_on_rounded
+                          : Icons.timer_outlined,
                       color: AppColors.primaryPurple,
-                      size: 20,
+                      size: 22,
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -121,6 +186,7 @@ class TasksFocusTimerCard extends StatelessWidget {
                           color: textColor,
                         ),
                       ),
+                      const SizedBox(height: 2),
                       Text(
                         isTimerRunning
                             ? 'Focus session in progress...'
@@ -146,69 +212,55 @@ class TasksFocusTimerCard extends StatelessWidget {
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    _buildTimerPresetPill(context, '15m', 900, isDark),
-                    _buildTimerPresetPill(context, '25m', 1500, isDark),
-                    _buildTimerPresetPill(context, '30m', 1800, isDark),
-                    _buildTimerPresetPill(context, '45m', 2700, isDark),
+                    _buildTimerPresetPill(context, '15m', 900, colors),
+                    _buildTimerPresetPill(context, '25m', 1500, colors),
+                    _buildTimerPresetPill(context, '30m', 1800, colors),
+                    _buildTimerPresetPill(context, '45m', 2700, colors),
                     if (![900, 1500, 1800, 2700].contains(timerTotalSeconds))
                       _buildTimerPresetPill(
                         context,
                         '${timerTotalSeconds ~/ 60}m',
                         timerTotalSeconds,
-                        isDark,
+                        colors,
                       ),
-                    ActionChip(
-                      avatar: const Icon(
-                        Icons.add_rounded,
-                        size: 14,
-                        color: AppColors.primaryPurple,
-                      ),
-                      label: const Text('Custom'),
-                      onPressed: isTimerRunning ? null : onCustomTimerTap,
-                      backgroundColor: isDark
-                          ? const Color(0xFF262632)
-                          : const Color(0xFFEAEAEE),
-                      labelStyle: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primaryPurple,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      visualDensity: VisualDensity.compact,
-                    ),
+                    _buildCustomPill(context, colors),
                   ],
                 ),
               ),
               const SizedBox(width: 16),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
                         formatTime(timerRemainingSeconds),
-                        style: const TextStyle(
-                          fontSize: 26,
+                        style: TextStyle(
+                          fontSize: 24,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
-                          color: AppColors.primaryPurple,
+                          color: isTimerRunning
+                              ? const Color(0xFFFF4081)
+                              : AppColors.primaryPurple,
                         ),
                       ),
                       const SizedBox(height: 4),
                       SizedBox(
-                        width: 100,
+                        width: 90,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(4),
                           child: LinearProgressIndicator(
                             value: progress,
-                            minHeight: 6,
+                            minHeight: 5,
                             backgroundColor: isDark
                                 ? const Color(0xFF2C2C38)
                                 : const Color(0xFFE2E4EB),
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                              AppColors.primaryPurple,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              isTimerRunning
+                                  ? const Color(0xFFFF4081)
+                                  : AppColors.primaryPurple,
                             ),
                           ),
                         ),
@@ -216,54 +268,63 @@ class TasksFocusTimerCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(width: 14),
-                  ElevatedButton.icon(
-                    onPressed: isTimerRunning ? onPauseTimer : onStartTimer,
-                    icon: Icon(
-                      isTimerRunning
-                          ? Icons.pause_rounded
-                          : Icons.play_arrow_rounded,
-                      size: 18,
-                      color: Colors.white,
-                    ),
-                    label: Text(
-                      isTimerRunning ? 'Pause' : 'Start Focus',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
+                  SizedBox(
+                    height: 40,
+                    child: ElevatedButton.icon(
+                      onPressed: isTimerRunning ? onPauseTimer : onStartTimer,
+                      icon: Icon(
+                        isTimerRunning
+                            ? Icons.pause_rounded
+                            : Icons.play_arrow_rounded,
+                        size: 18,
                         color: Colors.white,
                       ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isTimerRunning
-                          ? const Color(0xFFFF4081)
-                          : AppColors.primaryPurple,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 12,
+                      label: Text(
+                        isTimerRunning ? 'Pause' : 'Start Focus',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          color: Colors.white,
+                        ),
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isTimerRunning
+                            ? const Color(0xFFFF4081)
+                            : AppColors.primaryPurple,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 0,
                       ),
-                      elevation: 0,
                     ),
                   ),
                   const SizedBox(width: 8),
-                  OutlinedButton(
-                    onPressed: () => onResetTimer(),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 12,
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => onResetTimer(),
+                      borderRadius: BorderRadius.circular(10),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF26262B)
+                              : const Color(0xFFF0F1F5),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: colors.borderColor,
+                            width: 1.2,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.refresh_rounded,
+                          size: 18,
+                          color: subtextColor,
+                        ),
                       ),
-                      side: BorderSide(color: borderColor),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.refresh_rounded,
-                      size: 18,
-                      color: subtextColor,
                     ),
                   ),
                 ],

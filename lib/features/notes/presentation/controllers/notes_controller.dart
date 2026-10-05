@@ -48,8 +48,12 @@ class NotesController extends ChangeNotifier {
         content.startsWith('- [X]');
   }
 
+  bool _isFolderNote(Note note) {
+    return note.folderName != null && note.folderName!.isNotEmpty;
+  }
+
   List<Note> get regularNotes =>
-      _notes.where((note) => !_isTaskChecklistNote(note)).toList();
+      _notes.where((note) => !_isTaskChecklistNote(note) && !_isFolderNote(note)).toList();
 
   List<Note> get taskChecklistNotes =>
       _notes.where((note) => _isTaskChecklistNote(note)).toList();
@@ -151,6 +155,7 @@ class NotesController extends ChangeNotifier {
     required Color indicatorColor,
     required List<String> tags,
     bool isPinned = false,
+    bool isLocked = false,
     String? folderName,
   }) {
     final nowStr = _formatTimestamp(DateTime.now());
@@ -168,6 +173,7 @@ class NotesController extends ChangeNotifier {
           tags: tags,
           updatedAt: nowStr,
           isPinned: isPinned,
+          isLocked: isLocked || _notes[index].isLocked,
           folderName: folderName ?? _notes[index].folderName,
         );
         _notes[index] = updatedNote;
@@ -193,6 +199,7 @@ class NotesController extends ChangeNotifier {
       tags: tags,
       updatedAt: nowStr,
       isPinned: isPinned,
+      isLocked: isLocked,
       folderName: folderName,
     );
 

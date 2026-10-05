@@ -157,30 +157,39 @@ class TasksHeaderBar extends StatelessWidget {
                 onPressed: onToggleFocusTimer,
                 icon: Icon(
                   isTimerRunning
-                      ? Icons.timer_rounded
+                      ? Icons.alarm_on_rounded
                       : (showFocusTimerCard
                             ? Icons.timer_rounded
                             : Icons.timer_outlined),
                   size: 18,
-                  color: Colors.white,
+                  color: (isTimerRunning || showFocusTimerCard)
+                      ? Colors.white
+                      : (isDark ? Colors.white70 : textColor),
                 ),
                 label: Text(
                   isTimerRunning
-                      ? '⏱️ ${formatTimerTime(timerRemainingSeconds)}'
+                      ? formatTimerTime(timerRemainingSeconds)
                       : 'Focus Timer',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
-                    color: Colors.white,
+                    color: (isTimerRunning || showFocusTimerCard)
+                        ? Colors.white
+                        : (isDark ? Colors.white70 : textColor),
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isTimerRunning
-                      ? const Color(0xFFFFB020)
+                      ? const Color(0xFFFF4081)
                       : (showFocusTimerCard
-                            ? const Color(0xFF635BFF)
-                            : const Color(0xFF2C2C38)),
+                            ? AppColors.primaryPurple
+                            : inputBg),
                   padding: const EdgeInsets.symmetric(horizontal: 14),
+                  side: BorderSide(
+                    color: isTimerRunning || showFocusTimerCard
+                        ? Colors.transparent
+                        : borderColor,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

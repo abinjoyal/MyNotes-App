@@ -27,7 +27,7 @@ class NoteList extends StatelessWidget {
     String title = 'No Notes Found';
     String subtitle =
         'Click "+ New Note" in the sidebar to create your first note.';
-    String? buttonText = 'Create New Note';
+    String? buttonText;
 
     if (activeRoute == 'pinned') {
       iconColor = const Color(0xFF635BFF);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mynotes/core/services/storage_service.dart';
 import '../../app/constants/app_colors.dart';
 import '../../app/constants/app_strings.dart';
 import '../../app/layout/desktop_layout.dart';
@@ -49,6 +50,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateToNextScreen() async {
+    await StorageService.instance.init();
     await Future.delayed(const Duration(seconds: 2, milliseconds: 500));
     if (!mounted) return;
 

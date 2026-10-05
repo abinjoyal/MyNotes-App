@@ -143,24 +143,16 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
             child: Container(
               decoration: BoxDecoration(
                 color: colors.cardBg,
-                borderRadius: BorderRadius.circular(28),
+                borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: AppColors.primaryPurple.withOpacity(isDark ? 0.3 : 0.5),
-                  width: 1.2,
+                  color: colors.borderColor,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.45 : 0.08),
-                    blurRadius: 36,
-                    offset: const Offset(0, 14),
+                    color: Colors.black.withOpacity(isDark ? 0.25 : 0.05),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
                   ),
-                  if (isDark)
-                    BoxShadow(
-                      color: AppColors.primaryPurple.withOpacity(0.15),
-                      blurRadius: 40,
-                      spreadRadius: -4,
-                      offset: const Offset(0, 4),
-                    ),
                 ],
               ),
               child: Padding(
@@ -173,20 +165,13 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            AppColors.primaryPurple,
-                            AppColors.primaryPink,
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(22),
+                        color: AppColors.primaryPurple,
+                        borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primaryPurple.withOpacity(0.4),
-                            blurRadius: 24,
-                            offset: const Offset(0, 8),
+                            color: Colors.black.withOpacity(0.12),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
@@ -330,42 +315,44 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                     // Choice Buttons
                     Builder(
                       builder: (context) {
-                        final isDefaultSelected =
-                            _selectedPath == _defaultPath && _defaultPath.isNotEmpty;
+                        final isCustomSelected =
+                            _selectedPath != _defaultPath && _selectedPath.isNotEmpty;
                         return Row(
                           children: [
                             Expanded(
                               child: Material(
                                 color: Colors.transparent,
                                 child: InkWell(
-                                  onTap: _pickCustomFolder,
+                                  onTap: (_isPickingFolder || _isLoading)
+                                      ? null
+                                      : _pickCustomFolder,
                                   borderRadius: BorderRadius.circular(12),
                                   child: AnimatedContainer(
                                     duration: const Duration(milliseconds: 200),
                                     height: 44,
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
-                                      color: !isDefaultSelected
+                                      color: isCustomSelected
                                           ? AppColors.primaryPurple.withOpacity(0.12)
                                           : (isDark
                                                 ? const Color(0xFF241C18)
                                                 : Colors.transparent),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: !isDefaultSelected
+                                        color: isCustomSelected
                                             ? AppColors.primaryPurple
                                             : colors.borderColor,
-                                        width: !isDefaultSelected ? 1.5 : 1.0,
+                                        width: isCustomSelected ? 1.5 : 1.0,
                                       ),
                                     ),
                                     child: Text(
                                       'Choose Folder',
                                       style: TextStyle(
                                         fontSize: 14,
-                                        fontWeight: !isDefaultSelected
+                                        fontWeight: isCustomSelected
                                             ? FontWeight.bold
                                             : FontWeight.w600,
-                                        color: !isDefaultSelected
+                                        color: isCustomSelected
                                             ? AppColors.primaryPurple
                                             : colors.secondaryTextColor,
                                       ),
@@ -386,29 +373,21 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                                     height: 44,
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
-                                      color: isDefaultSelected
-                                          ? AppColors.primaryPurple.withOpacity(0.12)
-                                          : (isDark
-                                                ? const Color(0xFF241C18)
-                                                : Colors.transparent),
+                                      color: isDark
+                                          ? const Color(0xFF241C18)
+                                          : Colors.transparent,
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: isDefaultSelected
-                                            ? AppColors.primaryPurple
-                                            : colors.borderColor,
-                                        width: isDefaultSelected ? 1.5 : 1.0,
+                                        color: colors.borderColor,
+                                        width: 1.0,
                                       ),
                                     ),
                                     child: Text(
                                       'Use Default',
                                       style: TextStyle(
                                         fontSize: 14,
-                                        fontWeight: isDefaultSelected
-                                            ? FontWeight.bold
-                                            : FontWeight.w600,
-                                        color: isDefaultSelected
-                                            ? AppColors.primaryPurple
-                                            : colors.secondaryTextColor,
+                                        fontWeight: FontWeight.w600,
+                                        color: colors.secondaryTextColor,
                                       ),
                                     ),
                                   ),
@@ -424,64 +403,47 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                     // Continue Button
                     SizedBox(
                       width: double.infinity,
-                      height: 50,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              AppColors.primaryPurple,
-                              AppColors.primaryPink,
-                            ],
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : _onContinue,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryPurple,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          borderRadius: BorderRadius.circular(14),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primaryPurple.withOpacity(0.4),
-                              blurRadius: 16,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
                         ),
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _onContinue,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
-                                    ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
                                   ),
-                                )
-                              : const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Continue',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    SizedBox(width: 8),
-                                    Icon(
-                                      Icons.arrow_forward_rounded,
-                                      size: 20,
+                                ),
+                              )
+                            : const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Continue',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                     ),
-                                  ],
-                                ),
-                        ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Icon(
+                                    Icons.arrow_forward_rounded,
+                                    size: 20,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
                       ),
                     ),
                   ],

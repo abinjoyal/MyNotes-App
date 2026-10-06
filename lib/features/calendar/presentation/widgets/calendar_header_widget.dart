@@ -23,29 +23,31 @@ class CalendarHeaderWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Calendar',
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-                letterSpacing: -0.5,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Calendar',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                  letterSpacing: -0.5,
+                ),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              'View & manage notes linked to dates',
-              style: TextStyle(
-                fontSize: 13,
-                color: isDark
-                    ? const Color(0xFF8C98A9)
-                    : const Color(0xFF6C757D),
+              const SizedBox(height: 2),
+              Text(
+                'View & manage notes linked to dates',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark
+                      ? const Color(0xFF8C98A9)
+                      : const Color(0xFF6C757D),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,

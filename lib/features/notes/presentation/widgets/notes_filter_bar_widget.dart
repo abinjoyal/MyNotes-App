@@ -126,35 +126,37 @@ class NotesLayoutControlsWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        PopupMenuButton<String>(
-          onSelected: onSortChanged,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Sort by: ',
-                style: TextStyle(fontSize: 13, color: AppColors.lightText),
-              ),
-              Text(
-                selectedSort,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
+        Flexible(
+          child: PopupMenuButton<String>(
+            onSelected: onSortChanged,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Sort by: ',
+                  style: TextStyle(fontSize: 13, color: AppColors.lightText),
                 ),
-              ),
-              const SizedBox(width: 4),
-              Icon(Icons.keyboard_arrow_down, size: 16, color: textColor),
+                Text(
+                  selectedSort,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(Icons.keyboard_arrow_down, size: 16, color: textColor),
+              ],
+            ),
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: 'Last edited', child: Text('Last edited')),
+              PopupMenuItem(value: 'Title', child: Text('Title')),
+              PopupMenuItem(value: 'Date created', child: Text('Date created')),
             ],
           ),
-          itemBuilder: (context) => const [
-            PopupMenuItem(value: 'Last edited', child: Text('Last edited')),
-            PopupMenuItem(value: 'Title', child: Text('Title')),
-            PopupMenuItem(value: 'Date created', child: Text('Date created')),
-          ],
         ),
         Container(
           padding: const EdgeInsets.all(3),

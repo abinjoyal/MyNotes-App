@@ -24,6 +24,7 @@ class SidebarLayout extends ConsumerStatefulWidget {
 class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
   late String _selectedRoute;
   bool _isCollapsed = false;
+  double? _lastWidth;
 
   @override
   void initState() {
@@ -33,6 +34,20 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    if (_lastWidth != null) {
+      if (screenWidth < 900 && _lastWidth! >= 900) {
+        _isCollapsed = true;
+      } else if (screenWidth >= 900 && _lastWidth! < 900) {
+        _isCollapsed = false;
+      }
+    } else {
+      if (screenWidth < 900) {
+        _isCollapsed = true;
+      }
+    }
+    _lastWidth = screenWidth;
+
     final notesController = ref.watch(notesProvider);
     final foldersController = ref.watch(foldersProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;

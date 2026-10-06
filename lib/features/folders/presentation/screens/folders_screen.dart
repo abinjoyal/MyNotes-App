@@ -178,24 +178,26 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Folders',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                          letterSpacing: -0.5,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Folders',
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                            letterSpacing: -0.5,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Organize and browse your notes by project folders.',
-                        style: TextStyle(fontSize: 13, color: hintColor),
-                      ),
-                    ],
+                        const SizedBox(height: 4),
+                        Text(
+                          'Organize and browse your notes by project folders.',
+                          style: TextStyle(fontSize: 13, color: hintColor),
+                        ),
+                      ],
+                    ),
                   ),
                   ElevatedButton.icon(
                     onPressed: () => _showCreateFolderDialog(foldersController),

@@ -51,6 +51,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _navigateToNextScreen() async {
     await StorageService.instance.init();
+    await SettingsController.instance.loadSettings();
     await Future.delayed(const Duration(seconds: 2, milliseconds: 500));
     if (!mounted) return;
 
@@ -72,8 +73,8 @@ class _SplashScreenState extends State<SplashScreen>
     final Widget targetScreen = settings.enablePinLock
         ? PasscodeLockScreen(
             isSetupMode: false,
-            onSuccess: () {
-              Navigator.of(context).pushReplacement(
+            onSuccess: (passcodeContext) {
+              Navigator.of(passcodeContext).pushReplacement(
                 PageRouteBuilder(
                   transitionDuration: const Duration(milliseconds: 500),
                   pageBuilder: (context, animation, secondaryAnimation) {

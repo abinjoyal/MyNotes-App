@@ -99,8 +99,8 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
     final Widget targetScreen = settings.enablePinLock
         ? PasscodeLockScreen(
             isSetupMode: false,
-            onSuccess: () {
-              Navigator.of(context).pushReplacement(
+            onSuccess: (passcodeContext) {
+              Navigator.of(passcodeContext).pushReplacement(
                 MaterialPageRoute(
                   builder: (context) => const ResponsiveLayout(
                     mobile: Scaffold(

@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 
 class PasscodeLockScreen extends StatefulWidget {
   final bool isSetupMode;
-  final VoidCallback? onSuccess;
+  final void Function(BuildContext context)? onSuccess;
 
   const PasscodeLockScreen({
     super.key,
@@ -127,7 +127,7 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
       // Unlock Mode
       if (_settingsController.verifyPin(_enteredPin)) {
         if (widget.onSuccess != null) {
-          widget.onSuccess!();
+          widget.onSuccess!(context);
         } else if (mounted && Navigator.of(context).canPop()) {
           Navigator.of(context).pop(true);
         }
@@ -166,7 +166,7 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
 
         if (didAuthenticate) {
           if (widget.onSuccess != null) {
-            widget.onSuccess!();
+            widget.onSuccess!(context);
           } else if (mounted && Navigator.of(context).canPop()) {
             Navigator.of(context).pop(true);
           }

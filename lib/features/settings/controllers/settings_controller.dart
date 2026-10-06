@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/services/storage_service.dart';
 
 class SettingsController extends ChangeNotifier {
   static final SettingsController instance = SettingsController._internal();
@@ -24,6 +25,37 @@ class SettingsController extends ChangeNotifier {
   bool _enableCloudSync = true;
   String _backupFrequency = 'Daily';
   bool _autoCleanTrash = true;
+
+  // Load persisted settings from disk
+  Future<void> loadSettings() async {
+    final storage = StorageService.instance;
+    await storage.init();
+
+    _enablePinLock = storage.getBool('enable_pin_lock', defaultValue: false);
+    _pinCode = storage.getString('pin_code', defaultValue: '');
+    _enableBiometrics = storage.getBool('enable_biometrics', defaultValue: false);
+    _selectedTheme = storage.getString('selected_theme', defaultValue: 'System');
+    _selectedLayout = storage.getString('selected_layout', defaultValue: 'Grid');
+    _fontSize = storage.getString('font_size', defaultValue: 'Medium');
+    _autoCleanTrash = storage.getBool('auto_clean_trash', defaultValue: true);
+    _enableCloudSync = storage.getBool('enable_cloud_sync', defaultValue: true);
+    _backupFrequency = storage.getString('backup_frequency', defaultValue: 'Daily');
+
+    switch (_selectedTheme) {
+      case 'Light':
+        _themeMode = ThemeMode.light;
+        break;
+      case 'Dark':
+        _themeMode = ThemeMode.dark;
+        break;
+      case 'System':
+      default:
+        _themeMode = ThemeMode.system;
+        break;
+    }
+
+    notifyListeners();
+  }
 
   // Getters
   ThemeMode get themeMode => _themeMode;
@@ -67,16 +99,19 @@ class SettingsController extends ChangeNotifier {
         _themeMode = ThemeMode.system;
         break;
     }
+    StorageService.instance.saveString('selected_theme', theme);
     notifyListeners();
   }
 
   void updateLayout(String layout) {
     _selectedLayout = layout;
+    StorageService.instance.saveString('selected_layout', layout);
     notifyListeners();
   }
 
   void updateFontSize(String size) {
     _fontSize = size;
+    StorageService.instance.saveString('font_size', size);
     notifyListeners();
   }
 
@@ -84,13 +119,17 @@ class SettingsController extends ChangeNotifier {
     _enablePinLock = value;
     if (!value) {
       _enableBiometrics = false;
+      StorageService.instance.saveBool('enable_biometrics', false);
     }
+    StorageService.instance.saveBool('enable_pin_lock', value);
     notifyListeners();
   }
 
   void setPinCode(String pin) {
     _pinCode = pin;
     _enablePinLock = true;
+    StorageService.instance.saveString('pin_code', pin);
+    StorageService.instance.saveBool('enable_pin_lock', true);
     notifyListeners();
   }
 
@@ -100,21 +139,25 @@ class SettingsController extends ChangeNotifier {
 
   void toggleBiometrics(bool value) {
     _enableBiometrics = value;
+    StorageService.instance.saveBool('enable_biometrics', value);
     notifyListeners();
   }
 
   void toggleCloudSync(bool value) {
     _enableCloudSync = value;
+    StorageService.instance.saveBool('enable_cloud_sync', value);
     notifyListeners();
   }
 
   void updateBackupFrequency(String freq) {
     _backupFrequency = freq;
+    StorageService.instance.saveString('backup_frequency', freq);
     notifyListeners();
   }
 
   void toggleAutoCleanTrash(bool value) {
     _autoCleanTrash = value;
+    StorageService.instance.saveBool('auto_clean_trash', value);
     notifyListeners();
   }
 }

@@ -145,9 +145,7 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
               decoration: BoxDecoration(
                 color: colors.cardBg,
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: colors.borderColor,
-                ),
+                border: Border.all(color: colors.borderColor),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(isDark ? 0.25 : 0.05),
@@ -230,7 +228,9 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                               Container(
                                 padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primaryPurple.withOpacity(0.15),
+                                  color: AppColors.primaryPurple.withOpacity(
+                                    0.15,
+                                  ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Icon(
@@ -262,9 +262,7 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                                   ? const Color(0xFF181210)
                                   : Colors.white,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: colors.borderColor,
-                              ),
+                              border: Border.all(color: colors.borderColor),
                             ),
                             child: SelectableText(
                               _selectedPath.isEmpty
@@ -317,7 +315,8 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                     Builder(
                       builder: (context) {
                         final isCustomSelected =
-                            _selectedPath != _defaultPath && _selectedPath.isNotEmpty;
+                            _selectedPath != _defaultPath &&
+                            _selectedPath.isNotEmpty;
                         return Row(
                           children: [
                             Expanded(
@@ -334,7 +333,9 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
                                       color: isCustomSelected
-                                          ? AppColors.primaryPurple.withOpacity(0.12)
+                                          ? AppColors.primaryPurple.withOpacity(
+                                              0.12,
+                                            )
                                           : (isDark
                                                 ? const Color(0xFF241C18)
                                                 : Colors.transparent),

@@ -408,8 +408,9 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                                       color: note.indicatorColor,
                                       title: note.title,
                                       time: formatRelativeTime(note.updatedAt),
-                                      onTap: () =>
-                                          _select('open_note_recent:${note.id}'),
+                                      onTap: () => _select(
+                                        'open_note_recent:${note.id}',
+                                      ),
                                     ),
                                   ),
                             const SizedBox(height: 20),

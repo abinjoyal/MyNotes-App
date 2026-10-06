@@ -103,9 +103,7 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
               Navigator.of(passcodeContext).pushReplacement(
                 MaterialPageRoute(
                   builder: (context) => const ResponsiveLayout(
-                    mobile: Scaffold(
-                      body: Center(child: Text('Notes Mobile View')),
-                    ),
+                    mobile: DesktopLayout(),
                     desktop: DesktopLayout(),
                   ),
                 ),
@@ -113,7 +111,7 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
             },
           )
         : const ResponsiveLayout(
-            mobile: Scaffold(body: Center(child: Text('Notes Mobile View'))),
+            mobile: DesktopLayout(),
             desktop: DesktopLayout(),
           );
 

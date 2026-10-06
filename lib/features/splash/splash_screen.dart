@@ -81,9 +81,7 @@ class _SplashScreenState extends State<SplashScreen>
                   transitionDuration: const Duration(milliseconds: 300),
                   pageBuilder: (context, animation, secondaryAnimation) {
                     return const ResponsiveLayout(
-                      mobile: Scaffold(
-                        body: Center(child: Text('Notes Mobile View')),
-                      ),
+                      mobile: DesktopLayout(),
                       desktop: DesktopLayout(),
                     );
                   },
@@ -96,7 +94,7 @@ class _SplashScreenState extends State<SplashScreen>
             },
           )
         : const ResponsiveLayout(
-            mobile: Scaffold(body: Center(child: Text('Notes Mobile View'))),
+            mobile: DesktopLayout(),
             desktop: DesktopLayout(),
           );
 

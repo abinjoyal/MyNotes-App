@@ -31,6 +31,7 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
   late Animation<double> _shakeAnimation;
 
   final LocalAuthentication _auth = LocalAuthentication();
+  final FocusNode _focusNode = FocusNode();
   bool _canCheckBiometrics = false;
 
   @override
@@ -50,6 +51,12 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
     ]).animate(_shakeController);
 
     _checkBiometricsSupport();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _focusNode.requestFocus();
+      }
+    });
   }
 
   Future<void> _checkBiometricsSupport() async {
@@ -72,6 +79,7 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
 
   @override
   void dispose() {
+    _focusNode.dispose();
     _shakeController.dispose();
     super.dispose();
   }
@@ -203,159 +211,172 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
       headerSubtitle = 'Enter your 4-digit passcode to unlock';
     }
 
-    return Scaffold(
-      backgroundColor: bg,
-      appBar: widget.isSetupMode
-          ? AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back_rounded, color: textColor),
-                onPressed: () => Navigator.of(context).pop(false),
-              ),
-            )
-          : null,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // App Icon / Lock Icon
-                  Container(
-                    width: 72,
-                    height: 72,
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryPurple.withOpacity(0.12),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.lock_outline_rounded,
-                        size: 36,
-                        color: AppColors.primaryPurple,
+    return KeyboardListener(
+      focusNode: _focusNode,
+      onKeyEvent: (event) {
+        if (event is KeyDownEvent) {
+          final label = event.logicalKey.keyLabel;
+          if (RegExp(r'^[0-9]$').hasMatch(label)) {
+            _onKeyPress(label);
+          } else if (event.logicalKey == LogicalKeyboardKey.backspace) {
+            _onBackspace();
+          }
+        }
+      },
+      child: Scaffold(
+        backgroundColor: bg,
+        appBar: widget.isSetupMode
+            ? AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back_rounded, color: textColor),
+                  onPressed: () => Navigator.of(context).pop(false),
+                ),
+              )
+            : null,
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // App Icon / Lock Icon
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryPurple.withOpacity(0.12),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.lock_outline_rounded,
+                          size: 36,
+                          color: AppColors.primaryPurple,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                  // Header Title
-                  Text(
-                    headerTitle,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
+                    // Header Title
+                    Text(
+                      headerTitle,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    headerSubtitle,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: AppColors.secondaryText,
+                    const SizedBox(height: 8),
+                    Text(
+                      headerSubtitle,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppColors.secondaryText,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 36),
+                    const SizedBox(height: 36),
 
-                  // PIN Dots Indicator with Shake Animation
-                  AnimatedBuilder(
-                    animation: _shakeAnimation,
-                    builder: (context, child) {
-                      return Transform.translate(
-                        offset: Offset(_shakeAnimation.value, 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(4, (index) {
-                            final isFilled = index < _enteredPin.length;
-                            return AnimatedContainer(
-                              duration: const Duration(milliseconds: 150),
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                              ),
-                              width: 18,
-                              height: 18,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: isFilled
-                                    ? AppColors.primaryPurple
-                                    : Colors.transparent,
-                                border: Border.all(
+                    // PIN Dots Indicator with Shake Animation
+                    AnimatedBuilder(
+                      animation: _shakeAnimation,
+                      builder: (context, child) {
+                        return Transform.translate(
+                          offset: Offset(_shakeAnimation.value, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(4, (index) {
+                              final isFilled = index < _enteredPin.length;
+                              return AnimatedContainer(
+                                duration: const Duration(milliseconds: 150),
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
+                                width: 18,
+                                height: 18,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
                                   color: isFilled
                                       ? AppColors.primaryPurple
-                                      : (isDark
-                                            ? AppColors.darkBorder
-                                            : const Color(0xFFC4C4C4)),
-                                  width: 2,
+                                      : Colors.transparent,
+                                  border: Border.all(
+                                    color: isFilled
+                                        ? AppColors.primaryPurple
+                                        : (isDark
+                                              ? AppColors.darkBorder
+                                              : const Color(0xFFC4C4C4)),
+                                    width: 2,
+                                  ),
                                 ),
-                              ),
-                            );
-                          }),
-                        ),
-                      );
-                    },
-                  ),
-
-                  // Error Text
-                  SizedBox(
-                    height: 40,
-                    child: Center(
-                      child: _errorMessage.isNotEmpty
-                          ? Text(
-                              _errorMessage,
-                              style: const TextStyle(
-                                color: AppColors.error,
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          : null,
+                              );
+                            }),
+                          ),
+                        );
+                      },
                     ),
-                  ),
 
-                  // Keypad Buttons Grid
-                  SizedBox(
-                    width: 280,
-                    child: Column(
-                      children: [
-                        _buildKeypadRow(['1', '2', '3'], textColor, isDark),
-                        const SizedBox(height: 16),
-                        _buildKeypadRow(['4', '5', '6'], textColor, isDark),
-                        const SizedBox(height: 16),
-                        _buildKeypadRow(['7', '8', '9'], textColor, isDark),
-                        const SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // Biometrics button (Unlock mode)
-                            if (!widget.isSetupMode && _canCheckBiometrics)
-                              _buildIconButton(
-                                icon: Icons.fingerprint_rounded,
-                                textColor: AppColors.primaryPurple,
-                                isDark: isDark,
-                                onTap: _triggerBiometrics,
+                    // Error Text
+                    SizedBox(
+                      height: 40,
+                      child: Center(
+                        child: _errorMessage.isNotEmpty
+                            ? Text(
+                                _errorMessage,
+                                style: const TextStyle(
+                                  color: AppColors.error,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               )
-                            else
-                              const SizedBox(width: 68), // Spacer
-                            // Number 0
-                            _buildKeypadButton('0', textColor, isDark),
-                            // Backspace button
-                            _buildIconButton(
-                              icon: Icons.backspace_outlined,
-                              textColor: textColor,
-                              isDark: isDark,
-                              onTap: _onBackspace,
-                            ),
-                          ],
-                        ),
-                      ],
+                            : null,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                ],
+
+                    // Keypad Buttons Grid
+                    SizedBox(
+                      width: 280,
+                      child: Column(
+                        children: [
+                          _buildKeypadRow(['1', '2', '3'], textColor, isDark),
+                          const SizedBox(height: 16),
+                          _buildKeypadRow(['4', '5', '6'], textColor, isDark),
+                          const SizedBox(height: 16),
+                          _buildKeypadRow(['7', '8', '9'], textColor, isDark),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Biometrics button (Unlock mode)
+                              if (!widget.isSetupMode && _canCheckBiometrics)
+                                _buildIconButton(
+                                  icon: Icons.fingerprint_rounded,
+                                  textColor: AppColors.primaryPurple,
+                                  isDark: isDark,
+                                  onTap: _triggerBiometrics,
+                                )
+                              else
+                                const SizedBox(width: 68), // Spacer
+                              // Number 0
+                              _buildKeypadButton('0', textColor, isDark),
+                              // Backspace button
+                              _buildIconButton(
+                                icon: Icons.backspace_outlined,
+                                textColor: textColor,
+                                isDark: isDark,
+                                onTap: _onBackspace,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
           ),

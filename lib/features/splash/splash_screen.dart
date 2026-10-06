@@ -58,7 +58,8 @@ class _SplashScreenState extends State<SplashScreen>
     if (!StorageLocationService.instance.isSetupCompleted) {
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 600),
+          opaque: false,
+          transitionDuration: const Duration(milliseconds: 300),
           pageBuilder: (context, animation, secondaryAnimation) =>
               const StorageSetupWizardScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -76,7 +77,8 @@ class _SplashScreenState extends State<SplashScreen>
             onSuccess: (passcodeContext) {
               Navigator.of(passcodeContext).pushReplacement(
                 PageRouteBuilder(
-                  transitionDuration: const Duration(milliseconds: 500),
+                  opaque: false,
+                  transitionDuration: const Duration(milliseconds: 300),
                   pageBuilder: (context, animation, secondaryAnimation) {
                     return const ResponsiveLayout(
                       mobile: Scaffold(
@@ -100,7 +102,8 @@ class _SplashScreenState extends State<SplashScreen>
 
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 600),
+        opaque: false,
+        transitionDuration: const Duration(milliseconds: 300),
         pageBuilder: (context, animation, secondaryAnimation) => targetScreen,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);

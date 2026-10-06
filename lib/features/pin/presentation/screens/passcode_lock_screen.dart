@@ -164,7 +164,7 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
     if (_settingsController.enableBiometrics) {
       try {
         final didAuthenticate = await _auth.authenticate(
-          localizedReason: 'Please authenticate to unlock MyNotes',
+          localizedReason: 'Please authenticate to unlock Notes',
           options: const AuthenticationOptions(
             biometricOnly: true,
             useErrorDialogs: true,
@@ -207,7 +207,7 @@ class _PasscodeLockScreenState extends State<PasscodeLockScreen>
         headerSubtitle = 'Choose a 4-digit PIN code to secure your notes';
       }
     } else {
-      headerTitle = 'My Notes Locked';
+      headerTitle = 'Notes Locked';
       headerSubtitle = 'Enter your 4-digit passcode to unlock';
     }
 

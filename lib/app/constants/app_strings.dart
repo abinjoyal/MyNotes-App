@@ -1,6 +1,6 @@
 abstract class AppStrings {
   // App Information
-  static const String appName = 'My Notes';
+  static const String appName = 'Notes';
 
   // Navigation & Screen Headers
   static const String notes = 'Notes';

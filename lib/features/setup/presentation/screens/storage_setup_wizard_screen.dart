@@ -53,7 +53,7 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
       }
 
       final String? selectedDirectory = await FilePicker.getDirectoryPath(
-        dialogTitle: 'Select Storage Folder for MyNotes',
+        dialogTitle: 'Select Storage Folder for Notes',
         initialDirectory: initialDir,
       );
 
@@ -104,7 +104,7 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
                 MaterialPageRoute(
                   builder: (context) => const ResponsiveLayout(
                     mobile: Scaffold(
-                      body: Center(child: Text('MyNotes Mobile View')),
+                      body: Center(child: Text('Notes Mobile View')),
                     ),
                     desktop: DesktopLayout(),
                   ),
@@ -113,7 +113,7 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
             },
           )
         : const ResponsiveLayout(
-            mobile: Scaffold(body: Center(child: Text('MyNotes Mobile View'))),
+            mobile: Scaffold(body: Center(child: Text('Notes Mobile View'))),
             desktop: DesktopLayout(),
           );
 
@@ -186,7 +186,7 @@ class _StorageSetupWizardScreenState extends State<StorageSetupWizardScreen> {
 
                     // Title & Subtitle
                     Text(
-                      'Welcome to MyNotes',
+                      'Welcome to Notes',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 28,

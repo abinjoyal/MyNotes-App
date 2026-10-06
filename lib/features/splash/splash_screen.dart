@@ -82,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen>
                   pageBuilder: (context, animation, secondaryAnimation) {
                     return const ResponsiveLayout(
                       mobile: Scaffold(
-                        body: Center(child: Text('MyNotes Mobile View')),
+                        body: Center(child: Text('Notes Mobile View')),
                       ),
                       desktop: DesktopLayout(),
                     );
@@ -96,7 +96,7 @@ class _SplashScreenState extends State<SplashScreen>
             },
           )
         : const ResponsiveLayout(
-            mobile: Scaffold(body: Center(child: Text('MyNotes Mobile View'))),
+            mobile: Scaffold(body: Center(child: Text('Notes Mobile View'))),
             desktop: DesktopLayout(),
           );
 

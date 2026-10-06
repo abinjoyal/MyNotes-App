@@ -371,7 +371,7 @@ class SettingsScreen extends StatelessWidget {
                           SettingActionTile(
                             title: 'Export Notes Data',
                             subtitle:
-                                'Compress and download all notes, tasks & folders as MyNotes_Backup.zip',
+                                'Compress and download all notes, tasks & folders as Notes_Backup.zip',
                             icon: Icons.archive_rounded,
                             actionLabel: 'Export ZIP',
                             textColor: colors.textColor,
@@ -535,7 +535,7 @@ class SettingsScreen extends StatelessWidget {
       }
 
       final String? selectedDirectory = await FilePicker.getDirectoryPath(
-        dialogTitle: 'Select New Storage Folder for MyNotes',
+        dialogTitle: 'Select New Storage Folder for Notes',
         initialDirectory: initialDir,
       );
 
@@ -700,7 +700,7 @@ class SettingsScreen extends StatelessWidget {
   }
 
   static Future<void> _onExportZipClick(BuildContext context) async {
-    _showSnackBar(context, 'Generating MyNotes_Backup.zip...');
+    _showSnackBar(context, 'Generating Notes_Backup.zip...');
     final zipFile = await StorageLocationService.instance.createZipBackup();
     if (zipFile == null || !await zipFile.exists()) {
       _showSnackBar(context, 'Could not create ZIP backup archive');
@@ -710,11 +710,11 @@ class SettingsScreen extends StatelessWidget {
     try {
       await Share.shareXFiles(
         [XFile(zipFile.path)],
-        subject: 'MyNotes Backup Archive (.zip)',
+        subject: 'Notes Backup Archive (.zip)',
         text:
-            'Here is your complete MyNotes backup archive containing all notes, tasks, and folders.',
+            'Here is your complete Notes backup archive containing all notes, tasks, and folders.',
       );
-      _showSnackBar(context, 'MyNotes_Backup.zip export ready!');
+      _showSnackBar(context, 'Notes_Backup.zip export ready!');
     } catch (e) {
       _showSnackBar(context, 'Backup ZIP created at: ${zipFile.path}');
     }

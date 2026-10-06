@@ -37,7 +37,7 @@ class AppInfoCard extends StatelessWidget {
             ),
             child: const Center(
               child: Text(
-                'M',
+                'N',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -52,7 +52,7 @@ class AppInfoCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'MyNotes App',
+                  'Notes App',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

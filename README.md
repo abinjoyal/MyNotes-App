@@ -1,32 +1,34 @@
-# MyNotes
+# Notes App
 
-MyNotes is a feature-rich, cross-platform note-taking application built with Flutter. It helps you capture your ideas, manage your tasks, and keep everything organized in folders. It also provides advanced features such as exporting your notes as PDFs, pinning important items, and seamless Google Drive backup.
+Notes is a feature-rich, privacy-focused, cross-platform note-taking application built with Flutter. It helps you capture ideas with rich Markdown formatting, organize notes into folders, manage task checklists with an integrated focus timer, lock private notes with a passcode, and back up files to custom storage locations.
 
-## ✨ Features
+## Features
 
-* **Rich Note Management**: Create, edit, and manage your notes effortlessly.
-* **Tasks & Checklists**: Stay on top of your to-dos with built-in task management.
-* **Folder Organization**: Categorize your notes and tasks into folders for a clutter-free experience.
-* **Pin Important Items**: Pin your most crucial notes and tasks to the top for quick access.
-* **Search Functionality**: Quickly find what you are looking for with the integrated search feature.
-* **Trash / Recycle Bin**: Accidentally deleted something? Recover your notes and tasks from the Trash before they are permanently removed.
-* **Export & Share**: Easily export your notes as PDFs or images, or print them directly from the app.
-* **Cross-Platform Support**: Enjoy a seamless experience across Mobile, Web, and Desktop environments (features responsive layouts like sidebars and desktop views).
-* **Modern Architecture**: Built using a feature-first, clean architecture approach with Riverpod for robust state management.
+- **Rich Markdown Note Editing**: Create and edit notes with live inline Markdown formatting, headers, lists, blockquotes, tables, and version history snapshots.
+- **Task & Checklist Management**: Manage checkable task lists with smart enter continuation, category icons, tags, and an integrated Focus Timer.
+- **Folder & Category Organization**: Group notes and task lists into color-coded folders with custom sorting and layout view options.
+- **Passcode & Privacy Protection**: Secure sensitive notes and folders with passcode protection (PIN lock).
+- **Interactive Calendar View**: View notes and tasks organized by dates on a full-featured calendar interface.
+- **Pin & Quick Access**: Pin your most critical notes to the top of your workspace for fast retrieval.
+- **Search & Filter**: Instantly search across note titles, contents, tags, and folders.
+- **Trash & Item Recovery**: Soft-delete items to the Trash bin with full restore and permanent deletion options.
+- **Export, Print & Share**: Export notes as PDFs, images, or print them directly from the app.
+- **Storage Setup Wizard**: Choose and configure local database storage and file directory locations.
+- **Cross-Platform Responsive Design**: Features responsive desktop sidebars and smooth animations tailored for Desktop (Windows, macOS, Linux), Web, and Mobile.
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-* Flutter SDK (version ^3.12.2 or higher)
-* Dart SDK
-* An IDE (like Android Studio, VS Code, or IntelliJ IDEA)
+- Flutter SDK (version ^3.12.2 or higher)
+- Dart SDK
+- An IDE (VS Code, Android Studio, or IntelliJ IDEA)
 
 ### Installation
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/mynotes.git
+   git clone https://github.com/abinjoyal/MyNotes-App.git
    cd mynotes
    ```
 
@@ -40,39 +42,42 @@ MyNotes is a feature-rich, cross-platform note-taking application built with Flu
    flutter run
    ```
 
-## 🏗️ Project Architecture
+## Project Architecture
 
-This project follows a feature-driven, clean architecture approach to maintain scalability and readability. The primary directories under `lib/` are:
+This project follows a feature-driven, clean architecture approach:
 
-* **`app/`**: Contains core application setup, including routing, themes, and global layout structures (e.g., sidebar and desktop layouts).
-* **`core/`**: Houses shared resources used across the app, such as database services, extensions, utilities, exceptions, and common UI widgets.
-* **`features/`**: The main business logic is split into standalone features:
-  * `folders/`: Directory management for notes.
-  * `notes/`: Note creation and displaying logic.
-  * `tasks/`: Task management.
-  * `pin/`: Pinning logic for quick access.
-  * `search/`: Searching capabilities.
-  * `trash/`: Soft-delete mechanism.
-  * `settings/`: App preferences.
-  * `splash/`: Splash screen logic.
+- **`lib/app/`**: Application configuration, theme data, navigation router, and global responsive layouts (sidebar layout, desktop layout).
+- **`lib/core/`**: Shared infrastructure including SQLite database, local storage services, export service, and extensions.
+- **`lib/features/`**: Modular feature directories containing domain models, data sources, and presentation widgets:
+  - `notes/`: Note creation, Markdown editor, and version history service.
+  - `tasks/`: Task checklist view, focus timer controller, and markdown utilities.
+  - `folders/`: Folder CRUD management and folder lock controls.
+  - `calendar/`: Calendar screen and event date bindings.
+  - `pin/`: Pinning logic and pinned items view.
+  - `setup/`: Storage wizard setup screen and passcode-locked notes view.
+  - `trash/`: Soft-delete trash management and empty trash workflow.
+  - `settings/`: App configuration, font sizes, grid/list toggles, and security settings.
+  - `splash/`: Application boot and initialization.
 
-## 🛠️ Built With
+## Built With
 
-* [Flutter](https://flutter.dev/) - UI Toolkit
-* [Riverpod](https://riverpod.dev/) - Reactive State Management
-* [pdf](https://pub.dev/packages/pdf) & [printing](https://pub.dev/packages/printing) - Exporting & Printing
-* [share_plus](https://pub.dev/packages/share_plus) - Sharing functionalities
+- [Flutter](https://flutter.dev/) - Cross-platform UI toolkit
+- [Riverpod](https://riverpod.dev/) - Reactive state management
+- [sqflite](https://pub.dev/packages/sqflite) & [sqflite_common_ffi](https://pub.dev/packages/sqflite_common_ffi) - SQLite local database
+- [pdf](https://pub.dev/packages/pdf) & [printing](https://pub.dev/packages/printing) - Document export and printing
+- [local_auth](https://pub.dev/packages/local_auth) - Local biometric / passcode authentication
+- [flutter_animate](https://pub.dev/packages/flutter_animate) - Micro-animations and transitions
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are welcome. Please follow these steps:
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 Distributed under the MIT License. See `LICENSE` for more information.

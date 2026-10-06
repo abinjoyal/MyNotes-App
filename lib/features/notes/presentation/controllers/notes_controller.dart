@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mynotes/features/notes/data/services/version_history_service.dart';
+import 'package:notes/features/notes/data/services/version_history_service.dart';
 import '../../domain/entities/note.dart';
 import '../../../../core/database/database.dart';
 import '../../../../core/services/storage_location_service.dart';

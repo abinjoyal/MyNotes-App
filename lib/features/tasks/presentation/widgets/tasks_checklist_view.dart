@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mynotes/features/tasks/utils/task_markdown_utils.dart';
+import 'package:notes/features/tasks/utils/task_markdown_utils.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../../notes/domain/entities/note.dart';
 import '../../../notes/presentation/controllers/notes_provider.dart';

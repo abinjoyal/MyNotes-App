@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mynotes/app/theme/app_theme_colors.dart';
-import 'package:mynotes/features/notes/presentation/controllers/notes_provider.dart';
-import 'package:mynotes/features/trash/presentation/widgets/trash_item_card.dart';
+import 'package:notes/app/theme/app_theme_colors.dart';
+import 'package:notes/features/notes/presentation/controllers/notes_provider.dart';
+import 'package:notes/features/trash/presentation/widgets/trash_item_card.dart';
 
 class TrashScreen extends ConsumerWidget {
   const TrashScreen({super.key});

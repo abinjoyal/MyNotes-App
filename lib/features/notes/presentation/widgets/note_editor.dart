@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:mynotes/features/notes/data/services/version_history_service.dart';
+import 'package:notes/features/notes/data/services/version_history_service.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../domain/entities/note.dart';
 import 'editor_toolbar.dart';

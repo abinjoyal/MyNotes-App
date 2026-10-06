@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mynotes/app/theme/app_theme_colors.dart';
+import 'package:notes/app/theme/app_theme_colors.dart';
 
 import '../../domain/entities/note.dart';
 import '../widgets/note_editor.dart';

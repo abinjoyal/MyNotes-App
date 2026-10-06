@@ -1,4 +1,4 @@
-import 'package:mynotes/features/notes/domain/entities/note.dart';
+import 'package:notes/features/notes/domain/entities/note.dart';
 
 class TrashItem {
   final Note note;

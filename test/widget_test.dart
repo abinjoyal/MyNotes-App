@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mynotes/features/tasks/utils/task_markdown_utils.dart';
+import 'package:notes/features/tasks/utils/task_markdown_utils.dart';
 
 void main() {
   group('TaskMarkdownUtils Tests', () {

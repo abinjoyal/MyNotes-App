@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mynotes/features/notes/domain/entities/note.dart';
-import 'package:mynotes/features/notes/presentation/screens/notes_screen.dart';
+import 'package:notes/features/notes/domain/entities/note.dart';
+import 'package:notes/features/notes/presentation/screens/notes_screen.dart';
 
 class PinnedNotesScreen extends StatelessWidget {
   final Function(Note)? onNoteSelect;

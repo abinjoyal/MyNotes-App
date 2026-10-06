@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mynotes/features/tasks/domain/entities/task.dart';
+import 'package:notes/features/tasks/domain/entities/task.dart';
 import '../../../../app/constants/app_colors.dart';
 
 class TaskMarkdownUtils {

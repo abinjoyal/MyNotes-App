@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:mynotes/features/folders/data/datasources/folder_local_datasource.dart';
-import 'package:mynotes/features/folders/data/repositories/folder_repository_impl.dart';
-import 'package:mynotes/features/folders/domain/entities/folder.dart';
-import 'package:mynotes/features/folders/domain/usecases/get_folders.dart';
+import 'package:notes/features/folders/data/datasources/folder_local_datasource.dart';
+import 'package:notes/features/folders/data/repositories/folder_repository_impl.dart';
+import 'package:notes/features/folders/domain/entities/folder.dart';
+import 'package:notes/features/folders/domain/usecases/get_folders.dart';
 import '../../../../core/database/database.dart';
 
 final foldersProvider = ChangeNotifierProvider<FoldersController>((ref) {

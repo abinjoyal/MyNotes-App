@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mynotes/features/folders/domain/entities/folder.dart';
-import 'package:mynotes/features/notes/presentation/controllers/notes_controller.dart';
-import 'package:mynotes/features/pin/presentation/screens/passcode_lock_screen.dart';
+import 'package:notes/features/folders/domain/entities/folder.dart';
+import 'package:notes/features/notes/presentation/controllers/notes_controller.dart';
+import 'package:notes/features/pin/presentation/screens/passcode_lock_screen.dart';
 import '../../../../app/constants/app_colors.dart';
 import '../../../../app/theme/app_theme_colors.dart';
 import '../../../notes/domain/entities/note.dart';

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:mynotes/app/constants/app_colors.dart';
-import 'package:mynotes/app/theme/app_theme_colors.dart';
-import 'package:mynotes/core/extensions/date_extensions.dart';
-import 'package:mynotes/features/folders/presentation/controllers/folders_controller.dart';
-import 'package:mynotes/features/notes/domain/entities/note.dart';
-import 'package:mynotes/features/notes/presentation/controllers/notes_controller.dart';
-import 'package:mynotes/features/notes/presentation/screens/note_editor_screen.dart';
+import 'package:notes/app/constants/app_colors.dart';
+import 'package:notes/app/theme/app_theme_colors.dart';
+import 'package:notes/core/extensions/date_extensions.dart';
+import 'package:notes/features/folders/presentation/controllers/folders_controller.dart';
+import 'package:notes/features/notes/domain/entities/note.dart';
+import 'package:notes/features/notes/presentation/controllers/notes_controller.dart';
+import 'package:notes/features/notes/presentation/screens/note_editor_screen.dart';
 
 class LockedNotesScreen extends StatefulWidget {
   final Function(Note)? onNoteSelect;

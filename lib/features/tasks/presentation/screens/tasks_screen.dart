@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mynotes/features/notes/domain/entities/note.dart' as entity;
+import 'package:notes/features/notes/domain/entities/note.dart' as entity;
 import '../widgets/tasks_checklist_view.dart';
 
 class TasksScreen extends StatelessWidget {

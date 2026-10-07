@@ -1,1 +1,1 @@
-export '../../../settings/screens/locked_notes_screen.dart';
+export '../../../setup/presentation/screens/locked_notes_screen.dart';

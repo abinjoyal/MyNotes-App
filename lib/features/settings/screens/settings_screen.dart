@@ -7,7 +7,7 @@ import '../../../app/theme/app_theme_colors.dart';
 import '../../../core/services/storage_location_service.dart';
 import '../../notes/presentation/controllers/notes_controller.dart';
 import '../../pin/presentation/screens/passcode_lock_screen.dart';
-import '../../setup/presentation/screens/locked_notes_screen.dart';
+import 'locked_notes_screen.dart';
 import '../../trash/presentation/screens/trash_screen.dart';
 import '../controllers/settings_controller.dart';
 import '../widgets/app_info_card.dart';

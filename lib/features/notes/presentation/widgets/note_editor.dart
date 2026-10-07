@@ -449,6 +449,7 @@ class _NoteEditorState extends State<NoteEditor> {
   late Color _selectedColor;
   late List<String> _tags;
   bool _isPinned = false;
+  bool _isEditing = true;
   String _previousText = '';
   final ScreenshotController _screenshotController = ScreenshotController();
   Timer? _autoSaveTimer;
@@ -486,6 +487,7 @@ class _NoteEditorState extends State<NoteEditor> {
         (widget.initialNote?.id != null && widget.initialNote!.id.isNotEmpty)
             ? widget.initialNote!.id
             : null;
+    _isEditing = _currentNoteId == null;
     _titleController = TextEditingController(
       text: widget.initialNote?.title ?? '',
     );
@@ -1849,6 +1851,101 @@ class _NoteEditorState extends State<NoteEditor> {
               ),
               Row(
                 children: [
+                  // Read-Only (Eye) vs Edit (Pencil) Mode Toggle Button
+                  Container(
+                    margin: const EdgeInsets.only(right: 4),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF1E1E2A)
+                          : const Color(0xFFF3F4F6),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF2C2C3A)
+                            : const Color(0xFFE5E7EB),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Eye Icon Button (Read-Only / Preview Mode)
+                        Tooltip(
+                          message: 'Read-Only Mode',
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _isEditing = false;
+                              });
+                            },
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(9),
+                              bottomLeft: Radius.circular(9),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: !_isEditing
+                                    ? AppColors.primaryPurple.withOpacity(0.2)
+                                    : Colors.transparent,
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(9),
+                                  bottomLeft: Radius.circular(9),
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.remove_red_eye_rounded,
+                                size: 16,
+                                color: !_isEditing
+                                    ? AppColors.primaryPurple
+                                    : hintColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Pencil Icon Button (Edit Mode)
+                        Tooltip(
+                          message: 'Edit Mode',
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _isEditing = true;
+                              });
+                            },
+                            borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(9),
+                              bottomRight: Radius.circular(9),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _isEditing
+                                    ? AppColors.primaryPurple.withOpacity(0.2)
+                                    : Colors.transparent,
+                                borderRadius: const BorderRadius.only(
+                                  topRight: Radius.circular(9),
+                                  bottomRight: Radius.circular(9),
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.edit_rounded,
+                                size: 16,
+                                color: _isEditing
+                                    ? AppColors.primaryPurple
+                                    : hintColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                   // Pin Icon Toggle Button
                   IconButton(
                     tooltip: _isPinned ? 'Unpin Note' : 'Pin Note',
@@ -2027,201 +2124,203 @@ class _NoteEditorState extends State<NoteEditor> {
           ),
           const SizedBox(height: 16),
 
-          // Combined Formatting & Metadata Toolbar Row
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                EditorToolbar(
-                  activeHeading: _activeHeading,
-                  isBold: _isBold,
-                  isItalic: _isItalic,
-                  isUnderline: _isUnderline,
-                  isStrikethrough: _isStrikethrough,
-                  isCode: _isCode,
-                  isBulletList: _isBulletList,
-                  isNumberedList: _isNumberedList,
-                  isChecklist: _isChecklist,
-                  onH1Tap: () => _applyHeading(1),
-                  onH2Tap: () => _applyHeading(2),
-                  onH3Tap: () => _applyHeading(3),
-                  onBulletListTap: _toggleBulletList,
-                  onNumberedListTap: _toggleNumberedList,
-                  onCheckboxTap: _toggleChecklist,
-                  onBoldTap: _toggleBold,
-                  onItalicTap: _toggleItalic,
-                  onUnderlineTap: _toggleUnderline,
-                  onStrikethroughTap: _toggleStrikethrough,
-                  onCodeTap: _toggleCode,
-                  onLinkTap: _insertLink,
-                  onImageTap: _insertImage,
-                  onTableTap: _insertTable,
-                  onBlockquoteTap: _insertBlockquote,
-                  onDividerTap: _insertDivider,
-                  onClearFormattingTap: _clearFormatting,
-                ),
-                const SizedBox(width: 16),
-                Container(
-                  height: 24,
-                  width: 1,
-                  color: isDark
-                      ? const Color(0xFF323246)
-                      : const Color(0xFFE5E7EB),
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  'Color: ',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: isDark
-                        ? AppColors.lightText
-                        : AppColors.secondaryText,
+          // Combined Formatting & Metadata Toolbar Row (Visible in Edit Mode)
+          if (_isEditing) ...[
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  EditorToolbar(
+                    activeHeading: _activeHeading,
+                    isBold: _isBold,
+                    isItalic: _isItalic,
+                    isUnderline: _isUnderline,
+                    isStrikethrough: _isStrikethrough,
+                    isCode: _isCode,
+                    isBulletList: _isBulletList,
+                    isNumberedList: _isNumberedList,
+                    isChecklist: _isChecklist,
+                    onH1Tap: () => _applyHeading(1),
+                    onH2Tap: () => _applyHeading(2),
+                    onH3Tap: () => _applyHeading(3),
+                    onBulletListTap: _toggleBulletList,
+                    onNumberedListTap: _toggleNumberedList,
+                    onCheckboxTap: _toggleChecklist,
+                    onBoldTap: _toggleBold,
+                    onItalicTap: _toggleItalic,
+                    onUnderlineTap: _toggleUnderline,
+                    onStrikethroughTap: _toggleStrikethrough,
+                    onCodeTap: _toggleCode,
+                    onLinkTap: _insertLink,
+                    onImageTap: _insertImage,
+                    onTableTap: _insertTable,
+                    onBlockquoteTap: _insertBlockquote,
+                    onDividerTap: _insertDivider,
+                    onClearFormattingTap: _clearFormatting,
                   ),
-                ),
-                Row(
-                  children: _categoryColors.map((color) {
-                    final isSelected = _selectedColor == color;
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedColor = color;
-                        });
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        width: 22,
-                        height: 22,
-                        decoration: BoxDecoration(
-                          color: color,
-                          shape: BoxShape.circle,
-                          border: isSelected
-                              ? Border.all(
-                                  color: isDark
-                                      ? Colors.white
-                                      : AppColors.darkText,
-                                  width: 2.5,
-                                )
-                              : null,
-                          boxShadow: isSelected
-                              ? [
-                                  BoxShadow(
-                                    color: color.withOpacity(0.6),
-                                    blurRadius: 8,
-                                    spreadRadius: 1,
-                                  ),
-                                ]
-                              : null,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(width: 16),
-                Container(
-                  height: 24,
-                  width: 1,
-                  color: isDark
-                      ? const Color(0xFF323246)
-                      : const Color(0xFFE5E7EB),
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  'Tags: ',
-                  style: TextStyle(
-                    fontSize: 13,
+                  const SizedBox(width: 16),
+                  Container(
+                    height: 24,
+                    width: 1,
                     color: isDark
-                        ? AppColors.lightText
-                        : AppColors.secondaryText,
+                        ? const Color(0xFF323246)
+                        : const Color(0xFFE5E7EB),
                   ),
-                ),
-                Row(
-                  children: [
-                    ..._tags.map((tag) {
-                      return Container(
-                        margin: const EdgeInsets.only(right: 6),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? AppColors.primaryPurple.withOpacity(0.25)
-                              : AppColors.lightLavender,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: AppColors.primaryPurple.withOpacity(0.3),
+                  const SizedBox(width: 16),
+                  Text(
+                    'Color: ',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark
+                          ? AppColors.lightText
+                          : AppColors.secondaryText,
+                    ),
+                  ),
+                  Row(
+                    children: _categoryColors.map((color) {
+                      final isSelected = _selectedColor == color;
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedColor = color;
+                          });
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          width: 22,
+                          height: 22,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                            border: isSelected
+                                ? Border.all(
+                                    color: isDark
+                                        ? Colors.white
+                                        : AppColors.darkText,
+                                    width: 2.5,
+                                  )
+                                : null,
+                            boxShadow: isSelected
+                                ? [
+                                    BoxShadow(
+                                      color: color.withOpacity(0.6),
+                                      blurRadius: 8,
+                                      spreadRadius: 1,
+                                    ),
+                                  ]
+                                : null,
                           ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              tag,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.primaryPurple,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _tags.remove(tag);
-                                });
-                              },
-                              child: const Icon(
-                                Icons.close_rounded,
-                                size: 12,
-                                color: AppColors.primaryPurple,
-                              ),
-                            ),
-                          ],
-                        ),
                       );
-                    }),
-                    InkWell(
-                      onTap: _showAddTagDialog,
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF262636)
-                              : const Color(0xFFE5E7EB),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.add_rounded,
-                              size: 14,
-                              color: isDark ? Colors.white70 : Colors.black87,
+                    }).toList(),
+                  ),
+                  const SizedBox(width: 16),
+                  Container(
+                    height: 24,
+                    width: 1,
+                    color: isDark
+                        ? const Color(0xFF323246)
+                        : const Color(0xFFE5E7EB),
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    'Tags: ',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark
+                          ? AppColors.lightText
+                          : AppColors.secondaryText,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      ..._tags.map((tag) {
+                        return Container(
+                          margin: const EdgeInsets.only(right: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? AppColors.primaryPurple.withOpacity(0.25)
+                                : AppColors.lightLavender,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: AppColors.primaryPurple.withOpacity(0.3),
                             ),
-                            const SizedBox(width: 2),
-                            Text(
-                              'Tag',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                tag,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primaryPurple,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _tags.remove(tag);
+                                  });
+                                },
+                                child: const Icon(
+                                  Icons.close_rounded,
+                                  size: 12,
+                                  color: AppColors.primaryPurple,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                      InkWell(
+                        onTap: _showAddTagDialog,
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? const Color(0xFF262636)
+                                : const Color(0xFFE5E7EB),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.add_rounded,
+                                size: 14,
                                 color: isDark ? Colors.white70 : Colors.black87,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 2),
+                              Text(
+                                'Tag',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? Colors.white70 : Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
+            const SizedBox(height: 16),
+          ],
 
           // Title Row with Aligned Styled Pin Icon Button
           Row(
@@ -2229,6 +2328,7 @@ class _NoteEditorState extends State<NoteEditor> {
               Expanded(
                 child: TextField(
                   controller: _titleController,
+                  readOnly: !_isEditing,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
@@ -2261,7 +2361,15 @@ class _NoteEditorState extends State<NoteEditor> {
                     Expanded(
                       child: TextField(
                         controller: _contentController,
-                        onTap: _onTextFieldTap,
+                        readOnly: !_isEditing,
+                        onTap: () {
+                          _onTextFieldTap();
+                          if (!_isEditing) {
+                            setState(() {
+                              _isEditing = true;
+                            });
+                          }
+                        },
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
                         style: TextStyle(

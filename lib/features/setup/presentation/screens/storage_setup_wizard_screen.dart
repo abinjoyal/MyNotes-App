@@ -2,13 +2,13 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-import '../../../app/constants/app_colors.dart';
-import '../../../app/layout/desktop_layout.dart';
-import '../../../app/layout/responsive_layout.dart';
-import '../../../app/theme/app_theme_colors.dart';
-import '../../../core/services/storage_location_service.dart';
-import '../../pin/presentation/screens/passcode_lock_screen.dart';
-import '../controllers/settings_controller.dart';
+import '../../../../app/constants/app_colors.dart';
+import '../../../../app/layout/desktop_layout.dart';
+import '../../../../app/layout/responsive_layout.dart';
+import '../../../../app/theme/app_theme_colors.dart';
+import '../../../../core/services/storage_location_service.dart';
+import '../../../pin/presentation/screens/passcode_lock_screen.dart';
+import '../../../settings/controllers/settings_controller.dart';
 
 class StorageSetupWizardScreen extends StatefulWidget {
   const StorageSetupWizardScreen({super.key});

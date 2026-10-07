@@ -109,6 +109,12 @@ class VersionHistoryService {
     await _flushToDisk();
   }
 
+  Future<void> clearAllHistory() async {
+    await _loadFromDisk();
+    _historyMap.clear();
+    await _flushToDisk();
+  }
+
   Future<void> _flushToDisk() async {
     try {
       final dataMap = <String, dynamic>{};

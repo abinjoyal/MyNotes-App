@@ -8,6 +8,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 class NoteEditorScreen extends StatelessWidget {
   final Note? note;
   final Function(
+    String? id,
     String title,
     String content,
     Color color,

@@ -29,9 +29,9 @@ class _LockedNotesScreenState extends State<LockedNotesScreen> {
         MaterialPageRoute(
           builder: (_) => NoteEditorScreen(
             note: note,
-            onSave: (title, content, color, tags, isPinned) {
-              _controller.saveNote(
-                id: note.id,
+            onSave: (id, title, content, color, tags, isPinned) {
+              return _controller.saveNote(
+                id: (id != null && id.isNotEmpty) ? id : note.id,
                 title: title,
                 content: content,
                 indicatorColor: color,

@@ -427,6 +427,7 @@ class MarkdownEditingController extends TextEditingController {
 class NoteEditor extends StatefulWidget {
   final Note? initialNote;
   final Function(
+    String? id,
     String title,
     String content,
     Color color,
@@ -452,6 +453,7 @@ class _NoteEditorState extends State<NoteEditor> {
   final ScreenshotController _screenshotController = ScreenshotController();
   Timer? _autoSaveTimer;
   String _saveStatus = '';
+  String? _currentNoteId;
 
   // Active formatting state for toolbar highlights
   int _activeHeading = 0;
@@ -480,6 +482,10 @@ class _NoteEditorState extends State<NoteEditor> {
   }
 
   void _initControllers() {
+    _currentNoteId =
+        (widget.initialNote?.id != null && widget.initialNote!.id.isNotEmpty)
+            ? widget.initialNote!.id
+            : null;
     _titleController = TextEditingController(
       text: widget.initialNote?.title ?? '',
     );
@@ -551,11 +557,13 @@ class _NoteEditorState extends State<NoteEditor> {
     if (widget.onSave != null) {
       if (isDisposing || !mounted) {
         final onSaveCallback = widget.onSave!;
+        final noteId = _currentNoteId;
         final selectedColor = _selectedColor;
         final tags = List<String>.from(_tags);
         final isPinned = _isPinned;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           onSaveCallback(
+            noteId,
             title,
             content,
             selectedColor,
@@ -564,13 +572,19 @@ class _NoteEditorState extends State<NoteEditor> {
           );
         });
       } else {
-        widget.onSave!(
+        final savedResult = widget.onSave!(
+          _currentNoteId,
           title,
           content,
           _selectedColor,
           _tags,
           _isPinned,
         );
+        if (savedResult is Note) {
+          _currentNoteId = savedResult.id;
+        } else if (savedResult is String) {
+          _currentNoteId = savedResult;
+        }
         if (mounted) {
           setState(() {
             _saveStatus = 'Saved';
@@ -1906,13 +1920,19 @@ class _NoteEditorState extends State<NoteEditor> {
                   ElevatedButton.icon(
                     onPressed: () {
                       if (widget.onSave != null) {
-                        widget.onSave!(
+                        final savedResult = widget.onSave!(
+                          _currentNoteId,
                           _titleController.text.trim(),
                           _contentController.text.trim(),
                           _selectedColor,
                           _tags,
                           _isPinned,
                         );
+                        if (savedResult is Note) {
+                          _currentNoteId = savedResult.id;
+                        } else if (savedResult is String) {
+                          _currentNoteId = savedResult;
+                        }
                       }
                     },
                     label: const Text(

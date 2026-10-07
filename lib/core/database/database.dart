@@ -219,4 +219,12 @@ class AppDatabase {
       whereArgs: [name, 1],
     );
   }
+
+  Future<void> clearAllData() async {
+    final db = await instance.database;
+    await db.delete(NotesTable.tableName);
+    await db.delete(FoldersTable.tableName);
+    await db.delete(AttachmentsTable.tableName);
+    await db.delete(RecentNotesTable.tableName);
+  }
 }

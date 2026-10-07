@@ -148,7 +148,7 @@ class NotesController extends ChangeNotifier {
     }
   }
 
-  void saveNote({
+  Note saveNote({
     String? id,
     required String title,
     required String content,
@@ -187,7 +187,7 @@ class NotesController extends ChangeNotifier {
           tags: updatedNote.tags,
         );
         notifyListeners();
-        return;
+        return updatedNote;
       }
     }
 
@@ -214,6 +214,7 @@ class NotesController extends ChangeNotifier {
       tags: newNote.tags,
     );
     notifyListeners();
+    return newNote;
   }
 
   void deleteNote(String id) {
@@ -270,6 +271,20 @@ class NotesController extends ChangeNotifier {
       AppDatabase.instance.saveNote(updated);
       notifyListeners();
     }
+  }
+
+  Future<void> clearAllNotes() async {
+    for (final note in _notes) {
+      StorageLocationService.instance.deleteNoteFile(note);
+    }
+    for (final note in _trashedNotes) {
+      StorageLocationService.instance.deleteNoteFile(note);
+    }
+    _notes.clear();
+    _trashedNotes.clear();
+    await AppDatabase.instance.clearAllData();
+    await VersionHistoryService.instance.clearAllHistory();
+    notifyListeners();
   }
 
   String _formatTimestamp(DateTime dt) {

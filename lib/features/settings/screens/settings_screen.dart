@@ -470,6 +470,65 @@ class SettingsScreen extends StatelessWidget {
                                       }
                                     },
                                   ),
+                                  Divider(height: 1, color: colors.borderColor),
+                                  SettingActionTile(
+                                    title: 'Clear All Notes Data',
+                                    subtitle:
+                                        'Permanently delete all notes, tasks, folders & version history',
+                                    icon: Icons.cleaning_services_rounded,
+                                    actionLabel: 'Delete All Data',
+                                    isDestructive: true,
+                                    textColor: colors.textColor,
+                                    secondaryTextColor:
+                                        colors.secondaryTextColor,
+                                    onTap: () async {
+                                      final totalNotes = NotesController.instance.totalNotesCount;
+                                      final confirmed = await showDialog<bool>(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              16,
+                                            ),
+                                          ),
+                                          title: const Text('Delete ALL Notes Data?'),
+                                          content: Text(
+                                            'Are you sure you want to delete all $totalNotes notes, tasks, folders, and version history? This action cannot be undone.',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(ctx, false),
+                                              child: const Text('Cancel'),
+                                            ),
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.red,
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              onPressed: () =>
+                                                  Navigator.pop(ctx, true),
+                                              child: const Text('Delete Everything'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+
+                                      if (confirmed == true) {
+                                        await NotesController.instance.clearAllNotes();
+                                        if (context.mounted) {
+                                          _showSnackBar(
+                                            context,
+                                            'All notes and data cleared successfully!',
+                                          );
+                                        }
+                                      }
+                                    },
+                                  ),
                                 ],
                               );
                             },

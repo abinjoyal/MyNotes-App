@@ -52,9 +52,9 @@ class _DesktopLayoutState extends State<DesktopLayout> {
       return NoteEditorScreen(
         note: _selectedNote,
         onClose: _isOpenedFromRecent ? null : _returnFromEditor,
-        onSave: (title, content, color, tags, isPinned) {
-          NotesController.instance.saveNote(
-            id: _selectedNote?.id,
+        onSave: (id, title, content, color, tags, isPinned) {
+          final savedNote = NotesController.instance.saveNote(
+            id: id ?? _selectedNote?.id,
             title: title,
             content: content,
             indicatorColor: color,
@@ -62,7 +62,8 @@ class _DesktopLayoutState extends State<DesktopLayout> {
             isPinned: isPinned,
             folderName: _selectedNote?.folderName,
           );
-          _returnFromEditor();
+          _selectedNote = savedNote;
+          return savedNote;
         },
       );
     }

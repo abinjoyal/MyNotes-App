@@ -3,7 +3,7 @@ abstract class AppStrings {
   static const String appName = 'Notes';
 
   // Navigation & Screen Headers
-  static const String notes = 'Notes';
+  static const String notes = appName;
   static const String archive = 'Archive';
   static const String trash = 'Trash';
   static const String settings = 'Settings';

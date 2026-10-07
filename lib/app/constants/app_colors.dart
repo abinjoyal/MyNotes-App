@@ -19,15 +19,15 @@ abstract class AppColors {
 
   // Text Colors
   static const Color secondaryText = Color(0xFF81766B);
-  static const Color lightText = Color(0xFF81766B);
+  static const Color lightText = secondaryText;
 
   // Surface & Layout Colors
   static const Color white = Color(0xFFFFFFFF);
   static const Color cardBackground = Color(0xFFF1EADF);
-  static const Color sidebarBackground = Color(0xFFF1EADF);
-  static const Color selectedBackground = Color(0xFFE9D8C3);
+  static const Color sidebarBackground = cardBackground;
+  static const Color selectedBackground = lightLavender;
   static const Color divider = Color(0xFFE4D9CB);
-  static const Color border = Color(0xFFE4D9CB);
+  static const Color border = divider;
 
   // Dark Theme Surface Colors
   static const Color darkScaffoldBackground = Color(0xFF121212);

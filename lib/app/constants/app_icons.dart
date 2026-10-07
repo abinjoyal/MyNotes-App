@@ -34,7 +34,7 @@ abstract class AppIcons {
   static const IconData bold = Icons.format_bold_rounded;
   static const IconData italic = Icons.format_italic_rounded;
   static const IconData underline = Icons.format_underlined_rounded;
-  static const IconData bulletList = Icons.format_list_bulleted_rounded;
+  static const IconData bulletList = listView;
   static const IconData numberedList = Icons.format_list_numbered_rounded;
   static const IconData checkbox = Icons.check_box_outlined;
   static const IconData attachment = Icons.attach_file_rounded;

@@ -485,8 +485,8 @@ class _NoteEditorState extends State<NoteEditor> {
   void _initControllers() {
     _currentNoteId =
         (widget.initialNote?.id != null && widget.initialNote!.id.isNotEmpty)
-            ? widget.initialNote!.id
-            : null;
+        ? widget.initialNote!.id
+        : null;
     _isEditing = _currentNoteId == null;
     _titleController = TextEditingController(
       text: widget.initialNote?.title ?? '',
@@ -564,14 +564,7 @@ class _NoteEditorState extends State<NoteEditor> {
         final tags = List<String>.from(_tags);
         final isPinned = _isPinned;
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          onSaveCallback(
-            noteId,
-            title,
-            content,
-            selectedColor,
-            tags,
-            isPinned,
-          );
+          onSaveCallback(noteId, title, content, selectedColor, tags, isPinned);
         });
       } else {
         final savedResult = widget.onSave!(
@@ -2013,7 +2006,7 @@ class _NoteEditorState extends State<NoteEditor> {
                     const SizedBox(width: 10),
                   ],
 
-                  // Save Button
+                  // Done Button (Save & Close Editor)
                   ElevatedButton.icon(
                     onPressed: () {
                       if (widget.onSave != null) {
@@ -2031,9 +2024,14 @@ class _NoteEditorState extends State<NoteEditor> {
                           _currentNoteId = savedResult;
                         }
                       }
+                      if (widget.onClose != null) {
+                        widget.onClose!();
+                      } else if (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      }
                     },
                     label: const Text(
-                      'Save',
+                      'Done',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -2307,7 +2305,9 @@ class _NoteEditorState extends State<NoteEditor> {
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
-                                  color: isDark ? Colors.white70 : Colors.black87,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.black87,
                                 ),
                               ),
                             ],

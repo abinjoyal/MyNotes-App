@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'constants/app_strings.dart';
+import 'router/app_router.dart';
 import 'theme/app_theme.dart';
 import '../features/settings/controllers/settings_controller.dart';
 import '../features/splash/splash_screen.dart';
@@ -38,6 +39,7 @@ class _MyNotesAppState extends State<MyNotesApp> {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: _settingsController.themeMode,
+      onGenerateRoute: AppRouter.generateRoute,
       home: const SplashScreen(),
     );
   }

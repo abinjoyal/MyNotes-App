@@ -46,4 +46,18 @@ class Note {
       folderName: folderName ?? this.folderName,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'content': content,
+      'color': indicatorColor.value,
+      'tags': tags,
+      'updatedAt': updatedAt,
+      'isPinned': isPinned,
+      'isLocked': isLocked,
+      'folderName': folderName,
+    };
+  }
 }

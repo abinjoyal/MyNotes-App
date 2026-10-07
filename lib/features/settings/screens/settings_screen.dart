@@ -286,6 +286,29 @@ class SettingsScreen extends StatelessWidget {
                             onTap: () => _onChangeStorageClick(context, path),
                           ),
                           Divider(height: 1, color: colors.borderColor),
+                          SettingSelectionTile(
+                            title: 'Note File Save Format',
+                            subtitle:
+                                'Extension format used when auto-saving local files',
+                            icon: Icons.insert_drive_file_outlined,
+                            currentValue: controller.fileFormat,
+                            options: const [
+                              'Markdown (.md)',
+                              'Text (.txt)',
+                              'JSON (.json)',
+                            ],
+                            textColor: colors.textColor,
+                            secondaryTextColor: colors.secondaryTextColor,
+                            dropdownBg: colors.dropdownBg,
+                            onChanged: (val) {
+                              controller.updateFileFormat(val);
+                              _showSnackBar(
+                                context,
+                                'Note save format updated to $val',
+                              );
+                            },
+                          ),
+                          Divider(height: 1, color: colors.borderColor),
                           Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,

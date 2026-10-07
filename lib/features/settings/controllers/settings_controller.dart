@@ -25,6 +25,7 @@ class SettingsController extends ChangeNotifier {
   bool _enableCloudSync = true;
   String _backupFrequency = 'Daily';
   bool _autoCleanTrash = true;
+  String _fileFormat = 'Markdown (.md)'; // 'Markdown (.md)', 'Text (.txt)', 'JSON (.json)'
 
   // Load persisted settings from disk
   Future<void> loadSettings() async {
@@ -40,6 +41,7 @@ class SettingsController extends ChangeNotifier {
     _autoCleanTrash = storage.getBool('auto_clean_trash', defaultValue: true);
     _enableCloudSync = storage.getBool('enable_cloud_sync', defaultValue: true);
     _backupFrequency = storage.getString('backup_frequency', defaultValue: 'Daily');
+    _fileFormat = storage.getString('file_format', defaultValue: 'Markdown (.md)');
 
     switch (_selectedTheme) {
       case 'Light':
@@ -83,6 +85,19 @@ class SettingsController extends ChangeNotifier {
   bool get enableCloudSync => _enableCloudSync;
   String get backupFrequency => _backupFrequency;
   bool get autoCleanTrash => _autoCleanTrash;
+  String get fileFormat => _fileFormat;
+
+  String get fileExtension {
+    switch (_fileFormat) {
+      case 'Text (.txt)':
+        return '.txt';
+      case 'JSON (.json)':
+        return '.json';
+      case 'Markdown (.md)':
+      default:
+        return '.md';
+    }
+  }
 
   // Actions
   void updateTheme(String theme) {
@@ -112,6 +127,12 @@ class SettingsController extends ChangeNotifier {
   void updateFontSize(String size) {
     _fontSize = size;
     StorageService.instance.saveString('font_size', size);
+    notifyListeners();
+  }
+
+  void updateFileFormat(String format) {
+    _fileFormat = format;
+    StorageService.instance.saveString('file_format', format);
     notifyListeners();
   }
 

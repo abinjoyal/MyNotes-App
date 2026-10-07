@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../features/notes/domain/entities/note.dart';
+import '../../features/settings/controllers/settings_controller.dart';
 import 'storage_service.dart';
 
 enum StorageMigrationOption { move, copy, switchOnly }
@@ -195,20 +197,33 @@ class StorageLocationService {
       final filename = sanitizeFilename(
         note.title.isEmpty ? 'Untitled Note' : note.title,
       );
-      final filePath = '$targetDirPath${Platform.pathSeparator}$filename.md';
+      final ext = SettingsController.instance.fileExtension;
+      final filePath = '$targetDirPath${Platform.pathSeparator}$filename$ext';
 
       final file = File(filePath);
       final tagsStr = note.tags.isNotEmpty ? note.tags.join(', ') : 'None';
-      final markdownContent =
-          '''# ${note.title.isEmpty ? 'Untitled Note' : note.title}
+
+      String fileContent;
+      if (ext == '.json') {
+        fileContent = const JsonEncoder.withIndent('  ').convert(note.toMap());
+      } else if (ext == '.txt') {
+        fileContent = '''${note.title.isEmpty ? 'Untitled Note' : note.title}
+Updated: ${note.updatedAt}
+Tags: $tagsStr
+
+${note.content}
+''';
+      } else {
+        fileContent = '''# ${note.title.isEmpty ? 'Untitled Note' : note.title}
 
 Updated: ${note.updatedAt}
 Tags: $tagsStr
 
 ${note.content}
 ''';
+      }
 
-      await file.writeAsString(markdownContent);
+      await file.writeAsString(fileContent);
     } catch (_) {}
   }
 
@@ -219,22 +234,25 @@ ${note.content}
         note.title.isEmpty ? 'Untitled Note' : note.title,
       );
 
-      final pathsToTry = [
-        '$rootPath${Platform.pathSeparator}Notes${Platform.pathSeparator}$filename.md',
-        '$rootPath${Platform.pathSeparator}Tasks${Platform.pathSeparator}$filename.md',
-      ];
+      final extensions = ['.md', '.txt', '.json'];
+      for (final ext in extensions) {
+        final pathsToTry = [
+          '$rootPath${Platform.pathSeparator}Notes${Platform.pathSeparator}$filename$ext',
+          '$rootPath${Platform.pathSeparator}Tasks${Platform.pathSeparator}$filename$ext',
+        ];
 
-      if (note.folderName != null && note.folderName!.trim().isNotEmpty) {
-        final folderNameSanitized = sanitizeFilename(note.folderName!);
-        pathsToTry.add(
-          '$rootPath${Platform.pathSeparator}Folders${Platform.pathSeparator}$folderNameSanitized${Platform.pathSeparator}$filename.md',
-        );
-      }
+        if (note.folderName != null && note.folderName!.trim().isNotEmpty) {
+          final folderNameSanitized = sanitizeFilename(note.folderName!);
+          pathsToTry.add(
+            '$rootPath${Platform.pathSeparator}Folders${Platform.pathSeparator}$folderNameSanitized${Platform.pathSeparator}$filename$ext',
+          );
+        }
 
-      for (final p in pathsToTry) {
-        final f = File(p);
-        if (await f.exists()) {
-          await f.delete();
+        for (final p in pathsToTry) {
+          final f = File(p);
+          if (await f.exists()) {
+            await f.delete();
+          }
         }
       }
     } catch (_) {}

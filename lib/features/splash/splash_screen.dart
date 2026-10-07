@@ -6,7 +6,7 @@ import '../../app/layout/desktop_layout.dart';
 import '../../app/layout/responsive_layout.dart';
 import '../settings/controllers/settings_controller.dart';
 import '../pin/presentation/screens/passcode_lock_screen.dart';
-import '../settings/screens/storage_setup_wizard_screen.dart';
+import '../setup/presentation/screens/storage_setup_wizard_screen.dart';
 import '../../core/services/storage_location_service.dart';
 
 class SplashScreen extends StatefulWidget {

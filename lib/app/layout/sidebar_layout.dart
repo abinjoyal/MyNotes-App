@@ -282,28 +282,6 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                     ),
                   const SizedBox(height: 12),
 
-                  // 3.5 Quick Search Input Bar
-                  // Container(
-                  //   height: 36,
-                  //   decoration: BoxDecoration(
-                  //     color: cardBg,
-                  //     borderRadius: BorderRadius.circular(8),
-                  //     border: Border.all(color: borderColor),
-                  //   ),
-                  //   child: TextField(
-                  //     style: TextStyle(fontSize: 13, color: textColor),
-                  //     decoration: const InputDecoration(
-                  //       hintText: 'Search notes... (Ctrl+K)',
-                  //       hintStyle: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
-                  //       prefixIcon: Icon(Icons.search_rounded, size: 16, color: Color(0xFF9CA3AF)),
-                  //       border: InputBorder.none,
-                  //       contentPadding: EdgeInsets.symmetric(vertical: 8),
-                  //       isDense: true,
-                  //     ),
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 16),
-
                   // Scrollable Sidebar Navigation List
                   Expanded(
                     child: SingleChildScrollView(
@@ -354,42 +332,7 @@ class _SidebarLayoutState extends ConsumerState<SidebarLayout> {
                           ),
                           const SizedBox(height: 20),
 
-                          // FOLDERS Section
                           if (!_isCollapsed) ...[
-                            // _SectionHeader(
-                            //   title: 'FOLDERS',
-                            //   onAddTap: () => _showCreateFolderDialog(context),
-                            //   onHeaderTap: () => _select('folders'),
-                            // ),
-                            // const SizedBox(height: 6),
-                            // if (foldersController.folders.isEmpty)
-                            //   const Padding(
-                            //     padding: EdgeInsets.symmetric(
-                            //       horizontal: 8,
-                            //       vertical: 4,
-                            //     ),
-                            //     child: Text(
-                            //       'No folders created yet',
-                            //       style: TextStyle(
-                            //         fontSize: 12,
-                            //         color: Color(0xFF8C98A9),
-                            //       ),
-                            //     ),
-                            //   )
-                            // else
-                            //   ...foldersController.folders.map(
-                            //     (folder) => _FolderItem(
-                            //       title: folder.name,
-                            //       count: notesController.getFolderNotesCount(
-                            //         folder.name,
-                            //       ),
-                            //       folderColor: folder.color,
-                            //       isCollapsed: _isCollapsed,
-                            //       onTap: () => _select('folder:${folder.name}'),
-                            //     ),
-                            //   ),
-                            // const SizedBox(height: 20),
-
                             // RECENT NOTES Section
                             const Text(
                               'RECENT NOTES',

@@ -14,7 +14,7 @@ Notes is a feature-rich, privacy-focused, cross-platform note-taking application
 - **Trash & Item Recovery**: Soft-delete items to the Trash bin with full restore and permanent deletion options.
 - **Export, Print & Share**: Export notes as PDFs, images, or print them directly from the app.
 - **Storage Setup Wizard**: Choose and configure local database storage and file directory locations.
-- **Cross-Platform Responsive Design**: Features responsive desktop sidebars and smooth animations tailored for Desktop (Windows, macOS, Linux), Web, and Mobile.
+- **Cross-Platform Responsive Design**: Features responsive desktop sidebars and smooth animations tailored for Desktop (Windows), Web, and Mobile.
 
 ## Getting Started
 

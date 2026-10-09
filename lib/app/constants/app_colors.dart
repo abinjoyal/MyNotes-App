@@ -50,6 +50,10 @@ abstract class AppColors {
   static const Color warning = Color(0xFFFFC107);
   static const Color error = Color(0xFFDC3545);
   static const Color info = Color(0xFF0D6EFD);
+  
+  static const Color accentGold = Color(0xFFF5A623);
+  static const Color progressTrack = Color(0xFFEAE5DE);
+  static const Color subtitleSlate = Color(0xFF486581);
 
   /// List of note card colors for random or user selection
   static const List<Color> noteCardColors = [

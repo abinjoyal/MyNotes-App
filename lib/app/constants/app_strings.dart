@@ -4,11 +4,8 @@ abstract class AppStrings {
 
   // Navigation & Screen Headers
   static const String notes = appName;
-  static const String archive = 'Archive';
   static const String trash = 'Trash';
   static const String settings = 'Settings';
-  static const String categories = 'Categories';
-  static const String favorites = 'Favorites';
 
   // Placeholders
   static const String searchPlaceholder = 'Search notes...';
@@ -22,10 +19,6 @@ abstract class AppStrings {
   static const String save = 'Save';
   static const String cancel = 'Cancel';
   static const String delete = 'Delete';
-  static const String archiveNote = 'Archive Note';
-  static const String unarchiveNote = 'Unarchive Note';
-  static const String pinNote = 'Pin Note';
-  static const String unpinNote = 'Unpin Note';
   static const String share = 'Share';
   static const String copy = 'Copy';
   static const String duplicate = 'Duplicate';
@@ -37,7 +30,6 @@ abstract class AppStrings {
       'Tap the + button to create your first note';
   static const String noMatchingNotes = 'No matching notes found';
   static const String trashEmpty = 'Trash is empty';
-  static const String archiveEmpty = 'Archive is empty';
 
   // Dialog Prompts & Messages
   static const String deleteConfirmation =

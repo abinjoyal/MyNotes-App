@@ -22,7 +22,7 @@ Notes is a feature-rich, privacy-focused, cross-platform note-taking application
 
 - Flutter SDK (version ^3.12.2 or higher)
 - Dart SDK
-- An IDE (VS Code, Android Studio, or IntelliJ IDEA)
+- An IDE (VS Code, Android Studio)
 
 ### Installation
 

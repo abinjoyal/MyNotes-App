@@ -7,7 +7,6 @@ Notes is a feature-rich, privacy-focused, cross-platform note-taking application
 - **Rich Markdown Note Editing**: Create and edit notes with live inline Markdown formatting, headers, lists, blockquotes, tables, and version history snapshots.
 - **Task & Checklist Management**: Manage checkable task lists with smart enter continuation, category icons, tags, and an integrated Focus Timer.
 - **Folder & Category Organization**: Group notes and task lists into color-coded folders with custom sorting and layout view options.
-- **Passcode & Privacy Protection**: Secure sensitive notes and folders with passcode protection (PIN lock).
 - **Interactive Calendar View**: View notes and tasks organized by dates on a full-featured calendar interface.
 - **Pin & Quick Access**: Pin your most critical notes to the top of your workspace for fast retrieval.
 - **Search & Filter**: Instantly search across note titles, contents, tags, and folders.

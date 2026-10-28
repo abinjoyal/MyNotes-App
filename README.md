@@ -63,7 +63,6 @@ This project follows a feature-driven, clean architecture approach:
 - [Riverpod](https://riverpod.dev/) - Reactive state management
 - [sqflite](https://pub.dev/packages/sqflite) & [sqflite_common_ffi](https://pub.dev/packages/sqflite_common_ffi) - SQLite local database
 - [pdf](https://pub.dev/packages/pdf) & [printing](https://pub.dev/packages/printing) - Document export and printing
-- [local_auth](https://pub.dev/packages/local_auth) - Local biometric / passcode authentication
 
 ## License
 
